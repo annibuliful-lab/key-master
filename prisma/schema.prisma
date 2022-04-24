@@ -11,17 +11,23 @@ datasource db {
 }
 
 model Project {
-  id      String @id @default(uuid())
-  name    String
-  ownerId String
-  owner   User   @relation(fields: [ownerId], references: [id])
+  id        String    @id @default(uuid())
+  name      String
+  ownerId   String
+  owner     User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
+  deletedAt DateTime?
 
   @@unique([name, ownerId])
 }
 
 model User {
-  id       String    @id @default(uuid())
-  username String
-  password String
-  projects Project[]
+  id        String    @id @default(uuid())
+  username  String
+  password  String
+  projects  Project[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
+  deletedAt DateTime?
 }
