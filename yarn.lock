@@ -1534,7 +1534,7 @@
     relay-compiler "12.0.0"
     tslib "~2.3.0"
 
-"@graphql-tools/schema@8.3.10", "@graphql-tools/schema@^8.0.0", "@graphql-tools/schema@^8.1.2", "@graphql-tools/schema@^8.3.1":
+"@graphql-tools/schema@8.3.10", "@graphql-tools/schema@^8.0.0", "@graphql-tools/schema@^8.1.2", "@graphql-tools/schema@^8.3.1", "@graphql-tools/schema@^8.3.10":
   version "8.3.10"
   resolved "https://registry.yarnpkg.com/@graphql-tools/schema/-/schema-8.3.10.tgz#c3e373e6ad854f533fc7e55859dd8f9e81de30dd"
   integrity sha512-tfhjSTi3OzheDrVzG7rkPZg2BbQjmZRLM2vvQoM2b1TnUwgUIbpAgcnf+AWDLRsoCOWlezeLgij1BLeAR0Q0jg==
@@ -1543,6 +1543,15 @@
     "@graphql-tools/utils" "8.6.9"
     tslib "~2.3.0"
     value-or-promise "1.0.11"
+
+"@graphql-tools/stitching-directives@^2.2.14":
+  version "2.2.14"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/stitching-directives/-/stitching-directives-2.2.14.tgz#4b341f0f09c1b0e9f0d414fc6da3be8684407a3e"
+  integrity sha512-zJqspepXcsKBxuBB8JEffYJJn7Ez43EmfrUU4vLsyzcaYf+KWpAOyOPOwEzpgfjGMRE+vVgKennfinHIEzZErQ==
+  dependencies:
+    "@graphql-tools/delegate" "8.7.7"
+    "@graphql-tools/utils" "8.6.9"
+    tslib "~2.3.0"
 
 "@graphql-tools/url-loader@7.9.14", "@graphql-tools/url-loader@^7.0.11", "@graphql-tools/url-loader@^7.9.7":
   version "7.9.14"

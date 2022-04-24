@@ -1,4 +1,5 @@
 import { createServer } from '@key-master/graphql';
+import { FastifyContext } from 'apollo-server-fastify';
 import { resolvers } from './resolvers';
 import { UserService } from './services/user.service';
 import { typeDefs } from './user.schema';
@@ -9,7 +10,7 @@ createServer({
   resolvers,
   context: (context) => {
     return {
-      user: new UserService(),
+      user: new UserService<FastifyContext>(context),
     };
   },
 });

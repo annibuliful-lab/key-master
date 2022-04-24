@@ -1,5 +1,5 @@
 import { UserService } from './services/user.service';
 
-export interface IGraphqlContext {
-  user: UserService;
+export interface IGraphqlContext<T> {
+  user: UserService<T>;
 }
