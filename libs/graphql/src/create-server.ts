@@ -4,13 +4,14 @@ import { ApolloServerPluginLandingPageGraphQLPlayground } from 'apollo-server-co
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 import { DocumentNode } from 'graphql';
+import { Resolvers } from './generated';
 const { allStitchingDirectivesTypeDefs, stitchingDirectivesValidator } =
   stitchingDirectives();
 
 interface ICreateServer {
   typeDefs: Config['typeDefs'];
   port: number;
-  resolvers: Config['resolvers'];
+  resolvers: Resolvers;
   enablePlayGround?: boolean;
   supportSchemaStiching?: boolean;
   context: (context: FastifyContext) => Config['context'];
@@ -40,7 +41,7 @@ export const createServer = async ({
           resolvers: {
             ...resolvers,
             Query: {
-              ...(resolvers as any).Query,
+              ...resolvers.Query,
               _sdl: () => {
                 return (typeDefs as DocumentNode).loc.source.body;
               },
