@@ -25,7 +25,6 @@ export const createServer = async ({
   supportSchemaStiching = true,
   context,
 }: ICreateServer) => {
-  console.log('resolvers', resolvers);
   const schema = supportSchemaStiching
     ? stitchingDirectivesValidator(
         makeExecutableSchema({
