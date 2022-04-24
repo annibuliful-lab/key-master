@@ -5,7 +5,9 @@
   "scripts": {
     "start": "nx serve",
     "build": "nx build",
-    "test": "nx test"
+    "test": "nx test",
+    "user-backend:dev": "nx serve user-backend",
+    "db:migrate": "prisma migrate dev"
   },
   "private": true,
   "devDependencies": {
@@ -46,8 +48,11 @@
   },
   "dependencies": {
     "@nrwl/next": "14.0.2",
+    "@prisma/client": "^3.12.0",
     "core-js": "^3.6.5",
+    "fastify": "^3.28.0",
     "next": "12.1.5",
+    "prisma": "3.12.0",
     "react": "18.0.0",
     "react-dom": "18.0.0",
     "regenerator-runtime": "0.13.7",

@@ -9,3 +9,19 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Project {
+  id      String @id @default(uuid())
+  name    String
+  ownerId String
+  owner   User   @relation(fields: [ownerId], references: [id])
+
+  @@unique([name, ownerId])
+}
+
+model User {
+  id       String    @id @default(uuid())
+  username String
+  password String
+  projects Project[]
+}
