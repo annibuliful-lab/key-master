@@ -5,16 +5,22 @@ import { ApolloServerPluginLandingPageGraphQLPlayground } from 'apollo-server-co
 interface ICreateServer {
   typeDefs: Config['typeDefs'];
   port: number;
+  resolvers: Config['resolvers'];
   enablePlayGround?: boolean;
+  context: Config['context'];
 }
 
 export const createServer = async ({
   typeDefs,
   port,
+  resolvers,
+  context,
   enablePlayGround = true,
 }: ICreateServer) => {
   const apolloServer = new ApolloServer({
     typeDefs,
+    resolvers,
+    context,
     plugins: [
       enablePlayGround && ApolloServerPluginLandingPageGraphQLPlayground(),
     ],

@@ -26,8 +26,11 @@ model User {
   id        String    @id @default(uuid())
   username  String
   password  String
+  fullname  String
   projects  Project[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @default(now()) @updatedAt
   deletedAt DateTime?
+
+  @@unique([username, fullname])
 }
