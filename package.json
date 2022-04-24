@@ -7,10 +7,20 @@
     "build": "nx build",
     "test": "nx test",
     "user-backend:dev": "nx serve user-backend",
-    "db:migrate": "prisma migrate dev"
+    "db:migrate": "prisma migrate dev",
+    "codegen:backend": "graphql-codegen --config codegen-backend.yml"
   },
   "private": true,
   "devDependencies": {
+    "@graphql-codegen/cli": "2.6.2",
+    "@graphql-codegen/fragment-matcher": "3.2.1",
+    "@graphql-codegen/introspection": "2.1.1",
+    "@graphql-codegen/typescript": "2.4.8",
+    "@graphql-codegen/typescript-document-nodes": "2.2.8",
+    "@graphql-codegen/typescript-graphql-files-modules": "2.1.1",
+    "@graphql-codegen/typescript-operations": "2.3.5",
+    "@graphql-codegen/typescript-react-apollo": "3.2.11",
+    "@graphql-codegen/typescript-resolvers": "2.6.1",
     "@nrwl/cli": "14.0.2",
     "@nrwl/cypress": "14.0.2",
     "@nrwl/eslint-plugin-nx": "14.0.2",
@@ -47,10 +57,13 @@
     "typescript": "~4.6.2"
   },
   "dependencies": {
-    "@nrwl/next": "14.0.2",
+    "@graphql-codegen/cli": "^2.6.2",
     "@prisma/client": "^3.12.0",
+    "apollo-server-core": "^3.6.7",
+    "apollo-server-fastify": "^3.6.7",
     "core-js": "^3.6.5",
     "fastify": "^3.28.0",
+    "graphql": "^16.3.0",
     "next": "12.1.5",
     "prisma": "3.12.0",
     "react": "18.0.0",

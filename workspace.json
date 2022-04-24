@@ -4,6 +4,7 @@
     "dashboard": "apps/dashboard",
     "dashboard-e2e": "apps/dashboard-e2e",
     "db": "libs/db",
+    "graphql": "libs/graphql",
     "user-backend": "apps/user-backend"
   }
 }

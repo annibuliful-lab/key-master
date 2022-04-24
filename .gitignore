@@ -5,6 +5,7 @@
 /tmp
 /out-tsc
 .env
+generated.ts
 # dependencies
 node_modules
 
