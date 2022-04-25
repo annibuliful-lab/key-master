@@ -3,7 +3,7 @@ import { prismaClient } from '../client';
 import { auditFields } from '../constants';
 import { testUser } from './user';
 
-const project: Project = {
+export const project: Project = {
   id: 'e28c7bb9-d625-468e-b204-45953fbb95e7',
   ownerId: testUser.id,
   name: 'test-project',
