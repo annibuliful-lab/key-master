@@ -1,10 +1,14 @@
-import { fastify } from 'fastify';
-import { ApolloServer, Config, FastifyContext } from 'apollo-server-fastify';
-import { ApolloServerPluginLandingPageGraphQLPlayground } from 'apollo-server-core';
+import { fastify, FastifyContext } from 'fastify';
+import { ApolloServer, Config } from 'apollo-server-fastify';
+import {
+  ApolloError,
+  ApolloServerPluginLandingPageGraphQLPlayground,
+} from 'apollo-server-core';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 import { DocumentNode } from 'graphql';
 import { Resolvers } from './generated';
+import { IAppContext } from './graphql-context';
 const { allStitchingDirectivesTypeDefs, stitchingDirectivesValidator } =
   stitchingDirectives();
 
@@ -14,7 +18,7 @@ interface ICreateServer {
   resolvers: Resolvers;
   enablePlayGround?: boolean;
   supportSchemaStiching?: boolean;
-  context: (context: FastifyContext) => Config['context'];
+  contextResolver: (context: IAppContext) => Config['context'];
 }
 
 export const createServer = async ({
@@ -23,7 +27,7 @@ export const createServer = async ({
   resolvers,
   enablePlayGround = true,
   supportSchemaStiching = true,
-  context,
+  contextResolver,
 }: ICreateServer) => {
   const schema = supportSchemaStiching
     ? stitchingDirectivesValidator(
@@ -52,7 +56,18 @@ export const createServer = async ({
 
   const apolloServer = new ApolloServer({
     schema,
-    context,
+    context: (context) => {
+      const userId = context.request.headers['x-user-id'] as string;
+      if (!userId) {
+        throw new ApolloError('x-user-id is required');
+      }
+      const projectId = context.request.headers['x-project-id'] as string;
+      if (!projectId) {
+        throw new ApolloError('x-project-id is required');
+      }
+
+      return contextResolver({ userId, projectId, permissions: [] });
+    },
     plugins: [
       enablePlayGround && ApolloServerPluginLandingPageGraphQLPlayground(),
     ],
