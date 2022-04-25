@@ -65,6 +65,7 @@
     "apollo-server-fastify": "^3.6.7",
     "argon2": "^0.28.5",
     "core-js": "^3.6.5",
+    "eslint-plugin-unused-imports": "^2.0.0",
     "fastify": "^3.28.0",
     "graphql": "^16.3.0",
     "next": "12.1.5",

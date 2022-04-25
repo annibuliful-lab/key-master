@@ -1,4 +1,4 @@
-import { fastify, FastifyContext } from 'fastify';
+import { fastify } from 'fastify';
 import { ApolloServer, Config } from 'apollo-server-fastify';
 import {
   ApolloError,
