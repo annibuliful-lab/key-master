@@ -52,6 +52,7 @@ model Project {
   deletedAt     DateTime?
   keyManagments KeyManagment[]
   roles         Role[]
+  auditLogs     AuditLog[]
 
   @@unique([name, ownerId])
 }
@@ -80,4 +81,37 @@ model KeyManagment {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @default(now()) @updatedAt
   deletedAt DateTime?
+
+  @@index([projectId])
+}
+
+enum AuditType {
+  CREATE
+  UPDATE
+  DELETE
+}
+
+enum AuditLogStatus {
+  ERROR
+  WARN
+  SUCCESS
+  INFO
+}
+
+model AuditLog {
+  id          String         @id @default(uuid())
+  projectId   String
+  project     Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  serviceName String
+  type        AuditType
+  status      AuditLogStatus
+  message     String
+  data        Json?
+  createdBy   String
+  updatedBy   String
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @default(now()) @updatedAt
+
+  @@index([projectId, serviceName])
+  @@index([serviceName, type])
 }
