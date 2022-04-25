@@ -2,12 +2,16 @@
   "name": "key-master",
   "version": "0.0.0",
   "license": "MIT",
+  "prisma": {
+    "seed": "ts-node prisma/seed/index.ts"
+  },
   "scripts": {
     "start": "nx serve",
     "build": "nx build",
     "test": "nx test",
     "user-backend:dev": "nx serve user-backend",
     "db:migrate": "prisma migrate dev",
+    "db:seed": "prisma db seed",
     "codegen:backend": "graphql-codegen --config codegen-backend.yml"
   },
   "private": true,
