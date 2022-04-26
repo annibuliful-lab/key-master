@@ -1,24 +1,46 @@
 import { User } from '@prisma/client';
 import { prismaClient } from '../client';
+import { TEST_USER_A_ID, TEST_USER_B_ID } from '../constants';
 
-export const testUser: User = {
-  id: 'dbb3b0f8-8c0a-4914-b773-ab5cee865c64',
-  username: 'test',
+export const testUserA: User = {
+  id: TEST_USER_A_ID,
+  username: 'testUserA',
   password:
     '$argon2i$v=19$m=4096,t=3,p=1$eaVVI3+cTS0H9lVNXnONpg$bH1RXcMeogJfcuxyw5TqyPYsOsox1LDQyQd4FWSPxM0',
-  fullname: '1111',
-  createdAt: new Date(),
-  updatedAt: new Date(),
+  fullname: 'testUserAName',
+  createdAt: new Date(1),
+  updatedAt: new Date(1),
+  deletedAt: null,
+};
+
+export const testUserB: User = {
+  id: TEST_USER_B_ID,
+  username: 'testUserB',
+  password:
+    '$argon2i$v=19$m=4096,t=3,p=1$eaVVI3+cTS0H9lVNXnONpg$bH1RXcMeogJfcuxyw5TqyPYsOsox1LDQyQd4FWSPxM0',
+  fullname: 'testUserBName',
+  createdAt: new Date(1),
+  updatedAt: new Date(1),
   deletedAt: null,
 };
 
 export const createUser = async () => {
-  const result = await prismaClient.user.upsert({
-    where: {
-      id: testUser.id,
-    },
-    create: testUser,
-    update: {},
-  });
-  console.log('create user', { user: result });
+  const result = await prismaClient.$transaction([
+    prismaClient.user.upsert({
+      where: {
+        id: testUserA.id,
+      },
+      create: testUserA,
+      update: {},
+    }),
+    prismaClient.user.upsert({
+      where: {
+        id: testUserB.id,
+      },
+      create: testUserB,
+      update: {},
+    }),
+  ]);
+
+  console.log('Created users', { users: result });
 };

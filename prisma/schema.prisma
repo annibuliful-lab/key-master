@@ -26,6 +26,8 @@ model Role {
   deletedAt        DateTime?
   rolePermissions  RolePermission[]
   projectRoleUsers ProjectRoleUser[]
+
+  @@unique([projectId, role])
 }
 
 model RolePermission {
@@ -72,7 +74,7 @@ model User {
   projectRoleUsers  ProjectRoleUser[]
   organizationUsers OrganizationUser[]
 
-  @@unique([username, fullname])
+  @@unique([username])
 }
 
 model ProjectRoleUser {
@@ -101,18 +103,23 @@ model ProjectOrganization {
   updatedAt                  DateTime                    @default(now()) @updatedAt
   deletedAt                  DateTime?
   organizationKeyManagements OrganizationKeyManagement[]
+  organizationUsers          OrganizationUser[]
 
   @@unique([projectId, name])
 }
 
 model OrganizationUser {
-  id        String    @id @default(uuid())
-  userId    String
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  active    Boolean   @default(true)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @default(now()) @updatedAt
-  deletedAt DateTime?
+  id             String              @id @default(uuid())
+  organizationId String
+  organization   ProjectOrganization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  active         Boolean             @default(true)
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @default(now()) @updatedAt
+  deletedAt      DateTime?
+
+  @@unique([organizationId, userId])
 }
 
 model OrganizationKeyManagement {

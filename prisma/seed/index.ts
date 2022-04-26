@@ -1,6 +1,8 @@
+import { createProjectOrganization } from './organization/organization';
+import { createOrganizationUser } from './organization/organization-user';
 import { createPermissions } from './permission';
-import { createProject } from './project';
-import { createProjectRoleAndPermissions } from './project-role';
+import { createProject } from './project/project';
+import { createProjectRoleAndPermissions } from './project/project-role';
 import { createUser } from './user';
 
 const main = async () => {
@@ -8,6 +10,10 @@ const main = async () => {
   await createUser();
   await createProject();
   await createProjectRoleAndPermissions();
+
+  // organization
+  await createProjectOrganization();
+  await createOrganizationUser();
 };
 
 main();

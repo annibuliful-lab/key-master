@@ -1,11 +1,11 @@
 import { Project } from '@prisma/client';
-import { prismaClient } from '../client';
-import { auditFields } from '../constants';
-import { testUser } from './user';
+import { prismaClient } from '../../client';
+import { auditFields, PROJECT_ID } from '../../constants';
+import { testUserA } from '../user';
 
 export const project: Project = {
-  id: 'e28c7bb9-d625-468e-b204-45953fbb95e7',
-  ownerId: testUser.id,
+  id: PROJECT_ID,
+  ownerId: testUserA.id,
   name: 'test-project',
   ...auditFields,
 };
@@ -18,5 +18,5 @@ export const createProject = async () => {
     create: project,
     update: {},
   });
-  console.log('create project', { project: result });
+  console.log('Created project', { project: result });
 };
