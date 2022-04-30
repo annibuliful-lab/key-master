@@ -1,9 +1,10 @@
+import { AsyncExecutor } from '@graphql-tools/utils';
 import { fetch } from 'cross-undici-fetch';
 import { print } from 'graphql';
 
-export const makeRemoteExecutor = (url: string) => {
+export function makeRemoteExecutor(url: string): AsyncExecutor {
   return async ({ document, variables }) => {
-    const query = typeof document === 'string' ? document : print(document);
+    const query = print(document);
     const fetchResult = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -11,4 +12,4 @@ export const makeRemoteExecutor = (url: string) => {
     });
     return fetchResult.json();
   };
-};
+}

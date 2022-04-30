@@ -1,31 +1,34 @@
-import { executeRemoteSchema } from '@key-master/graphql';
-
 import { stitchSchemas } from '@graphql-tools/stitch';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 import { fastify } from 'fastify';
 import { ApolloServer } from 'apollo-server-fastify';
 import { ApolloServerPluginLandingPageGraphQLPlayground } from 'apollo-server-core';
-
+import { executeRemoteSchema } from '@key-master/graphql';
 const { stitchingDirectivesTransformer } = stitchingDirectives();
 
 async function makeGatewaySchema() {
+  const userSchema = await executeRemoteSchema({
+    wsEndpoint: 'ws://localhost:3000/graphql',
+    httpEndpoint: 'http://localhost:3000/graphql',
+  });
+
+  //   const user = await makeRemoteExecutor('http://localhost:3000/graphql');
   return stitchSchemas({
     subschemaConfigTransforms: [stitchingDirectivesTransformer],
     subschemas: [
       {
-        schema: await executeRemoteSchema({
-          wsEndpoint: 'ws://localhost:3000/graphql',
-          httpEndpoint: 'http://localhost:3000/graphql',
-        }),
+        schema: userSchema,
+        // executor: user,
       },
     ],
   });
 }
 
 const main = async () => {
-  const typeDefs = await makeGatewaySchema();
+  const schema = await makeGatewaySchema();
+
   const apolloServer = new ApolloServer({
-    typeDefs,
+    schema,
     plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
   });
   const app = fastify({});

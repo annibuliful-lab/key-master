@@ -1338,7 +1338,7 @@
     "@graphql-codegen/plugin-helpers" "^2.3.2"
     tslib "~2.3.0"
 
-"@graphql-codegen/typescript-graphql-request@^4.4.5":
+"@graphql-codegen/typescript-graphql-request@4.4.5":
   version "4.4.5"
   resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript-graphql-request/-/typescript-graphql-request-4.4.5.tgz#56b5d76cc29055827ce2ad02d4c785fa30a6873d"
   integrity sha512-D8ao8j43R8pStLqCMXVzdvGX9xc/x+IWd8ZacbKUVKbpWxlO7AEVAF89fgTpPv4FFTYG62BdkElf3ePcvgEWuw==
@@ -1708,7 +1708,7 @@
     camel-case "4.1.2"
     tslib "~2.2.0"
 
-"@graphql-tools/wrap@8.4.16":
+"@graphql-tools/wrap@8.4.16", "@graphql-tools/wrap@^8.4.16":
   version "8.4.16"
   resolved "https://registry.yarnpkg.com/@graphql-tools/wrap/-/wrap-8.4.16.tgz#87dce9ec623a921e5a62f44e75abc9655892724b"
   integrity sha512-b3yz7uN0en44sBEv/fAEQIqdiCEM/gQJSaLyA7Z2hWJwM0gQ5kiq0XMwKvyUAIY8NGig7IywC7bbup5Jc2F35Q==
@@ -12251,7 +12251,7 @@ ws@^6.1.4:
   dependencies:
     async-limiter "~1.0.0"
 
-ws@^8.3.0, ws@^8.4.2:
+ws@^8.3.0, ws@^8.4.2, ws@^8.5.0:
   version "8.5.0"
   resolved "https://registry.yarnpkg.com/ws/-/ws-8.5.0.tgz#bfb4be96600757fe5382de12c670dab984a1ed4f"
   integrity sha512-BWX0SWVgLPzYwF8lTzEy1egjhS4S4OEAHfsO8o65WOVsrnSRGaSiUaa9e0ggGlkMTtBlmOpEXiie9RUcBO86qg==
