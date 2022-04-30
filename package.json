@@ -10,6 +10,7 @@
     "build": "nx build",
     "test": "nx test",
     "user-backend:dev": "nx serve user-backend",
+    "auth-backend:dev": "nx serve auth-backend",
     "db:migrate": "prisma migrate dev",
     "db:seed": "prisma db seed",
     "db:generate": "prisma generate",

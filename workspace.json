@@ -1,9 +1,11 @@
 {
   "version": 2,
   "projects": {
+    "auth-backend": "apps/auth-backend",
     "dashboard": "apps/dashboard",
     "dashboard-e2e": "apps/dashboard-e2e",
     "db": "libs/db",
+    "gateway-backend": "apps/gateway-backend",
     "graphql": "libs/graphql",
     "test": "libs/test",
     "user-backend": "apps/user-backend"
