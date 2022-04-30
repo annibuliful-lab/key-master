@@ -14,9 +14,11 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
+    "esModuleInterop": true,
     "paths": {
       "@key-master/db": ["libs/db/src/index.ts"],
-      "@key-master/graphql": ["libs/graphql/src/index.ts"]
+      "@key-master/graphql": ["libs/graphql/src/index.ts"],
+      "@key-master/test": ["libs/test/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
