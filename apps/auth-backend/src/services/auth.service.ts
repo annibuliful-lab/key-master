@@ -5,7 +5,10 @@ import { verify } from 'argon2';
 import { sign } from 'jsonwebtoken';
 
 export class AuthService extends Repository<IAppContext> {
-  async login({ username, password }: LoginInput): Promise<Authentication> {
+  async login({
+    username,
+    password,
+  }: LoginInput): Promise<Omit<Authentication, 'user'>> {
     const user = await this.db.user.findFirst({
       where: {
         username,

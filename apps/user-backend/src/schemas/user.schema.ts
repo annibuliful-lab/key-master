@@ -6,6 +6,15 @@ export const typeDefs = gql`
     fullname: String!
   }
 
+  type Authentication @key(selectionSet: "{ id }") {
+    id: ID!
+    user: User!
+  }
+
+  input AuthUserKey {
+    id: ID!
+  }
+
   input CreateUserInput {
     username: String!
     password: String!
@@ -14,6 +23,7 @@ export const typeDefs = gql`
 
   type Query {
     users: [User]
+    _userProfile(keys: [AuthUserKey!]!): [Authentication]! @merge
   }
 
   type Mutation {

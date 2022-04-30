@@ -90,6 +90,7 @@
     "react-dom": "18.0.0",
     "regenerator-runtime": "0.13.7",
     "tslib": "2.3.0",
+    "wait-on": "^6.0.1",
     "ws": "^8.5.0"
   }
 }
