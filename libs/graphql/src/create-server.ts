@@ -10,7 +10,6 @@ import { mergeResolvers } from '@graphql-tools/merge';
 import { DocumentNode, print } from 'graphql';
 import { Resolvers } from './generated';
 import { IAppContext } from './graphql-context';
-import { GQL_WHITE_LIST } from './constants';
 const { allStitchingDirectivesTypeDefs, stitchingDirectivesValidator } =
   stitchingDirectives();
 
@@ -20,6 +19,7 @@ interface ICreateServer {
   resolvers: Resolvers;
   enablePlayGround?: boolean;
   supportSchemaStiching?: boolean;
+  skipAuth?: boolean;
   contextResolver: (context: IAppContext) => Config['context'];
 }
 
@@ -29,6 +29,7 @@ export const createServer = async ({
   resolvers,
   enablePlayGround = true,
   supportSchemaStiching = true,
+  skipAuth = true,
   contextResolver,
 }: ICreateServer) => {
   const schema = supportSchemaStiching
@@ -60,11 +61,8 @@ export const createServer = async ({
   const apolloServer = new ApolloServer({
     schema,
     context: (context) => {
-      const operationName = (context.request.body as any).operationName;
-
-      // skip instrospection, login, createUser query
-      if (GQL_WHITE_LIST.includes(operationName)) {
-        return;
+      if (skipAuth) {
+        return contextResolver({ userId: '', projectId: '', permissions: [] });
       }
 
       const userId = context.request.headers['x-user-id'] as string;
