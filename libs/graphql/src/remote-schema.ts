@@ -22,13 +22,13 @@ export const executeRemoteSchema = async ({
       webSocketImpl: WebSocket,
     });
 
-    async ({ document, variables, operationName, extensions }) =>
+    wsExecutor = async ({ document, variables, operationName, extensions }) =>
       observableToAsyncIterable({
         subscribe: (observer) => ({
           unsubscribe: subscriptionClient.subscribe(
             {
               query: print(document),
-              variables: variables as Record<string, any>,
+              variables,
               operationName,
               extensions,
             },
