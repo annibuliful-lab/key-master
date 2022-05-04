@@ -3,10 +3,11 @@ import { ApolloServer, Config } from 'apollo-server-fastify';
 import {
   ApolloServerPluginLandingPageGraphQLPlayground,
   AuthenticationError,
+  gql,
 } from 'apollo-server-core';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
-import { mergeResolvers } from '@graphql-tools/merge';
+import { mergeResolvers, mergeTypeDefs } from '@graphql-tools/merge';
 import { DocumentNode, print } from 'graphql';
 
 import { IAppContext } from './graphql-context';
@@ -35,17 +36,17 @@ export const createServer = async ({
   const schema = supportSchemaStiching
     ? stitchingDirectivesValidator(
         makeExecutableSchema({
-          typeDefs: [
-            `
-          ${allStitchingDirectivesTypeDefs}
-          type Query {
-            _sdl: String!
-          }
-        `,
+          typeDefs: mergeTypeDefs([
             typeDefs,
-          ],
+            gql`
+              ${allStitchingDirectivesTypeDefs}
+              type Query {
+                _sdl: String!
+              }
+            `,
+          ]),
           resolvers: mergeResolvers([
-            resolvers as any,
+            resolvers as never,
             {
               Query: {
                 _sdl: () => {

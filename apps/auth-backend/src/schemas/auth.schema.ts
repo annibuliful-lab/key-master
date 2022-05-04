@@ -16,4 +16,8 @@ export const typeDefs = gql`
   type Mutation {
     login(input: LoginInput): Authentication!
   }
+
+  type Query {
+    check: Boolean!
+  }
 `;
