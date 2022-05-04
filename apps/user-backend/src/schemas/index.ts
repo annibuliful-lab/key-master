@@ -1,3 +1,3 @@
 import { typeDefs as UserSchema } from './user.schema';
-
-export const typeDefs = [UserSchema];
+import { mergeTypeDefs } from '@graphql-tools/merge';
+export const typeDefs = mergeTypeDefs([UserSchema]);

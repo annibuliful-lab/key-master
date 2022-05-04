@@ -7,7 +7,17 @@ export class UserService extends Repository<IAppContext> {
     return this.db.user.create({ data });
   }
 
-  async findAll() {
+  findByIds(ids: string[]) {
+    return this.db.user.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    });
+  }
+
+  findAll() {
     return this.db.user.findMany();
   }
 }

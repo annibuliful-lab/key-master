@@ -8,7 +8,7 @@ export const typeDefs = gql`
 
   type Authentication @key(selectionSet: "{ id }") {
     id: ID!
-    user: User!
+    user: User
   }
 
   input AuthUserKey {
@@ -23,7 +23,8 @@ export const typeDefs = gql`
 
   type Query {
     users: [User]
-    _userProfile(keys: [AuthUserKey!]!): [Authentication]! @merge
+    _userProfile(keys: [AuthUserKey!]!): [Authentication]!
+      @merge(keyArg: "keys")
   }
 
   type Mutation {
