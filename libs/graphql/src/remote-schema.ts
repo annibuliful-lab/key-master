@@ -1,6 +1,12 @@
-import { wrapSchema, introspectSchema } from '@graphql-tools/wrap';
+import { wrapSchema } from '@graphql-tools/wrap';
 import { fetch } from 'cross-undici-fetch';
-import { print, getOperationAST, OperationTypeNode } from 'graphql';
+import {
+  print,
+  buildSchema,
+  GraphQLSchema,
+  getOperationAST,
+  OperationTypeNode,
+} from 'graphql';
 import { AsyncExecutor, observableToAsyncIterable } from '@graphql-tools/utils';
 import { createClient } from 'graphql-ws';
 import WebSocket from 'ws';
@@ -75,21 +81,33 @@ export const executeRemoteSchema = async ({
   };
 
   const executor: AsyncExecutor = async (args) => {
-    // get the operation node of from the document that should be executed
-    const operation = getOperationAST(args.document, args.operationName);
-    // subscription operations should be handled by the wsExecutor
+    // fetch schema stiching type from each service
+    if ((args.document as unknown as string) === '{ _sdl }') {
+      return httpExecutor(args);
+    }
+
+    const operation = getOperationAST(
+      args.document,
+      args.operationName ? args.operationName : undefined
+    );
+
     if (
       operation?.operation === OperationTypeNode.SUBSCRIPTION &&
       !!wsEndpoint
     ) {
       return wsExecutor && wsExecutor(args);
     }
-    // all other operations should be handles by the httpExecutor
+
     return httpExecutor(args);
   };
 
+  async function fetchRemoteSchema(executor): Promise<GraphQLSchema> {
+    const result = await executor({ document: '{ _sdl }' });
+    return buildSchema(result.data._sdl);
+  }
+
   const schema = wrapSchema({
-    schema: await introspectSchema(executor),
+    schema: await fetchRemoteSchema(executor),
     executor,
   });
 

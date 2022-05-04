@@ -49,7 +49,9 @@ export const createServer = async ({
             {
               Query: {
                 _sdl: () => {
-                  return print(typeDefs as DocumentNode);
+                  return `
+                  ${allStitchingDirectivesTypeDefs}
+                  ${print(typeDefs as DocumentNode)}`;
                 },
               },
             },
