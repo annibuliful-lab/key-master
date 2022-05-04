@@ -1,4 +1,4 @@
-import { Resolvers } from '@key-master/graphql';
+import { Resolvers } from '../codegen-generated';
 import { mutations } from './mutations';
 import { query } from './queries';
 

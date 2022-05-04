@@ -1,4 +1,4 @@
-import { Resolvers } from '@key-master/graphql';
+import { Resolvers } from '../../codegen-generated';
 import { IGraphqlContext } from '../../context';
 
 export const mutation: Resolvers<IGraphqlContext>['Mutation'] = {

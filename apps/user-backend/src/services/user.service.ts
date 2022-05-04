@@ -1,6 +1,7 @@
 import { Repository } from '@key-master/db';
-import { CreateUserInput, IAppContext } from '@key-master/graphql';
+import { IAppContext } from '@key-master/graphql';
 import { hash } from 'argon2';
+import { CreateUserInput } from '../codegen-generated';
 export class UserService extends Repository<IAppContext> {
   async createUser(data: CreateUserInput) {
     data.password = await hash(data.password);

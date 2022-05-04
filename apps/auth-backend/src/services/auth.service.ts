@@ -1,14 +1,12 @@
 import { Repository } from '@key-master/db';
-import { Authentication, IAppContext, LoginInput } from '@key-master/graphql';
+import { IAppContext } from '@key-master/graphql';
 import { AuthenticationError } from 'apollo-server-fastify';
 import { verify } from 'argon2';
 import { sign } from 'jsonwebtoken';
+import { LoginInput } from '../codegen-generated';
 
 export class AuthService extends Repository<IAppContext> {
-  async login({
-    username,
-    password,
-  }: LoginInput): Promise<Omit<Authentication, 'user'>> {
+  async login({ username, password }: LoginInput) {
     const user = await this.db.user.findFirst({
       where: {
         username,

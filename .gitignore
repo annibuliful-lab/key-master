@@ -6,6 +6,7 @@
 /out-tsc
 .env
 generated.ts
+codegen-generated.ts
 # dependencies
 node_modules
 

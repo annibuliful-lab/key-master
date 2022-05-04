@@ -8,7 +8,7 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 import { mergeResolvers } from '@graphql-tools/merge';
 import { DocumentNode, print } from 'graphql';
-import { Resolvers } from './generated';
+
 import { IAppContext } from './graphql-context';
 const { allStitchingDirectivesTypeDefs, stitchingDirectivesValidator } =
   stitchingDirectives();
@@ -16,7 +16,7 @@ const { allStitchingDirectivesTypeDefs, stitchingDirectivesValidator } =
 interface ICreateServer {
   typeDefs: Config['typeDefs'];
   port: number;
-  resolvers: Resolvers;
+  resolvers: Config['resolvers'];
   enablePlayGround?: boolean;
   supportSchemaStiching?: boolean;
   skipAuth?: boolean;
@@ -45,7 +45,7 @@ export const createServer = async ({
             typeDefs,
           ],
           resolvers: mergeResolvers([
-            resolvers,
+            resolvers as any,
             {
               Query: {
                 _sdl: () => {
