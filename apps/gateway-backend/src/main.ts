@@ -5,6 +5,7 @@ import { ApolloServer } from 'apollo-server-fastify';
 import { ApolloServerPluginLandingPageGraphQLPlayground } from 'apollo-server-core';
 import { executeRemoteSchema } from '@key-master/graphql';
 const { stitchingDirectivesTransformer } = stitchingDirectives();
+import waitOn from 'wait-on';
 
 async function makeGatewaySchema() {
   const userSchema = await executeRemoteSchema({
@@ -45,4 +46,11 @@ const main = async () => {
   });
 };
 
-main();
+waitOn({ resources: [3000, 3001].map((port) => `tcp:${port}`) }, (error) => {
+  if (error) {
+    console.error('Gate-way-error ', error);
+    return;
+  }
+
+  main();
+});
