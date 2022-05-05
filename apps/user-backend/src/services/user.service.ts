@@ -5,6 +5,7 @@ import { CreateUserInput } from '../codegen-generated';
 export class UserService extends Repository<IAppContext> {
   async createUser(data: CreateUserInput) {
     data.password = await hash(data.password);
+
     return this.db.user.create({ data });
   }
 

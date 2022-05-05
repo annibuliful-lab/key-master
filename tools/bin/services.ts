@@ -16,8 +16,8 @@ const userService: IService = {
   commandArg: '',
   port: 3000,
   appPath: `apps/user-backend/${baseAppPath}`,
-  schemaPath: 'apps/user-backend/src/schemas',
-  outputCodegenPath: 'apps/user-backend/src/codegen-generated.ts',
+  schemaPath: `apps/user-backend/${baseAppPath}/${baseSchemaPath}`,
+  outputCodegenPath: `apps/user-backend/${baseAppPath}/${baseOutputCodegenPath}`,
 };
 
 const authService: IService = {

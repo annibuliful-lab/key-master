@@ -110,5 +110,5 @@ export const mergeTypeDefsWithScalarsAndDirectives = (
 };
 
 generateSchemas().then(() => {
-  console.log('generate all services schemas');
+  console.log('🚀 generate all services schemas 🚀');
 });
