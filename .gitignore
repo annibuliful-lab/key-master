@@ -7,6 +7,8 @@
 .env
 generated.ts
 codegen-generated.ts
+generated
+
 # dependencies
 node_modules
 

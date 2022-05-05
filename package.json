@@ -15,6 +15,7 @@
     "db:migrate": "prisma migrate dev",
     "db:seed": "prisma db seed",
     "db:generate": "prisma generate",
+    "genql": "ts-node tools/bin/genql.ts",
     "codegen:backend": "ts-node tools/bin/codegen.ts",
     "all-services:dev": "concurrently \"yarn:*-backend:dev\""
   },
@@ -90,6 +91,7 @@
     "graphql": "16.3.0",
     "jsonwebtoken": "8.5.1",
     "lodash": "4.17.21",
+    "nanoid": "^3.3.4",
     "next": "12.1.5",
     "prisma": "3.13.0",
     "react": "18.0.0",
