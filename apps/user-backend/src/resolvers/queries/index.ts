@@ -7,9 +7,11 @@ export const query: Resolvers<IGraphqlContext>['Query'] = {
     return ctx.user.findAll();
   },
   _userProfile: async (_parent, { keys }, ctx) => {
-    const users = await ctx.user.findByIds(keys);
+    const ids = keys.map((key) => key.id);
+    const users = await ctx.user.findByIds(ids);
+
     const groupedUsers = groupBy(users, (user) => user.id);
-    return keys.map((id) => {
+    return ids.map((id) => {
       const user = groupedUsers[id][0];
 
       return {

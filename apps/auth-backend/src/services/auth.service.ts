@@ -31,7 +31,7 @@ export class AuthService extends Repository<IAppContext> {
         userId: user.id,
         fullname: user.fullname,
       },
-      process.env.JWT_SCRET,
+      process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
 
@@ -40,7 +40,7 @@ export class AuthService extends Repository<IAppContext> {
         userId: user.id,
         fullname: user.fullname,
       },
-      process.env.JWT_SCRET,
+      process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
 
