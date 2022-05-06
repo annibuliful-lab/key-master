@@ -29,7 +29,17 @@ const authService: IService = {
   outputCodegenPath: `apps/auth-backend/${baseAppPath}/${baseOutputCodegenPath}`,
 };
 
+const projectService: IService = {
+  serviceName: 'Project',
+  commandArg: '',
+  port: 3002,
+  appPath: `apps/project-backend/${baseAppPath}`,
+  schemaPath: `apps/project-backend/${baseAppPath}/${baseSchemaPath}`,
+  outputCodegenPath: `apps/project-backend/${baseAppPath}/${baseOutputCodegenPath}`,
+};
+
 export const services = {
   authService,
   userService,
+  projectService,
 };
