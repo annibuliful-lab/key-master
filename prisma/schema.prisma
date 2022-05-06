@@ -68,12 +68,13 @@ model User {
   username          String
   password          String
   fullname          String
-  projects          Project[]
+  avatar            String?
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @default(now()) @updatedAt
   deletedAt         DateTime?
   projectRoleUsers  ProjectRoleUser[]
   organizationUsers OrganizationUser[]
+  projects          Project[]
 
   @@unique([username])
 }

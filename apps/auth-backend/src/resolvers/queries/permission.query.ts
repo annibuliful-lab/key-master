@@ -1,4 +1,3 @@
-import { groupBy } from 'lodash';
 import { Resolvers } from '../../codegen-generated';
 import { IGraphqlContext } from '../../context';
 
