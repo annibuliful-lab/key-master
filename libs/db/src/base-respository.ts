@@ -1,5 +1,5 @@
 import * as Prisma from '@prisma/client';
-import { prismaClient } from './prismaClient';
+import { prismaClient } from './prisma-client';
 
 export class Repository<Context = never> {
   context: Context;
