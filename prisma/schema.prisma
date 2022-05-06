@@ -49,6 +49,7 @@ model RolePermission {
 model Project {
   id                   String                @id @default(uuid())
   name                 String
+  logo                 String?
   ownerId              String
   owner                User                  @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   createdAt            DateTime              @default(now())
