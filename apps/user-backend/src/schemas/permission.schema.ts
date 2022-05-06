@@ -1,8 +1,10 @@
-import { deleteOperationTypeDef } from '@key-master/graphql';
 import { gql } from 'apollo-server-fastify';
 
 export const typeDefs = gql`
-  ${deleteOperationTypeDef}
+  type DeleteOperationResult {
+    success: Boolean!
+  }
+
   type Permission {
     id: ID!
     permission: String!
