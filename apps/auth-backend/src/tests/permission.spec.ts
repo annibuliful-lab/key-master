@@ -1,4 +1,4 @@
-import { Client, graphqlClient } from '@key-master/test';
+import { Client, createPermission, graphqlClient } from '@key-master/test';
 import { nanoid } from 'nanoid';
 
 describe('Permission', () => {
@@ -7,15 +7,6 @@ describe('Permission', () => {
   beforeAll(() => {
     client = graphqlClient;
   });
-
-  function createPermission(customPermission?: string) {
-    const permission = customPermission
-      ? customPermission
-      : `MOCK_PERMISSION_${nanoid()}`;
-    return client.chain.mutation
-      .createPermission({ permission })
-      .get({ permission: true, id: true });
-  }
 
   describe('Mutation', () => {
     it('creates new permission', async () => {
