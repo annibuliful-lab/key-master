@@ -12,7 +12,12 @@ export const validateAuthentication = async ({
   token,
   projectId = null,
   cacheExpire = CACHE_EXPIRE,
-}: IValidateAuthenticationParam) => {
+}: IValidateAuthenticationParam): Promise<
+  | { userId: string; permissions: string[]; role: string | null }
+  | string
+  | 'FORBIDDEN'
+  | null
+> => {
   const { isValid, userInfo } = verify<IJwtAuthInfo>(token);
 
   if (!isValid) {
@@ -20,7 +25,7 @@ export const validateAuthentication = async ({
   }
 
   // get cache user
-  if (userInfo.userId) {
+  if (userInfo.userId && !projectId) {
     const key = `${userInfo.userId}-null`;
     const authInfo = await redisClient.get(key);
     if (authInfo) {
@@ -46,6 +51,16 @@ export const validateAuthentication = async ({
       projectId,
       userId: user.id,
     });
+
+    // prevent fobidden permission and role in selected project
+    if (!userPermissions) {
+      return 'FORBIDDEN';
+    }
+
+    // prevent fobidden permission and role in selected project
+    if (userPermissions.role.rolePermissions.length === 0) {
+      return 'FORBIDDEN';
+    }
 
     permissions = userPermissions.role.rolePermissions.map(
       (role) => role.permission.permission
@@ -78,6 +93,7 @@ export const validateAuthentication = async ({
     role,
   };
 
+  // set cache for user auth
   await redisClient.set(
     `${user.id}-${projectId}`,
     JSON.stringify(authInfo),

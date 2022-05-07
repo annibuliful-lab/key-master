@@ -5,6 +5,7 @@ import { ApolloServer } from 'apollo-server-fastify';
 import {
   ApolloServerPluginLandingPageGraphQLPlayground,
   AuthenticationError,
+  ForbiddenError,
 } from 'apollo-server-core';
 import {
   executeRemoteSchema,
@@ -57,6 +58,11 @@ const main = async () => {
       const projectId = request.headers['x-project-id'] as string;
       const userId = request.headers['x-user-id'] as string;
       const userAuth = await validateAuthentication({ token, projectId });
+
+      if (typeof userAuth === 'string' && userAuth === 'FORBIDDEN') {
+        throw new ForbiddenError(`Forbidden with project id ${projectId}`);
+      }
+
       if (!userAuth) {
         throw new AuthenticationError('Unauthorization');
       }
