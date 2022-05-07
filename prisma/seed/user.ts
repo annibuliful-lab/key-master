@@ -11,6 +11,7 @@ export const testUserA: User = {
   createdAt: new Date(1),
   updatedAt: new Date(1),
   deletedAt: null,
+  avatar: null,
 };
 
 export const testUserB: User = {
@@ -22,6 +23,7 @@ export const testUserB: User = {
   createdAt: new Date(1),
   updatedAt: new Date(1),
   deletedAt: null,
+  avatar: null,
 };
 
 export const createUser = async () => {

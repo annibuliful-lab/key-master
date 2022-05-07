@@ -67,6 +67,7 @@ export const executeRemoteSchema = async ({
     variables,
     operationName,
     extensions,
+    context,
   }) => {
     const query = typeof document === 'string' ? document : print(document);
 
@@ -74,6 +75,7 @@ export const executeRemoteSchema = async ({
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        ...context,
       },
       body: JSON.stringify({ query, variables, operationName, extensions }),
     });

@@ -7,6 +7,7 @@ export const project: Project = {
   id: PROJECT_ID,
   ownerId: testUserA.id,
   name: 'test-project',
+  logo: null,
   ...auditFields,
 };
 
