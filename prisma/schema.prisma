@@ -93,7 +93,7 @@ model ProjectRoleUser {
   updatedAt DateTime  @default(now()) @updatedAt
   deletedAt DateTime?
 
-  @@unique([roleId, userId])
+  @@unique([roleId, userId, projectId])
 }
 
 model ProjectOrganization {
