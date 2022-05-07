@@ -33,7 +33,9 @@ export const prismaClient = new PrismaClient(
 if (shouldLog) {
   prismaClient.$on('query', (e) => {
     console.log('\n');
+    console.log(`Target: ${e.target}`);
     console.log(`Query: ${e.query}`);
+    console.log(`Param: ${e.params}`);
     console.log(`Duration: ${e.duration} ms`);
     console.log('\n');
   });
