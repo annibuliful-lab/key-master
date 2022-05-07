@@ -1,9 +1,27 @@
 import { Repository } from '@key-master/db';
-import { IAppContext, ResourceNotFound } from '@key-master/graphql';
+import {
+  DuplicateResouce,
+  IAppContext,
+  ResourceNotFound,
+} from '@key-master/graphql';
 import { CreateProjectInput } from '../codegen-generated';
 
 export class ProjectService extends Repository<IAppContext> {
-  create(input: CreateProjectInput) {
+  async create(input: CreateProjectInput) {
+    const duplicatedProjectName = this.db.project.findFirst({
+      where: {
+        name: input.name,
+        ownerId: this.context.userId,
+        deletedAt: null,
+      },
+    });
+
+    if (duplicatedProjectName) {
+      throw new DuplicateResouce(
+        `create project: duplicated project name ${input.name}`
+      );
+    }
+
     return this.db.project.create({
       data: {
         ...input,
