@@ -1,6 +1,6 @@
 import { Resolvers } from '../codegen-generated';
-import { mutations } from './mutations/project.mutation';
-import { queries } from './queries/project.query';
+import { mutations } from './mutations';
+import { queries } from './queries';
 
 export const resolvers: Resolvers = {
   Mutation: mutations,
