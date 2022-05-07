@@ -64,6 +64,17 @@ export const createServer = async ({
   const apolloServer = new ApolloServer({
     schema,
     context: (context) => {
+      const operationName = (context.request.body as any)
+        .operationName as string;
+      if (operationName === 'IntrospectionQuery') {
+        return;
+      }
+
+      const sdlQuery = (context.request.body as any).query as string;
+      if (sdlQuery === '{\n  _sdl\n}\n' || sdlQuery.includes('_sdl')) {
+        return;
+      }
+
       if (skipAuth) {
         return contextResolver({ userId: '', projectId: '', permissions: [] });
       }
