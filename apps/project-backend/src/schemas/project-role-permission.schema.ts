@@ -20,6 +20,6 @@ export const typeDefs = gql`
   }
 
   type Query {
-    getProjectRolePermissionByRoleId(id: ID!): [ProjectRolePermission!]!
+    getProjectRolePermissionsByRoleId(id: ID!): [ProjectRolePermission!]!
   }
 `;

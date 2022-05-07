@@ -65,7 +65,7 @@ export class ProjectRolePermissionService extends Repository<IAppContext> {
     });
   }
 
-  async findByProjectRoleId(roleId: string) {
+  async findByRoleId(roleId: string) {
     const projectRole = await this.db.projectRole.findFirst({
       select: {
         id: true,
