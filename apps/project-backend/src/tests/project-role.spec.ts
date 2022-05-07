@@ -87,4 +87,40 @@ describe('Project Role', () => {
       ).rejects.toBeTruthy();
     });
   });
+
+  describe('Query', () => {
+    it('gets by id', async () => {
+      const role = await createProjectRole({ client });
+
+      expect(
+        client.chain.query.getProjectRoleById({ id: role.id }).id.get()
+      ).resolves.toEqual(role.id);
+    });
+
+    it('throws error when gets with wrong id', async () => {
+      expect(
+        client.chain.query
+          .getProjectRoleById({ id: `WRONG_ROLE_ID_${nanoid()}` })
+          .id.get()
+      ).rejects.toBeTruthy();
+    });
+
+    it('throws error when gets with deleted wrong id', async () => {
+      const createdRole = await createProjectRole({ client });
+      const roleBeforeDelete = await client.chain.query
+        .getProjectRoleById({ id: createdRole.id })
+        .id.get();
+
+      await client.chain.mutation
+        .deleteProjectRole({
+          id: createdRole.id,
+        })
+        .success.get();
+
+      expect(roleBeforeDelete).toEqual(createdRole.id);
+      expect(
+        client.chain.query.getProjectRoleById({ id: createdRole.id }).id.get()
+      ).rejects.toBeTruthy();
+    });
+  });
 });

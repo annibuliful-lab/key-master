@@ -6,9 +6,9 @@ export const mutations: Resolvers<IGraphqlContext>['Mutation'] = {
     return ctx.project.create(input);
   },
   updateProject: (_parent, { id, input }, ctx) => {
-    return ctx.project.updateProject(id, input);
+    return ctx.project.update(id, input);
   },
   deleteProject: (_parent, { id }, ctx) => {
-    return ctx.project.deleteProject(id);
+    return ctx.project.delete(id);
   },
 };

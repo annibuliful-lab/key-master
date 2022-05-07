@@ -33,7 +33,7 @@ export class ProjectService extends Repository<IAppContext> {
     });
   }
 
-  async updateProject(id: string, data: UpdateProjectInput) {
+  async update(id: string, data: UpdateProjectInput) {
     const project = await this.db.project.findFirst({
       select: { id: true },
       where: {
@@ -55,7 +55,7 @@ export class ProjectService extends Repository<IAppContext> {
     });
   }
 
-  async deleteProject(id: string) {
+  async delete(id: string) {
     const project = await this.db.project.findFirst({
       select: { id: true },
       where: {

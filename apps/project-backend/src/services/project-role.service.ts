@@ -71,4 +71,20 @@ export class ProjectRoleService extends Repository<IAppContext> {
     });
     return { success: true };
   }
+
+  async findById(id: string) {
+    const role = await this.db.projectRole.findFirst({
+      where: {
+        id,
+        projectId: this.context.projectId,
+        deletedAt: null,
+      },
+    });
+
+    if (!role) {
+      throw new ResourceNotFound(`id ${id} not found `);
+    }
+
+    return role;
+  }
 }

@@ -25,7 +25,7 @@ export const typeDefs = gql`
   }
 
   type Query {
-    getProjectRoleByProject: [ProjectRole!]!
-    getProjectRoleById(id: ID!): [ProjectRole!]!
+    getProjectRolesByProject: [ProjectRole!]!
+    getProjectRoleById(id: ID!): ProjectRole!
   }
 `;
