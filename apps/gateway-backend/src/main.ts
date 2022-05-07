@@ -2,8 +2,14 @@ import { stitchSchemas } from '@graphql-tools/stitch';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 import { fastify } from 'fastify';
 import { ApolloServer } from 'apollo-server-fastify';
-import { ApolloServerPluginLandingPageGraphQLPlayground } from 'apollo-server-core';
-import { executeRemoteSchema } from '@key-master/graphql';
+import {
+  ApolloServerPluginLandingPageGraphQLPlayground,
+  AuthenticationError,
+} from 'apollo-server-core';
+import {
+  executeRemoteSchema,
+  validateAuthentication,
+} from '@key-master/graphql';
 const { stitchingDirectivesTransformer } = stitchingDirectives();
 import waitOn from 'wait-on';
 
@@ -41,10 +47,23 @@ const main = async () => {
   const apolloServer = new ApolloServer({
     schema,
     plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
-    context: ({ request }) => {
+    context: async ({ request }) => {
+      const token = request.headers['authorization']?.replace('Bearer ', '');
+
+      if (!token) {
+        return null;
+      }
+
+      const projectId = request.headers['x-project-id'] as string;
+      const userId = request.headers['x-user-id'] as string;
+      const userAuth = await validateAuthentication({ token, projectId });
+      if (!userAuth) {
+        throw new AuthenticationError('Unauthorization');
+      }
+
       return {
-        'x-user-id': request.headers['x-user-id'] as string,
-        'x-project-id': request.headers['x-project-id'] as string,
+        'x-user-id': userId,
+        'x-project-id': projectId,
       };
     },
   });
