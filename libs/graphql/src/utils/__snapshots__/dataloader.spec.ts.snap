@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`dataloader mapDataWithIds returns map data structure 1`] = `
+Array [
+  Object {
+    "id": "1",
+  },
+  Object {
+    "id": "2",
+  },
+]
+`;
+
+exports[`dataloader mapDataWithIdsByCustomFieldId returns map data structure with custom field 1`] = `
+Array [
+  Object {
+    "id": "1",
+    "name": "AAAA",
+  },
+  Object {
+    "id": "2",
+    "name": "BBBB",
+  },
+]
+`;
