@@ -12,11 +12,22 @@ export class ProjectService extends Repository<IAppContext> {
     });
   }
 
-  async getById(id: string) {
+  async findById(id: string) {
     const project = await this.db.project.findFirst({
       where: {
         id,
-        ownerId: this.context.userId,
+        OR: [
+          {
+            ownerId: this.context.userId,
+          },
+          {
+            projectRoleUsers: {
+              some: {
+                userId: this.context.userId,
+              },
+            },
+          },
+        ],
       },
     });
 
@@ -25,5 +36,13 @@ export class ProjectService extends Repository<IAppContext> {
     }
 
     return project;
+  }
+
+  async findManyByOwnder() {
+    return this.db.project.findMany({
+      where: {
+        ownerId: this.context.userId,
+      },
+    });
   }
 }

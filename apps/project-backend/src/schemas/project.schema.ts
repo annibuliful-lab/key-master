@@ -29,5 +29,6 @@ export const typeDefs = gql`
 
   type Query {
     getProjectById(id: ID!): Project!
+    getProjectsByOwner: [Project!]!
   }
 `;

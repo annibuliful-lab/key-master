@@ -41,6 +41,12 @@ const main = async () => {
   const apolloServer = new ApolloServer({
     schema,
     plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
+    context: ({ request }) => {
+      return {
+        'x-user-id': request.headers['x-user-id'] as string,
+        'x-project-id': request.headers['x-project-id'] as string,
+      };
+    },
   });
   const app = fastify({});
   await apolloServer.start();
