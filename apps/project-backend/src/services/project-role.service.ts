@@ -12,6 +12,7 @@ import {
 export class ProjectRoleService extends Repository<IAppContext> {
   async create(data: CreateProjectRoleInput) {
     const projectRole = await this.db.projectRole.findFirst({
+      select: { id: true },
       where: {
         role: data.role,
         deletedAt: null,
@@ -32,6 +33,7 @@ export class ProjectRoleService extends Repository<IAppContext> {
 
   async update(id: string, data: UpdateProjectRoleInput) {
     const projectRole = await this.db.projectRole.findFirst({
+      select: { id: true },
       where: {
         id,
         deletedAt: null,
@@ -52,6 +54,7 @@ export class ProjectRoleService extends Repository<IAppContext> {
 
   async delete(id: string) {
     const projectRole = await this.db.projectRole.findFirst({
+      select: { id: true },
       where: {
         id,
         deletedAt: null,
@@ -86,5 +89,28 @@ export class ProjectRoleService extends Repository<IAppContext> {
     }
 
     return role;
+  }
+
+  async findByProject() {
+    const project = await this.db.project.findFirst({
+      select: {
+        id: true,
+      },
+      where: {
+        id: this.context.projectId,
+        deletedAt: null,
+      },
+    });
+
+    if (!project) {
+      throw new ResourceNotFound(`project id ${this.context.projectId}`);
+    }
+
+    return this.db.projectRole.findMany({
+      where: {
+        projectId: this.context.projectId,
+        deletedAt: null,
+      },
+    });
   }
 }

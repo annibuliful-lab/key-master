@@ -122,5 +122,18 @@ describe('Project Role', () => {
         client.chain.query.getProjectRoleById({ id: createdRole.id }).id.get()
       ).rejects.toBeTruthy();
     });
+
+    it('gets by project id', async () => {
+      const createdRole = await createProjectRole({ client });
+      const projectRoles =
+        await client.chain.query.getProjectRolesByProject.get({
+          id: true,
+          role: true,
+        });
+
+      expect(
+        projectRoles.some((role) => role.role === createdRole.role)
+      ).toBeTruthy();
+    });
   });
 });
