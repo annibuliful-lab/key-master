@@ -5,6 +5,9 @@ import { SetProjectRolePermissionsInput } from '../codegen-generated';
 export class ProjectRolePermissionService extends Repository<IAppContext> {
   async setRolePermissions(input: SetProjectRolePermissionsInput) {
     const projectRole = await this.db.projectRole.findFirst({
+      select: {
+        id: true,
+      },
       where: {
         id: input.roleId,
         projectId: this.context.projectId,
@@ -57,6 +60,31 @@ export class ProjectRolePermissionService extends Repository<IAppContext> {
     return this.db.projectRolePermission.findMany({
       where: {
         roleId: input.roleId,
+        deletedAt: null,
+      },
+    });
+  }
+
+  async findByProjectRoleId(roleId: string) {
+    const projectRole = await this.db.projectRole.findFirst({
+      select: {
+        id: true,
+      },
+      where: {
+        id: roleId,
+        projectId: this.context.projectId,
+      },
+    });
+
+    if (!projectRole) {
+      throw new ResourceNotFound(
+        `set role permission project role id ${roleId} not found`
+      );
+    }
+
+    return this.db.projectRolePermission.findMany({
+      where: {
+        roleId,
         deletedAt: null,
       },
     });
