@@ -9,6 +9,9 @@ import { CreateProjectInput } from '../codegen-generated';
 export class ProjectService extends Repository<IAppContext> {
   async create(input: CreateProjectInput) {
     const duplicatedProjectName = this.db.project.findFirst({
+      select: {
+        id: true,
+      },
       where: {
         name: input.name,
         ownerId: this.context.userId,
