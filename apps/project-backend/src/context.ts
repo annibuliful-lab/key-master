@@ -2,9 +2,12 @@ import { ProjectRolePermissionService } from './services/project-role-permission
 import { ProjectRoleService } from './services/project-role.service';
 import { ProjectService } from './services/project.service';
 import { projectRoleDataLoader } from './dataloaders/project-role.dataloader';
+import { ProjectOrganizationService } from './services/project-organization.service';
+
 export interface IGraphqlContext {
   project: ProjectService;
   projectRole: ProjectRoleService;
   projectRolePermission: ProjectRolePermissionService;
+  projectOrganization: ProjectOrganizationService;
   projectRoleDataLoader: typeof projectRoleDataLoader;
 }
