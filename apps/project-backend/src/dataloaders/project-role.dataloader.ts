@@ -1,6 +1,5 @@
 import { prismaClient } from '@key-master/db';
-import { mapDataWithIds } from '@key-master/graphql';
-
+import { mapDataWithIdsByCustomFieldId } from '@key-master/graphql';
 import DataLoader from 'dataloader';
 
 export const projectRoleDataLoader = new DataLoader(
@@ -9,6 +8,10 @@ export const projectRoleDataLoader = new DataLoader(
       where: { id: { in: roleIds } },
     });
 
-    return mapDataWithIds(projectRoles, roleIds);
+    return mapDataWithIdsByCustomFieldId({
+      data: projectRoles,
+      idField: 'id',
+      ids: roleIds,
+    });
   }
 );
