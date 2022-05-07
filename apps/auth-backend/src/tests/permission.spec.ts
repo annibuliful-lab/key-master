@@ -112,7 +112,7 @@ describe('Permission', () => {
       ).toBeTruthy();
     });
 
-    it('returns permission that contain search text and limie', async () => {
+    it('returns permissions that contain search text and limie', async () => {
       await Promise.all([
         createPermission(`SEARCH_TEXT_WITH_LIMIT_${nanoid()}`),
         createPermission(`SEARCH_TEXT_WITH_LIMIT_${nanoid()}`),
@@ -129,6 +129,20 @@ describe('Permission', () => {
           permision.permission.includes('SEARCH_TEXT_')
         )
       ).toBeTruthy();
+    });
+
+    it('returns permissiosn with cursor', async () => {
+      const [cursor] = await Promise.all([
+        createPermission(),
+        createPermission(),
+      ]);
+      const permissions = await client.chain.query
+        .getPermissions({
+          filter: { cursor: cursor.id },
+        })
+        .get({ id: true, permission: true });
+
+      expect(permissions.every((p) => p.id !== cursor.id)).toBeTruthy();
     });
   });
 });
