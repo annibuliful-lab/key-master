@@ -1,4 +1,4 @@
-import { prisma, Role } from '@prisma/client';
+import { prisma, ProjectRole } from '@prisma/client';
 import { prismaClient } from '../../client';
 
 import {
@@ -10,14 +10,14 @@ import {
 import { permissions } from '../permission';
 import { testUserA } from '../user';
 
-export const roleAdmin: Role = {
+export const roleAdmin: ProjectRole = {
   id: PROJECT_ROLE_ADMIN_ID,
   projectId: PROJECT_ID,
   role: 'ADMIN',
   ...auditFields,
 };
 
-export const roleUser: Role = {
+export const roleUser: ProjectRole = {
   id: PROJECT_ROLE_USER_ID,
   projectId: PROJECT_ID,
   role: 'USER',
@@ -25,7 +25,7 @@ export const roleUser: Role = {
 };
 
 export const createProjectRoleAndPermissions = async () => {
-  const createAdminRole = prismaClient.role.upsert({
+  const createAdminRole = prismaClient.projectRole.upsert({
     where: {
       id: roleAdmin.id,
     },
@@ -33,7 +33,7 @@ export const createProjectRoleAndPermissions = async () => {
     update: {},
   });
 
-  const createUserRole = prismaClient.role.upsert({
+  const createUserRole = prismaClient.projectRole.upsert({
     where: {
       id: roleUser.id,
     },
@@ -42,7 +42,7 @@ export const createProjectRoleAndPermissions = async () => {
   });
 
   const listRoleAdminPermissions = permissions.map((permission) =>
-    prismaClient.rolePermission.upsert({
+    prismaClient.projectRolePermission.upsert({
       where: {
         roleId_permissionId: {
           roleId: roleAdmin.id,
@@ -60,7 +60,7 @@ export const createProjectRoleAndPermissions = async () => {
   );
 
   const listRoleUserPermissions = permissions.map((permission) =>
-    prismaClient.rolePermission.upsert({
+    prismaClient.projectRolePermission.upsert({
       where: {
         roleId_permissionId: {
           roleId: roleUser.id,

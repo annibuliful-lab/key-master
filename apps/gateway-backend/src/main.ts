@@ -26,6 +26,7 @@ async function makeGatewaySchema() {
   const projectSchema = await executeRemoteSchema({
     httpEndpoint: 'http://localhost:3002/graphql',
   });
+
   return stitchSchemas({
     subschemaConfigTransforms: [stitchingDirectivesTransformer],
     subschemas: [
