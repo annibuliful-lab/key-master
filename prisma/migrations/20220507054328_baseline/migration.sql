@@ -162,9 +162,6 @@ CREATE UNIQUE INDEX "ProjectRole_projectId_role_key" ON "ProjectRole"("projectId
 CREATE UNIQUE INDEX "ProjectRolePermission_roleId_permissionId_key" ON "ProjectRolePermission"("roleId", "permissionId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Project_name_ownerId_key" ON "Project"("name", "ownerId");
-
--- CreateIndex
 CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 
 -- CreateIndex

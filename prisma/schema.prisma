@@ -61,7 +61,6 @@ model Project {
   projectRoleUsers     ProjectRoleUser[]
   projectOrganizations ProjectOrganization[]
 
-  @@unique([name, ownerId])
 }
 
 model User {
