@@ -7,8 +7,9 @@ import { ProjectService } from './services/project.service';
 dotenv.config();
 
 createServer({
+  skipAuth: false,
   typeDefs,
-  port: 3001,
+  port: 3002,
   resolvers,
   contextResolver: (context) => {
     return {

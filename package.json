@@ -11,6 +11,7 @@
     "test": "nx test",
     "user-backend:dev": "nx serve user-backend",
     "auth-backend:dev": "nx serve auth-backend",
+    "project-backend:dev": "nx serve project-backend",
     "gateway-backend:dev": "nx serve gateway-backend",
     "db:migrate": "prisma migrate dev",
     "db:seed": "prisma db seed",
