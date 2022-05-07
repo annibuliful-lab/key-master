@@ -10,6 +10,12 @@ export const typeDefs = gql`
     permission: String!
   }
 
+  input PermissionFilterInput {
+    search: String
+    cursor: ID
+    take: Int
+  }
+
   type Mutation {
     createPermission(permission: String!): Permission!
     updatePermission(id: ID!, permission: String!): Permission!
@@ -18,5 +24,6 @@ export const typeDefs = gql`
 
   type Query {
     getPermissionById(id: ID!): Permission!
+    getPermissions(filter: PermissionFilterInput): [Permission!]!
   }
 `;

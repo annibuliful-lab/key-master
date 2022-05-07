@@ -1,5 +1,6 @@
 import { Repository } from '@key-master/db';
 import { IAppContext, ResourceNotFound } from '@key-master/graphql';
+import { PermissionFilterInput } from '../codegen-generated';
 
 export class PermissionService extends Repository<IAppContext> {
   create(permission: string) {
@@ -59,7 +60,7 @@ export class PermissionService extends Repository<IAppContext> {
 
     return { success: true };
   }
-  async getById(id: string) {
+  async findById(id: string) {
     const permissionInfo = await this.db.permission.findFirst({
       where: {
         id,
@@ -72,5 +73,29 @@ export class PermissionService extends Repository<IAppContext> {
     }
 
     return permissionInfo;
+  }
+
+  findManyByFilter(filter: PermissionFilterInput) {
+    return this.db.permission.findMany({
+      ...(filter?.cursor && { skip: 1 }),
+      ...(filter?.cursor && {
+        cursor: {
+          id: filter?.cursor,
+        },
+      }),
+      where: {
+        ...(filter?.search && {
+          permission: {
+            contains: filter?.search,
+            mode: 'insensitive',
+          },
+        }),
+        deletedAt: null,
+      },
+      orderBy: {
+        id: 'asc',
+      },
+      take: filter?.take ?? 20,
+    });
   }
 }

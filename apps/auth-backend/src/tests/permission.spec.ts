@@ -61,12 +61,74 @@ describe('Permission', () => {
         .get({ id: true, permission: true });
       expect(newPermission).toEqual(getPermission);
     });
+
+    it('throws error when get by deleted id', async () => {
+      const newPermission = await createPermission();
+      await client.chain.mutation
+        .deletePermission({ id: newPermission.id })
+        .success.get();
+
+      expect(
+        client.chain.query.getPermissionById({ id: newPermission.id }).id.get()
+      ).rejects.toBeTruthy();
+    });
+
     it('throws error when get by wrong id', () => {
       expect(
         client.chain.query
           .getPermissionById({ id: `WRONG_ID_${nanoid()}` })
           .id.get()
       ).rejects.toBeTruthy();
+    });
+
+    it('returns permissions', async () => {
+      await Promise.all([createPermission(), createPermission()]);
+      const permissions = await client.chain.query
+        .getPermissions({})
+        .get({ id: true, permission: true });
+      expect(permissions.length).toBeGreaterThanOrEqual(2);
+    });
+
+    it('returns permissions with limit', async () => {
+      await Promise.all([createPermission(), createPermission()]);
+      const permissions = await client.chain.query
+        .getPermissions({ filter: { take: 1 } })
+        .get({ id: true, permission: true });
+      expect(permissions).toHaveLength(1);
+    });
+
+    it('returns permission that contain search text', async () => {
+      await Promise.all([
+        createPermission(`SEARCH_TEXT_${nanoid()}`),
+        createPermission(`SEARCH_TEXT_${nanoid()}`),
+      ]);
+      const permissions = await client.chain.query
+        .getPermissions({ filter: { search: 'search_text' } })
+        .get({ id: true, permission: true });
+      expect(
+        permissions.every((permision) =>
+          permision.permission.includes('SEARCH_TEXT_')
+        )
+      ).toBeTruthy();
+    });
+
+    it('returns permission that contain search text and limie', async () => {
+      await Promise.all([
+        createPermission(`SEARCH_TEXT_WITH_LIMIT_${nanoid()}`),
+        createPermission(`SEARCH_TEXT_WITH_LIMIT_${nanoid()}`),
+      ]);
+      const permissions = await client.chain.query
+        .getPermissions({
+          filter: { take: 1, search: 'search_text_with_limit' },
+        })
+        .get({ id: true, permission: true });
+
+      expect(permissions).toHaveLength(1);
+      expect(
+        permissions.every((permision) =>
+          permision.permission.includes('SEARCH_TEXT_')
+        )
+      ).toBeTruthy();
     });
   });
 });
