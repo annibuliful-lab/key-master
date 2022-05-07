@@ -106,6 +106,8 @@ model ProjectOrganization {
   createdAt                  DateTime                    @default(now())
   updatedAt                  DateTime                    @default(now()) @updatedAt
   deletedAt                  DateTime?
+  createdBy                  String
+  updatedBy                  String
   organizationKeyManagements OrganizationKeyManagement[]
   organizationUsers          OrganizationUser[]
 
@@ -119,6 +121,8 @@ model OrganizationUser {
   userId         String
   user           User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   active         Boolean             @default(true)
+  createdBy      String
+  updatedBy      String
   createdAt      DateTime            @default(now())
   updatedAt      DateTime            @default(now()) @updatedAt
   deletedAt      DateTime?
