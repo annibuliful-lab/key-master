@@ -9,8 +9,12 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 import { mergeResolvers, mergeTypeDefs } from '@graphql-tools/merge';
 import { DocumentNode, print } from 'graphql';
-
 import { IAppContext } from './graphql-context';
+import {
+  constraintDirectiveTypeDefs,
+  constraintDirective,
+} from 'graphql-constraint-directive';
+
 const { allStitchingDirectivesTypeDefs, stitchingDirectivesValidator } =
   stitchingDirectives();
 
@@ -21,6 +25,7 @@ interface ICreateServer {
   enablePlayGround?: boolean;
   supportSchemaStiching?: boolean;
   skipAuth?: boolean;
+  supportContastraintDirective?: boolean;
   contextResolver: (context: IAppContext) => Config['context'];
 }
 
@@ -31,12 +36,14 @@ export const createServer = async ({
   enablePlayGround = true,
   supportSchemaStiching = true,
   skipAuth = true,
+  supportContastraintDirective = true,
   contextResolver,
 }: ICreateServer) => {
-  const schema = supportSchemaStiching
+  let schema = supportSchemaStiching
     ? stitchingDirectivesValidator(
         makeExecutableSchema({
           typeDefs: mergeTypeDefs([
+            constraintDirectiveTypeDefs,
             typeDefs,
             gql`
               ${allStitchingDirectivesTypeDefs}
@@ -52,6 +59,7 @@ export const createServer = async ({
                 _sdl: () => {
                   return `
                   ${allStitchingDirectivesTypeDefs}
+                  ${constraintDirectiveTypeDefs}
                   ${print(typeDefs as DocumentNode)}`;
                 },
               },
@@ -59,7 +67,14 @@ export const createServer = async ({
           ]),
         })
       )
-    : makeExecutableSchema({ typeDefs, resolvers });
+    : makeExecutableSchema({
+        typeDefs: mergeTypeDefs([constraintDirectiveTypeDefs, typeDefs]),
+        resolvers,
+      });
+
+  if (supportContastraintDirective) {
+    schema = constraintDirective()(schema);
+  }
 
   const apolloServer = new ApolloServer({
     schema,

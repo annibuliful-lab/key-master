@@ -90,6 +90,7 @@
     "fast-glob": "3.2.11",
     "fastify": "3.28.0",
     "graphql": "16.3.0",
+    "graphql-constraint-directive": "v2",
     "ioredis": "5.0.4",
     "jsonwebtoken": "8.5.1",
     "lodash": "4.17.21",
