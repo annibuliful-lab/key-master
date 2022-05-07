@@ -1,4 +1,4 @@
-import { Repository } from '@key-master/db';
+import { redisClient, Repository } from '@key-master/db';
 import { IAppContext } from '@key-master/graphql';
 import { AuthenticationError } from 'apollo-server-fastify';
 import { verify } from 'argon2';
@@ -50,5 +50,43 @@ export class AuthService extends Repository<IAppContext> {
       token,
       refreshToken,
     };
+  }
+
+  async logout() {
+    const userId = this.context.userId;
+    if (!userId) {
+      throw new AuthenticationError('Unauthorization');
+    }
+
+    const userProjects = await this.db.project.findMany({
+      select: {
+        id: true,
+      },
+      where: {
+        OR: [
+          {
+            ownerId: userId,
+            deletedAt: null,
+          },
+          {
+            projectRoleUsers: {
+              some: {
+                userId,
+                deletedAt: null,
+              },
+            },
+          },
+        ],
+      },
+    });
+
+    const redisKeys = [
+      `${userId}-null`,
+      ...userProjects.map((project) => `${userId}-${project.id}`),
+    ];
+
+    await redisClient.del(...redisKeys);
+
+    return { success: true };
   }
 }

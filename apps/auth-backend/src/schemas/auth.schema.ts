@@ -1,6 +1,9 @@
 import { gql } from 'apollo-server-fastify';
 
 export const typeDefs = gql`
+  type LogoutOperationResult {
+    success: Boolean!
+  }
   type Authentication {
     id: ID!
     fullname: String!
@@ -15,9 +18,6 @@ export const typeDefs = gql`
 
   type Mutation {
     login(input: LoginInput): Authentication!
-  }
-
-  type Query {
-    check: Boolean!
+    logout: LogoutOperationResult!
   }
 `;
