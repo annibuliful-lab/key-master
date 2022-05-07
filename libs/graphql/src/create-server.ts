@@ -93,7 +93,10 @@ export const createServer = async ({
       }
 
       if (skipAuth) {
-        return contextResolver({ userId: '', projectId: '', permissions: [] });
+        const userId = context.request.headers['x-user-id'] as string;
+        const projectId = context.request.headers['x-project-id'] as string;
+
+        return contextResolver({ userId, projectId, permissions: [] });
       }
 
       const userId = context.request.headers['x-user-id'] as string;
