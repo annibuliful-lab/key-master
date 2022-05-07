@@ -16,5 +16,5 @@ export function createProjectRole({
         role,
       },
     })
-    .role.get();
+    .get({ id: true, role: true });
 }

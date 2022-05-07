@@ -15,8 +15,8 @@ export const typeDefs = gql`
   }
 
   type Mutation {
-    createProjectRole(input: CreateProjectRoleInput): ProjectRole!
-    updateProjectRole(id: ID!, input: UpdateProjectRoleInput): ProjectRole!
+    createProjectRole(input: CreateProjectRoleInput!): ProjectRole!
+    updateProjectRole(id: ID!, input: UpdateProjectRoleInput!): ProjectRole!
     deleteProjectRole(id: ID!): ProjectRole!
   }
 

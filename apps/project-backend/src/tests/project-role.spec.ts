@@ -3,6 +3,7 @@ import {
   createProjectRole,
   projectOwnerAClient,
 } from '@key-master/test';
+
 import { nanoid } from 'nanoid';
 
 describe('Project Role', () => {
@@ -35,6 +36,33 @@ describe('Project Role', () => {
             },
           })
           .role.get()
+      ).rejects.toBeTruthy();
+    });
+
+    it('updates an existing project role', async () => {
+      const role = await createProjectRole({ client });
+      const newRole = `MOCK_NEW_ROLE_${nanoid()}`;
+      const updated = await client.chain.mutation
+        .updateProjectRole({
+          id: role.id,
+          input: {
+            role: newRole,
+          },
+        })
+        .get({ id: true, role: true });
+
+      expect(updated.id).toEqual(role.id);
+      expect(updated.role).toEqual(newRole);
+    });
+
+    it('throws error when update wrong id', async () => {
+      expect(
+        client.chain.mutation.updateProjectRole({
+          id: `MOCK_WRONG_ID_${nanoid()}`,
+          input: {
+            role: 'NEW',
+          },
+        })
       ).rejects.toBeTruthy();
     });
   });
