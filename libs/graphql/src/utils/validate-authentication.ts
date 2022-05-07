@@ -142,6 +142,14 @@ const getUserPermissions = ({
     },
     where: {
       projectId,
+      role: {
+        deletedAt: null,
+        rolePermissions: {
+          some: {
+            deletedAt: null,
+          },
+        },
+      },
       userId: userId,
     },
   });
