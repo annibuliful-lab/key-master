@@ -14,9 +14,10 @@
     "project-backend:dev": "nx serve project-backend",
     "gateway-backend:dev": "nx serve gateway-backend",
     "db:migrate": "prisma migrate dev",
-    "db-mongo:generate": "prisma generate --schema prisma-mongo/schema.prisma",
     "db:seed": "prisma db seed",
     "db:generate": "prisma generate",
+    "db-mongo:generate": "prisma generate --schema prisma-mongo/schema.prisma",
+    "db-mongo:seed": "ts-node prisma-mongo/seed/index.ts",
     "genql": "ts-node tools/bin/genql.ts",
     "codegen:backend": "ts-node tools/bin/codegen.ts",
     "all-services:dev": "concurrently \"yarn:*-backend:dev\""
