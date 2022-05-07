@@ -111,7 +111,7 @@ model ProjectOrganization {
   organizationKeyManagements OrganizationKeyManagement[]
   organizationUsers          OrganizationUser[]
 
-  @@unique([projectId, name])
+  @@index([projectId, name])
 }
 
 model OrganizationUser {
