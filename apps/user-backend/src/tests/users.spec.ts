@@ -26,8 +26,4 @@ describe('User', () => {
       expect(newUser.id).toBeDefined();
     });
   });
-
-  describe('Query', () => {
-    it.todo('gets user profile by auth context');
-  });
 });
