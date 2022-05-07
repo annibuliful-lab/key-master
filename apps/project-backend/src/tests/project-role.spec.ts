@@ -65,5 +65,26 @@ describe('Project Role', () => {
         })
       ).rejects.toBeTruthy();
     });
+
+    it('deletes an existing', async () => {
+      const role = await createProjectRole({ client });
+      expect(
+        client.chain.mutation
+          .deleteProjectRole({
+            id: role.id,
+          })
+          .success.get()
+      ).toBeTruthy();
+    });
+
+    it('throws error when delete wrong id', async () => {
+      expect(
+        client.chain.mutation
+          .deleteProjectRole({
+            id: 'MOCK_ROLE_ID',
+          })
+          .success.get()
+      ).rejects.toBeTruthy();
+    });
   });
 });

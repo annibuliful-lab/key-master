@@ -49,4 +49,26 @@ export class ProjectRoleService extends Repository<IAppContext> {
       data,
     });
   }
+
+  async delete(id: string) {
+    const projectRole = await this.db.projectRole.findFirst({
+      where: {
+        id,
+        deletedAt: null,
+      },
+    });
+    if (!projectRole) {
+      throw new ResourceNotFound(`delete project role id ${id} not found`);
+    }
+
+    await this.db.projectRole.update({
+      where: {
+        id,
+      },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
+    return { success: true };
+  }
 }
