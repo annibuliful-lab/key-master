@@ -10,7 +10,7 @@ import { ProjectRolePermissionService } from './services/project-role-permission
 dotenv.config();
 
 createServer({
-  skipAuth: true,
+  skipAuth: false,
   typeDefs,
   port: 3002,
   resolvers,
