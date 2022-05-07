@@ -4,11 +4,11 @@ import {
   IAppContext,
   ResourceNotFound,
 } from '@key-master/graphql';
-import { CreateProjectInput } from '../codegen-generated';
+import { CreateProjectInput, UpdateProjectInput } from '../codegen-generated';
 
 export class ProjectService extends Repository<IAppContext> {
   async create(input: CreateProjectInput) {
-    const duplicatedProjectName = this.db.project.findFirst({
+    const duplicatedProjectName = await this.db.project.findFirst({
       select: {
         id: true,
       },
@@ -31,6 +31,56 @@ export class ProjectService extends Repository<IAppContext> {
         ownerId: this.context.userId,
       },
     });
+  }
+
+  async updateProject(id: string, data: UpdateProjectInput) {
+    const project = await this.db.project.findFirst({
+      select: { id: true },
+      where: {
+        ownerId: this.context.userId,
+        deletedAt: null,
+        id,
+      },
+    });
+
+    if (!project) {
+      throw new ResourceNotFound(`update project id ${id} not found`);
+    }
+
+    return this.db.project.update({
+      where: {
+        id,
+      },
+      data,
+    });
+  }
+
+  async deleteProject(id: string) {
+    const project = await this.db.project.findFirst({
+      select: { id: true },
+      where: {
+        ownerId: this.context.userId,
+        deletedAt: null,
+        id,
+      },
+    });
+
+    if (!project) {
+      throw new ResourceNotFound(`delete project id ${id} not found`);
+    }
+
+    await this.db.project.update({
+      where: {
+        id,
+      },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
+
+    return {
+      success: true,
+    };
   }
 
   async findById(id: string) {
