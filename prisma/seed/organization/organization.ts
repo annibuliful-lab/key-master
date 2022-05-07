@@ -34,15 +34,8 @@ export const organizationB: Organization = {
 export const createProjectOrganization = async () => {
   const result = await prismaClient.$transaction(
     [organizationA, organizationB].map((data) =>
-      prismaClient.projectOrganization.upsert({
-        where: {
-          projectId_name: {
-            projectId: data.projectId,
-            name: data.name,
-          },
-        },
-        update: {},
-        create: data,
+      prismaClient.projectOrganization.create({
+        data,
       })
     )
   );
