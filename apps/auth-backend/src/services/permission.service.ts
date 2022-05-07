@@ -3,8 +3,14 @@ import { IAppContext, ResourceNotFound } from '@key-master/graphql';
 
 export class PermissionService extends Repository<IAppContext> {
   create(permission: string) {
-    return this.db.permission.create({
-      data: { permission },
+    return this.db.permission.upsert({
+      where: {
+        permission,
+      },
+      update: {
+        deletedAt: null,
+      },
+      create: { permission },
     });
   }
 
