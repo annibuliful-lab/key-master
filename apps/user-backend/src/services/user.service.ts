@@ -19,6 +19,14 @@ export class UserService extends Repository<IAppContext> {
     });
   }
 
+  findByUserIdFromContext() {
+    return this.db.user.findUnique({
+      where: {
+        id: this.context.userId,
+      },
+    });
+  }
+
   findAll() {
     return this.db.user.findMany();
   }
