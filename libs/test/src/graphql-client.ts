@@ -9,16 +9,23 @@ export const graphqlClient = createClient({
 
 interface IProjectOwnerParam {
   projectId: string;
-  token: string;
+  userId: string;
 }
 export const projectOwnerGraphqlClient = ({
   projectId,
-  token,
+  userId,
 }: IProjectOwnerParam) => {
   return createClient({
     url: process.env.GRAPHQL_ENDPOINT,
     headers: {
-      Authorization: `TEST ${token}-${projectId}`,
+      Authorization: `TEST-AUTH ${projectId}`,
+      'x-project-id': projectId,
+      'x-user-id': userId,
     },
   });
 };
+
+export const projectOwnerAClient = projectOwnerGraphqlClient({
+  projectId: 'TEST_PROJECT_ID',
+  userId: 'TEST_USER_A_ID',
+});

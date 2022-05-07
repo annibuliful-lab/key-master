@@ -64,12 +64,14 @@ export const createServer = async ({
   const apolloServer = new ApolloServer({
     schema,
     context: (context) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const operationName = (context.request.body as any)
         .operationName as string;
       if (operationName === 'IntrospectionQuery') {
         return;
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const sdlQuery = (context.request.body as any).query as string;
       if (sdlQuery === '{\n  _sdl\n}\n' || sdlQuery.includes('_sdl')) {
         return;
@@ -83,8 +85,9 @@ export const createServer = async ({
       if (!userId) {
         throw new AuthenticationError('x-user-id is required');
       }
+
       const projectId = context.request.headers['x-project-id'] as string;
-      if (!projectId) {
+      if (!projectId && !sdlQuery.includes('createProject')) {
         throw new AuthenticationError('x-project-id is required');
       }
 

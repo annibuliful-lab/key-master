@@ -13,6 +13,9 @@ import {
 } from '@key-master/graphql';
 const { stitchingDirectivesTransformer } = stitchingDirectives();
 import waitOn from 'wait-on';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 async function makeGatewaySchema() {
   const userSchema = await executeRemoteSchema({
@@ -50,7 +53,21 @@ const main = async () => {
     schema,
     plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
     context: async ({ request }) => {
-      const token = request.headers['authorization']?.replace('Bearer ', '');
+      const authorization = request.headers['authorization'];
+
+      if (
+        process.env.ALLOW_SKIP_AUTH_TEST ||
+        authorization.startsWith('TEST-AUTH')
+      ) {
+        const projectId = request.headers['x-project-id'] as string;
+        const userId = request.headers['x-user-id'] as string;
+        return {
+          'x-user-id': userId,
+          'x-project-id': projectId,
+        };
+      }
+
+      const token = authorization?.replace('Bearer ', '');
 
       if (!token) {
         return null;
