@@ -1,4 +1,4 @@
-import { groupBy } from 'lodash';
+import { keyBy } from 'lodash';
 import { Resolvers } from '../../codegen-generated';
 import { IGraphqlContext } from '../../context';
 
@@ -10,9 +10,10 @@ export const query: Resolvers<IGraphqlContext>['Query'] = {
     const ids = keys.map((key) => key.id);
     const users = await ctx.user.findByIds(ids);
 
-    const groupedUsers = groupBy(users, (user) => user.id);
+    const groupedUsers = keyBy(users, (user) => user.id);
+
     return ids.map((id) => {
-      const user = groupedUsers[id][0];
+      const user = groupedUsers[id];
 
       return {
         id: id,
