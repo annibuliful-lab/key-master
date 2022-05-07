@@ -42,7 +42,7 @@ export class PermissionService extends Repository<IAppContext> {
       throw new ResourceNotFound(`delete permission id: ${id} not found`);
     }
 
-    return this.db.permission.update({
+    await this.db.permission.update({
       where: {
         id,
       },
@@ -50,6 +50,8 @@ export class PermissionService extends Repository<IAppContext> {
         deletedAt: new Date(),
       },
     });
+
+    return { success: true };
   }
   async getById(id: string) {
     const permissionInfo = await this.db.permission.findFirst({

@@ -9,8 +9,6 @@ export const mutation: Resolvers<IGraphqlContext>['Mutation'] = {
     return ctx.permission.update(id, permission);
   },
   deletePermission: async (_parent, { id }, ctx) => {
-    await ctx.permission.delete(id);
-
-    return { success: true };
+    return ctx.permission.delete(id);
   },
 };
