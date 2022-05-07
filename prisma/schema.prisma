@@ -28,7 +28,7 @@ model ProjectRole {
   rolePermissions  ProjectRolePermission[]
   projectRoleUsers ProjectRoleUser[]
 
-  @@unique([projectId, role])
+  @@index([projectId, role])
 }
 
 model ProjectRolePermission {
