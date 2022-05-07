@@ -15,6 +15,8 @@ model Permission {
   updatedAt              DateTime                @default(now()) @updatedAt
   deletedAt              DateTime?
   projectRolePermissions ProjectRolePermission[]
+
+  @@unique([permission])
 }
 
 model ProjectRole {
