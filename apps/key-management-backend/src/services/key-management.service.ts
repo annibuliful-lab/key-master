@@ -136,7 +136,7 @@ export class KeyManagementService extends Repository<IAppContext> {
 
   async findById(id: string) {
     const keyManagement = await this.db.keyManagment.findFirst({
-      select: { id: true, name: true, projectId: true },
+      select: { id: true, name: true, projectId: true, pin: true },
       where: {
         id,
         projectId: this.context.projectId,
@@ -149,5 +149,26 @@ export class KeyManagementService extends Repository<IAppContext> {
     }
 
     return keyManagement;
+  }
+
+  async getMasterKey(id: string, pin: string) {
+    const keyManagement = await this.db.keyManagment.findUnique({
+      select: { masterKey: true, pin: true },
+      where: {
+        id,
+      },
+    });
+
+    if (!keyManagement) {
+      throw new ResourceNotFound(`id ${id} not found`);
+    }
+
+    const isCorrectPin = await verify(keyManagement.pin, pin);
+
+    if (!isCorrectPin) {
+      throw new ForbiddenError('Pin mismatch');
+    }
+
+    return keyManagement.masterKey;
   }
 }
