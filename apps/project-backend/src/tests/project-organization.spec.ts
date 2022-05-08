@@ -66,5 +66,54 @@ describe('Project Organization', () => {
           .get({ id: true, name: true, active: true })
       ).rejects.toBeTruthy();
     });
+
+    it('update an existing organization', async () => {
+      const organization = await createProjectOrganization({ client });
+      const newName = `MOCK_NEW_ORGANIZATION_NAME_${nanoid()}`;
+
+      const updatedOrganization = await client.chain.mutation
+        .updateProjectOrganization({
+          id: organization.id,
+          input: {
+            name: newName,
+            active: false,
+          },
+        })
+        .get({ id: true, name: true, active: true });
+      expect(updatedOrganization.active).toBeFalsy();
+      expect(updatedOrganization.id).toEqual(organization.id);
+      expect(updatedOrganization.name).toEqual(newName);
+    });
+
+    it('throws error when update wrong organization', async () => {
+      expect(
+        client.chain.mutation
+          .updateProjectOrganization({
+            id: `WRONG_ORGANIZATION_ID_${nanoid()}`,
+            input: {
+              active: false,
+            },
+          })
+          .get({ id: true, name: true, active: true })
+      ).rejects.toBeTruthy();
+    });
+    it('throws error when update with duplicated organization name', async () => {
+      const [organizationA, organizationB] = await Promise.all([
+        createProjectOrganization({ client }),
+        createProjectOrganization({ client }),
+      ]);
+
+      expect(
+        client.chain.mutation
+          .updateProjectOrganization({
+            id: organizationB.id,
+            input: {
+              name: organizationA.name,
+              active: false,
+            },
+          })
+          .get({ id: true, name: true, active: true })
+      ).rejects.toBeTruthy();
+    });
   });
 });
