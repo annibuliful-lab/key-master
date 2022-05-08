@@ -144,4 +144,43 @@ describe('Project Role User', () => {
         .success.get()
     ).rejects.toBeTruthy();
   });
+
+  describe('Query', () => {
+    it('gets with correct id', async () => {
+      const projectRoleUser = await createProjectRoleUser({ client });
+      const result = await client.chain.query
+        .getProjectRoleUserById({
+          id: projectRoleUser.id,
+        })
+        .id.get();
+      expect(result).toEqual(projectRoleUser.id);
+    });
+
+    it('throws error when get with wrong id', async () => {
+      expect(
+        client.chain.query
+          .getProjectRoleUserById({
+            id: `MOCK_WRONG_PROJECT_ROLE_USER_${nanoid()}`,
+          })
+          .id.get()
+      ).rejects.toBeTruthy();
+    });
+
+    it('throws error when get deleted id', async () => {
+      const projectRoleUser = await createProjectRoleUser({ client });
+      await client.chain.mutation
+        .deleteProjectRoleUser({
+          id: projectRoleUser.id,
+        })
+        .success.get();
+
+      expect(
+        client.chain.query
+          .getProjectRoleUserById({
+            id: projectRoleUser.id,
+          })
+          .id.get()
+      ).rejects.toBeTruthy();
+    });
+  });
 });
