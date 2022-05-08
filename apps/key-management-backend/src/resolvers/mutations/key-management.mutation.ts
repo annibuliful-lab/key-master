@@ -8,4 +8,7 @@ export const mutations: Resolvers<IGraphqlContext>['Mutation'] = {
   updateKeyManagement: (_parent, { id, input }, ctx) => {
     return ctx.keyManagement.update(id, input);
   },
+  updateKeyManagementPin: (_parent, { id, input }, ctx) => {
+    return ctx.keyManagement.updatePin(id, input);
+  },
 };

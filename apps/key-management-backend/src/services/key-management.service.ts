@@ -9,6 +9,7 @@ import { hash, verify } from 'argon2';
 import {
   CreateKeyManagementInput,
   UpdateKeyManagementInput,
+  UpdateKeyManagementPinInput,
 } from '../codegen-generated';
 
 export class KeyManagementService extends Repository<IAppContext> {
@@ -64,6 +65,37 @@ export class KeyManagementService extends Repository<IAppContext> {
       },
       data: {
         ...input,
+        updatedBy: this.context.userId,
+      },
+    });
+  }
+
+  async updatePin(id: string, input: UpdateKeyManagementPinInput) {
+    const keyManagement = await this.db.keyManagment.findFirst({
+      select: { id: true, pin: true },
+      where: {
+        id,
+        projectId: this.context.projectId,
+        deletedAt: null,
+      },
+    });
+
+    if (!keyManagement) {
+      throw new ResourceNotFound(`id ${id} not found`);
+    }
+
+    const isCorrectPin = await verify(keyManagement.pin, input.oldPin);
+
+    if (!isCorrectPin) {
+      throw new ForbiddenError('Unpermitted key');
+    }
+
+    return this.db.keyManagment.update({
+      where: {
+        id,
+      },
+      data: {
+        pin: await hash(input.newPin),
         updatedBy: this.context.userId,
       },
     });
