@@ -1,6 +1,9 @@
 import { Repository } from '@key-master/db';
 import { IAppContext, ResourceNotFound } from '@key-master/graphql';
-import { CreateOrganizationUserInput } from '../codegen-generated';
+import {
+  CreateOrganizationUserInput,
+  UpdateOrganizationUserInput,
+} from '../codegen-generated';
 
 export class OrganizationUserService extends Repository<IAppContext> {
   async create(input: CreateOrganizationUserInput) {
@@ -40,5 +43,49 @@ export class OrganizationUserService extends Repository<IAppContext> {
         updatedBy: this.context.userId,
       },
     });
+  }
+
+  async update(id: string, input: UpdateOrganizationUserInput) {
+    const organizationUser = await this.db.organizationUser.findFirst({
+      select: { id: true },
+      where: {
+        id,
+        deletedAt: null,
+      },
+    });
+
+    if (!organizationUser) {
+      throw new ResourceNotFound(`id ${id} not found`);
+    }
+
+    return this.db.organizationUser.update({
+      where: {
+        id,
+      },
+      data: {
+        ...input,
+        updatedBy: this.context.userId,
+      },
+    });
+  }
+
+  async delete(id: string) {
+    const organizationUser = await this.db.organizationUser.findFirst({
+      select: { id: true },
+      where: {
+        id,
+        deletedAt: null,
+      },
+    });
+
+    if (!organizationUser) {
+      throw new ResourceNotFound(`id ${id} not found`);
+    }
+
+    await this.db.organizationUser.delete({
+      where: { id },
+    });
+
+    return { success: true };
   }
 }
