@@ -182,5 +182,48 @@ describe('Project Role User', () => {
           .id.get()
       ).rejects.toBeTruthy();
     });
+
+    it('returns project role users', async () => {
+      await Promise.all([
+        createProjectRoleUser({ client }),
+        createProjectRoleUser({ client }),
+      ]);
+
+      const projectRoleUsers = await client.chain.query
+        .getProjectRoleUsers({ filter: {} })
+        .get({ id: true, userId: true, roleId: true });
+      expect(projectRoleUsers.length).toBeGreaterThanOrEqual(2);
+    });
+
+    it('returns project role users with limit', async () => {
+      await Promise.all([
+        createProjectRoleUser({ client }),
+        createProjectRoleUser({ client }),
+      ]);
+      const projectRoleUsers = await client.chain.query
+        .getProjectRoleUsers({ filter: { take: 1 } })
+        .get({ id: true, userId: true, roleId: true });
+
+      expect(projectRoleUsers).toHaveLength(1);
+    });
+
+    it('returns with search text', async () => {
+      await Promise.all([
+        createProjectRoleUser({
+          client,
+          customFullname: `SEARCH_USER_${nanoid()}`,
+        }),
+        createProjectRoleUser({
+          client,
+          customFullname: `SEARCH_USER_${nanoid()}`,
+        }),
+      ]);
+
+      const projectRoleUsers = await client.chain.query
+        .getProjectRoleUsers({ filter: { take: 1, search: 'search_user' } })
+        .get({ id: true, userId: true, roleId: true });
+
+      expect(projectRoleUsers.length).toBeGreaterThanOrEqual(1);
+    });
   });
 });
