@@ -220,10 +220,30 @@ describe('Project Role User', () => {
       ]);
 
       const projectRoleUsers = await client.chain.query
-        .getProjectRoleUsers({ filter: { take: 1, search: 'search_user' } })
-        .get({ id: true, userId: true, roleId: true });
+        .getProjectRoleUsers({ filter: { search: 'search_user' } })
+        .get({
+          id: true,
+          userId: true,
+          roleId: true,
+          user: {
+            fullname: true,
+          },
+          role: {
+            role: true,
+          },
+        });
 
-      expect(projectRoleUsers.length).toBeGreaterThanOrEqual(1);
+      expect(
+        projectRoleUsers.every((roleUser) =>
+          roleUser.user.fullname.includes('SEARCH_USER_')
+        )
+      ).toBeTruthy();
+
+      expect(
+        projectRoleUsers.every((roleUser) => roleUser.role.role === 'USER')
+      ).toBeTruthy();
+
+      expect(projectRoleUsers.length).toBeGreaterThanOrEqual(2);
     });
   });
 });
