@@ -107,4 +107,41 @@ describe('Project Role User', () => {
         })
     ).rejects.toBeTruthy();
   });
+
+  it('deletes with correct id', async () => {
+    const projectRoleUser = await createProjectRoleUser({ client });
+    const getBeforeDelete = await client.chain.query
+      .getProjectRoleUserById({
+        id: projectRoleUser.id,
+      })
+      .id.get();
+
+    expect(getBeforeDelete).toEqual(projectRoleUser.id);
+
+    expect(
+      await client.chain.mutation
+        .deleteProjectRoleUser({
+          id: projectRoleUser.id,
+        })
+        .success.get()
+    ).toBeTruthy();
+
+    expect(
+      client.chain.query
+        .getProjectRoleUserById({
+          id: projectRoleUser.id,
+        })
+        .id.get()
+    ).rejects.toBeTruthy();
+  });
+
+  it('throws error when delete with wrong id', () => {
+    expect(
+      client.chain.mutation
+        .deleteProjectRoleUser({
+          id: `MOCK_WRONG_PROJECT_ROLE_${nanoid()}`,
+        })
+        .success.get()
+    ).rejects.toBeTruthy();
+  });
 });

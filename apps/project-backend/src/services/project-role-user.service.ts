@@ -128,4 +128,20 @@ export class ProjectRoleUserService extends Repository<IAppContext> {
 
     return { success: true };
   }
+
+  async findById(id: string) {
+    const projectRoleUser = await this.db.projectRoleUser.findFirst({
+      where: {
+        id,
+        deletedAt: null,
+        projectId: this.context.projectId,
+      },
+    });
+
+    if (!projectRoleUser) {
+      throw new ResourceNotFound(`id ${id} not found`);
+    }
+
+    return projectRoleUser;
+  }
 }
