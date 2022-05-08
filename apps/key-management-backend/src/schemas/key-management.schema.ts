@@ -41,7 +41,10 @@ export const typeDefs = gql`
       input: UpdateKeyManagementPinInput!
     ): KeyManagement!
 
-    deleteKeyMangement(id: ID!): KeyManagementDeleteOperationResult!
+    deleteKeyMangement(
+      id: ID!
+      pin: String!
+    ): KeyManagementDeleteOperationResult!
   }
 
   type Query {

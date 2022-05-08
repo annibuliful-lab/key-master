@@ -100,4 +100,37 @@ export class KeyManagementService extends Repository<IAppContext> {
       },
     });
   }
+
+  async delete(id: string, pin: string) {
+    const keyManagement = await this.db.keyManagment.findFirst({
+      select: { id: true, pin: true },
+      where: {
+        id,
+        projectId: this.context.projectId,
+        deletedAt: null,
+      },
+    });
+
+    if (!keyManagement) {
+      throw new ResourceNotFound(`id ${id} not found`);
+    }
+
+    const isCorrectPin = await verify(keyManagement.pin, pin);
+
+    if (!isCorrectPin) {
+      throw new ForbiddenError('Unpermitted key');
+    }
+
+    await this.db.keyManagment.update({
+      where: {
+        id,
+      },
+      data: {
+        deletedAt: new Date(),
+        updatedBy: this.context.userId,
+      },
+    });
+
+    return { success: true };
+  }
 }
