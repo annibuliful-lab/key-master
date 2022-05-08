@@ -19,9 +19,8 @@ export const typeDefs = gql`
   }
 
   input UpdateKeyManagementInput {
-    organizationId: ID!
     pin: String!
-    masterKey: String!
+    name: String!
   }
 
   type Mutation {
