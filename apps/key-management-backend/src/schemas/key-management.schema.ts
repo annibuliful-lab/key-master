@@ -23,12 +23,22 @@ export const typeDefs = gql`
     name: String!
   }
 
+  input UpdateKeyManagementPinInput {
+    oldPin: String!
+    newPin: String!
+  }
+
   type Mutation {
-    createKeyManagement(input: CreateKeyManagementInput): KeyManagement!
+    createKeyManagement(input: CreateKeyManagementInput!): KeyManagement!
 
     updateKeyManagement(
       id: ID!
-      input: UpdateKeyManagementInput
+      input: UpdateKeyManagementInput!
+    ): KeyManagement!
+
+    updateKeyManagementPin(
+      id: ID!
+      input: UpdateKeyManagementPinInput!
     ): KeyManagement!
 
     deleteKeyMangement(id: ID!): KeyManagementDeleteOperationResult!
