@@ -95,5 +95,41 @@ describe('Key Management', () => {
           })
       ).rejects.toBeTruthy();
     });
+
+    it('updates key pin', async () => {
+      const createdKey = await createKeyManagement({ client });
+      const updated = await client.chain.mutation
+        .updateKeyManagementPin({
+          id: createdKey.id,
+          input: {
+            oldPin: PIN_SECRET,
+            newPin: 'NEW_PIN',
+          },
+        })
+        .get({
+          id: true,
+          name: true,
+        });
+      expect(updated.id).toEqual(createdKey.id);
+      expect(updated.name).toEqual(createdKey.name);
+    });
+
+    it('throws error when update key pin with wrong old pin', async () => {
+      const createdKey = await createKeyManagement({ client });
+      expect(
+        client.chain.mutation
+          .updateKeyManagementPin({
+            id: createdKey.id,
+            input: {
+              oldPin: `WRONG_PIN`,
+              newPin: 'NEW_PIN',
+            },
+          })
+          .get({
+            id: true,
+            name: true,
+          })
+      ).rejects.toBeTruthy();
+    });
   });
 });
