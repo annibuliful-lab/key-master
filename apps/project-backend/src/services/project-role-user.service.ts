@@ -2,6 +2,7 @@ import { Repository } from '@key-master/db';
 import { IAppContext, ResourceNotFound } from '@key-master/graphql';
 import {
   CreateProjectRoleUserInput,
+  ProjectRoleUserFilterInput,
   UpdateProjectRoleUserInput,
 } from '../codegen-generated';
 
@@ -143,5 +144,30 @@ export class ProjectRoleUserService extends Repository<IAppContext> {
     }
 
     return projectRoleUser;
+  }
+  findManyByFilter(filter: ProjectRoleUserFilterInput) {
+    return this.db.projectRoleUser.findMany({
+      ...(filter?.cursor && { skip: 1 }),
+      ...(filter?.cursor && {
+        cursor: {
+          id: filter?.cursor,
+        },
+      }),
+      where: {
+        ...(filter?.search && {
+          user: {
+            fullname: {
+              contains: filter.search,
+              mode: 'insensitive',
+            },
+          },
+        }),
+        deletedAt: null,
+      },
+      orderBy: {
+        id: 'asc',
+      },
+      take: filter?.take ?? 20,
+    });
   }
 }
