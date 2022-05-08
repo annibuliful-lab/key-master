@@ -21,7 +21,7 @@ export class OrganizationKeyManagementService extends Repository<IAppContext> {
       throw new ResourceNotFound(`key id ${keyManagementId} not found`);
     }
 
-    const projectOrganization = await this.db.keyManagment.findFirst({
+    const projectOrganization = await this.db.projectOrganization.findFirst({
       select: {
         id: true,
       },
