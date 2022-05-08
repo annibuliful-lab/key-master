@@ -7,6 +7,7 @@ import { createProject } from './project/project';
 import { createProjectRoleAndPermissions } from './project/project-role';
 import { createUser } from './user';
 import { prismaClient } from '../client';
+import { createProjectRoleUser } from './project/project-role-user';
 
 export async function cleanupDb() {
   const shouldClearTable = true;
@@ -38,6 +39,7 @@ const main = async () => {
   await createUser();
   await createProject();
   await createProjectRoleAndPermissions();
+  await createProjectRoleUser();
   await createKeyManagement();
 
   // organization
