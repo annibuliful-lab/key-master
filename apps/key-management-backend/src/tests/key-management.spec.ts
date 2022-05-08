@@ -203,12 +203,46 @@ describe('Key Management', () => {
           .success.get()
       ).rejects.toBeTruthy();
     });
+
     it('throws error when delete with correct id but wrong pin', async () => {
       const createdKey = await createKeyManagement({ client });
       expect(
         client.chain.mutation
           .deleteKeyMangement({ id: createdKey.id, pin: `WRONG_PIN_SECRET` })
           .success.get()
+      ).rejects.toBeTruthy();
+    });
+
+    it('returns master key', async () => {
+      const masterKey = `MASTER_KEY_${nanoid()}`;
+      const createdKey = await createKeyManagement({
+        client,
+        customMasterKey: masterKey,
+      });
+
+      const result = await client.chain.query
+        .getKeyManagementById({
+          id: createdKey.id,
+        })
+        .masterKey({ pin: PIN_SECRET })
+        .get();
+      expect(result).toEqual(masterKey);
+    });
+
+    it('throws error when get master key with wrong pin', async () => {
+      const masterKey = `MASTER_KEY_${nanoid()}`;
+      const createdKey = await createKeyManagement({
+        client,
+        customMasterKey: masterKey,
+      });
+
+      expect(
+        client.chain.query
+          .getKeyManagementById({
+            id: createdKey.id,
+          })
+          .masterKey({ pin: `WRONG_PIN_SECRET_${nanoid()}` })
+          .get()
       ).rejects.toBeTruthy();
     });
   });

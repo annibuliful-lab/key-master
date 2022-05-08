@@ -9,10 +9,12 @@ const MASTER_KEY_SECRET = process.env.MASTER_KEY_SECRET;
 interface ICreateKeyManagementParam {
   client: Client;
   customName?: string;
+  customMasterKey?: string;
 }
 export function createKeyManagement({
   client,
   customName,
+  customMasterKey,
 }: ICreateKeyManagementParam) {
   const name = customName ?? `MOCK_NAME_${nanoid()}`;
 
@@ -21,7 +23,7 @@ export function createKeyManagement({
       input: {
         name,
         pin: PIN_SECRET,
-        masterKey: MASTER_KEY_SECRET,
+        masterKey: customMasterKey ?? MASTER_KEY_SECRET,
       },
     })
     .get({
