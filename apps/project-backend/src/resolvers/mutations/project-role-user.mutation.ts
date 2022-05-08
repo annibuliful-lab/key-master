@@ -3,6 +3,6 @@ import { IGraphqlContext } from '../../context';
 
 export const mutations: Resolvers<IGraphqlContext>['Mutation'] = {
   createProjectRoleUser: (_parent, { input }, ctx) => {
-    return ctx.projectRoleUser;
+    return ctx.projectRoleUser.create(input);
   },
 };
