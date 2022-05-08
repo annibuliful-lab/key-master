@@ -1,7 +1,15 @@
 import { Repository } from '@key-master/db';
-import { DuplicateResouce, IAppContext } from '@key-master/graphql';
-import { hash } from 'argon2';
-import { CreateKeyManagementInput } from '../codegen-generated';
+import {
+  DuplicateResouce,
+  IAppContext,
+  ResourceNotFound,
+} from '@key-master/graphql';
+import { ForbiddenError } from 'apollo-server-core';
+import { hash, verify } from 'argon2';
+import {
+  CreateKeyManagementInput,
+  UpdateKeyManagementInput,
+} from '../codegen-generated';
 
 export class KeyManagementService extends Repository<IAppContext> {
   async create(input: CreateKeyManagementInput) {
@@ -25,6 +33,37 @@ export class KeyManagementService extends Repository<IAppContext> {
         ...input,
         projectId: this.context.projectId,
         createdBy: this.context.userId,
+        updatedBy: this.context.userId,
+      },
+    });
+  }
+
+  async update(id: string, input: UpdateKeyManagementInput) {
+    const keyManagement = await this.db.keyManagment.findFirst({
+      select: { id: true, pin: true },
+      where: {
+        id,
+        projectId: this.context.projectId,
+        deletedAt: null,
+      },
+    });
+
+    if (!keyManagement) {
+      throw new ResourceNotFound(`id ${id} not found`);
+    }
+
+    const isCorrectPin = await verify(keyManagement.pin, input.pin);
+
+    if (!isCorrectPin) {
+      throw new ForbiddenError('Unpermitted key');
+    }
+
+    return this.db.keyManagment.update({
+      where: {
+        id,
+      },
+      data: {
+        ...input,
         updatedBy: this.context.userId,
       },
     });
