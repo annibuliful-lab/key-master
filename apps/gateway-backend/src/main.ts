@@ -9,6 +9,7 @@ import {
 } from 'apollo-server-core';
 import {
   executeRemoteSchema,
+  getAllPermissions,
   validateAuthentication,
 } from '@key-master/graphql';
 const { stitchingDirectivesTransformer } = stitchingDirectives();
@@ -53,24 +54,31 @@ async function makeGatewaySchema() {
   });
 }
 
+interface IGatewayContext {
+  'x-user-id': string;
+  'x-project-id': string;
+  'x-user-permissions': string[];
+  authorization: string;
+}
+
 const main = async () => {
   const schema = await makeGatewaySchema();
 
   const apolloServer = new ApolloServer({
     schema,
     plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
-    context: async ({ request }) => {
+    context: async ({ request }): Promise<IGatewayContext> => {
       const authorization = request.headers['authorization'];
 
-      if (
-        process.env.ALLOW_SKIP_AUTH_TEST ||
-        authorization.startsWith('TEST-AUTH')
-      ) {
+      if (process.env.ALLOW_SKIP_AUTH_TEST && authorization === 'TEST-AUTH') {
         const projectId = request.headers['x-project-id'] as string;
         const userId = request.headers['x-user-id'] as string;
+
         return {
           'x-user-id': userId,
           'x-project-id': projectId,
+          'x-user-permissions': await getAllPermissions(),
+          authorization,
         };
       }
 
@@ -81,7 +89,7 @@ const main = async () => {
       }
 
       const projectId = request.headers['x-project-id'] as string;
-      const userId = request.headers['x-user-id'] as string;
+
       const userAuth = await validateAuthentication({ token, projectId });
 
       if (typeof userAuth === 'string' && userAuth === 'FORBIDDEN') {
@@ -93,8 +101,10 @@ const main = async () => {
       }
 
       return {
-        'x-user-id': userId,
+        'x-user-id': userAuth.userId,
         'x-project-id': projectId,
+        'x-user-permissions': userAuth.permissions,
+        authorization,
       };
     },
   });

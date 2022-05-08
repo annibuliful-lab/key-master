@@ -109,7 +109,15 @@ export const createServer = async ({
         throw new AuthenticationError('x-project-id is required');
       }
 
-      return contextResolver({ userId, projectId, permissions: [] });
+      const permissions = context.request.headers[
+        'x-user-permissions'
+      ] as string;
+
+      return contextResolver({
+        userId,
+        projectId,
+        permissions: permissions.split(','),
+      });
     },
     plugins: [
       enablePlayGround && ApolloServerPluginLandingPageGraphQLPlayground(),
