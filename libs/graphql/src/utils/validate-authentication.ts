@@ -14,7 +14,6 @@ export const validateAuthentication = async ({
   cacheExpire = CACHE_EXPIRE,
 }: IValidateAuthenticationParam): Promise<
   | { userId: string; permissions: string[]; role: string | null }
-  | string
   | 'FORBIDDEN'
   | null
 > => {
@@ -37,6 +36,7 @@ export const validateAuthentication = async ({
   if (userInfo.userId && projectId) {
     const key = `${userInfo.userId}-${projectId}`;
     const authInfo = await redisClient.get(key);
+
     if (authInfo) {
       return JSON.parse(authInfo);
     }
@@ -58,14 +58,13 @@ export const validateAuthentication = async ({
     }
 
     // prevent fobidden permission and role in selected project
-    if (userPermissions.role.rolePermissions.length === 0) {
+    if (userPermissions.permissions.length === 0) {
       return 'FORBIDDEN';
     }
 
-    permissions = userPermissions.role.rolePermissions.map(
-      (role) => role.permission.permission
-    );
-    role = userPermissions.role.role;
+    permissions = userPermissions.permissions;
+
+    role = userPermissions.role;
 
     // remove duplicate user id key
     await redisClient.del(`${user.id}-null`);
@@ -119,11 +118,21 @@ interface IGetUserPermissionsParam {
   projectId: string;
   userId: string;
 }
-const getUserPermissions = ({
+const getUserPermissions = async ({
   projectId,
   userId,
-}: IGetUserPermissionsParam) => {
-  return prismaClient.projectRoleUser.findFirst({
+}: IGetUserPermissionsParam): Promise<{
+  userId: string;
+  permissions: string[];
+  role: string;
+} | null> => {
+  const cacheUserPermissions = await redisClient.get(`${userId}-${projectId}`);
+
+  if (cacheUserPermissions) {
+    return JSON.parse(cacheUserPermissions);
+  }
+
+  const userPermissions = await prismaClient.projectRoleUser.findFirst({
     select: {
       role: {
         select: {
@@ -146,6 +155,9 @@ const getUserPermissions = ({
         deletedAt: null,
         rolePermissions: {
           some: {
+            permission: {
+              deletedAt: null,
+            },
             deletedAt: null,
           },
         },
@@ -153,4 +165,16 @@ const getUserPermissions = ({
       userId: userId,
     },
   });
+
+  if (!userPermissions) {
+    return null;
+  }
+
+  return {
+    userId,
+    role: userPermissions.role.role,
+    permissions: userPermissions.role.rolePermissions.map(
+      (rolePermission) => rolePermission.permission.permission
+    ),
+  };
 };
