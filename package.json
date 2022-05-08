@@ -13,6 +13,8 @@
     "user-backend:test": "nx test user-backend",
     "auth-backend:test": "nx test auth-backend",
     "project-backend:test": "nx test project-backend",
+    "key-management-backend:test": "nx test key-management-backend",
+    "key-management-backend:dev": "nx serve key-management-backend",
     "user-backend:dev": "nx serve user-backend",
     "auth-backend:dev": "nx serve auth-backend",
     "project-backend:dev": "nx serve project-backend",

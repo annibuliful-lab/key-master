@@ -30,6 +30,10 @@ async function makeGatewaySchema() {
     httpEndpoint: 'http://localhost:3002/graphql',
   });
 
+  const keyManagementSchema = await executeRemoteSchema({
+    httpEndpoint: 'http://localhost:3003/graphql',
+  });
+
   return stitchSchemas({
     subschemaConfigTransforms: [stitchingDirectivesTransformer],
     subschemas: [
@@ -41,6 +45,9 @@ async function makeGatewaySchema() {
       },
       {
         schema: projectSchema,
+      },
+      {
+        schema: keyManagementSchema,
       },
     ],
   });
@@ -102,7 +109,7 @@ const main = async () => {
 };
 
 waitOn(
-  { resources: [3000, 3001, 3002].map((port) => `tcp:${port}`) },
+  { resources: [3000, 3001, 3002, 3003].map((port) => `tcp:${port}`) },
   (error) => {
     if (error) {
       console.error('Gate-way-error ', error);

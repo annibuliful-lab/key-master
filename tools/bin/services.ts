@@ -38,8 +38,18 @@ const projectService: IService = {
   outputCodegenPath: `apps/project-backend/${baseAppPath}/${baseOutputCodegenPath}`,
 };
 
+const keyManagementService: IService = {
+  serviceName: 'KeyManagement',
+  commandArg: '',
+  port: 3003,
+  appPath: `apps/key-management-backend/${baseAppPath}`,
+  schemaPath: `apps/key-management-backend/${baseAppPath}/${baseSchemaPath}`,
+  outputCodegenPath: `apps/key-management-backend/${baseAppPath}/${baseOutputCodegenPath}`,
+};
+
 export const services = {
   authService,
   userService,
   projectService,
+  keyManagementService,
 };
