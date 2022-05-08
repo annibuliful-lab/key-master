@@ -15,6 +15,15 @@ export const typeDefs = gql`
     id: ID!
   }
 
+  type ProjectRoleUser @key(selectionSet: "{ userId }") {
+    userId: ID!
+    user: User
+  }
+
+  input ProjectRoleUserKey {
+    userId: ID!
+  }
+
   input CreateUserInput {
     username: String!
     password: String!
@@ -23,8 +32,13 @@ export const typeDefs = gql`
 
   type Query {
     me: User!
+
     users: [User]
+
     _userProfile(keys: [AuthUserKey!]!): [Authentication]!
+      @merge(keyArg: "keys")
+
+    _projectRoleUserProfile(keys: [ProjectRoleUserKey!]!): [ProjectRoleUser]!
       @merge(keyArg: "keys")
   }
 
