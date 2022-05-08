@@ -32,7 +32,7 @@ export const typeDefs = gql`
       input: CreateOrganizationKeyManagementInput!
     ): OrganizationKeyManagement!
 
-    pdateOrganizationKeyManagement(
+    updateOrganizationKeyManagement(
       id: ID!
       input: UpdateOrganizationKeyManagementInput!
     ): OrganizationKeyManagement!

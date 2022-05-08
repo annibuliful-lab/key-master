@@ -1,6 +1,9 @@
 import { Repository } from '@key-master/db';
 import { IAppContext, ResourceNotFound } from '@key-master/graphql';
-import { CreateOrganizationKeyManagementInput } from '../codegen-generated';
+import {
+  CreateOrganizationKeyManagementInput,
+  UpdateOrganizationKeyManagementInput,
+} from '../codegen-generated';
 
 export class OrganizationKeyManagementService extends Repository<IAppContext> {
   async create({
@@ -53,6 +56,30 @@ export class OrganizationKeyManagementService extends Repository<IAppContext> {
         projectOrganizationId,
         active,
         createdBy: this.context.userId,
+        updatedBy: this.context.userId,
+      },
+    });
+  }
+
+  async update(id: string, { active }: UpdateOrganizationKeyManagementInput) {
+    const organizationKeyManagement =
+      await this.db.organizationKeyManagement.findFirst({
+        where: {
+          id,
+          deletedAt: null,
+        },
+      });
+
+    if (!organizationKeyManagement) {
+      throw new ResourceNotFound(`id ${id} not found`);
+    }
+
+    return this.db.organizationKeyManagement.update({
+      where: {
+        id,
+      },
+      data: {
+        active,
         updatedBy: this.context.userId,
       },
     });
