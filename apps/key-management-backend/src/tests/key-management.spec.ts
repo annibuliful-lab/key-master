@@ -78,6 +78,32 @@ describe('Key Management', () => {
       expect(updated.name).toEqual(newName);
     });
 
+    it('throws error when update deleted id', async () => {
+      const createdKey = await createKeyManagement({ client });
+
+      await client.chain.mutation
+        .deleteKeyMangement({
+          id: createdKey.id,
+          pin: PIN_SECRET,
+        })
+        .success.get();
+
+      expect(
+        client.chain.mutation
+          .updateKeyManagement({
+            id: createdKey.id,
+            input: {
+              pin: PIN_SECRET,
+              name: 'NEW_NAME',
+            },
+          })
+          .get({
+            id: true,
+            name: true,
+          })
+      ).rejects.toBeTruthy();
+    });
+
     it('throws error when update with correct id but wrong pin', async () => {
       const createdKey = await createKeyManagement({ client });
       expect(
@@ -114,6 +140,31 @@ describe('Key Management', () => {
       expect(updated.name).toEqual(createdKey.name);
     });
 
+    it('throws error when update key pin with deleted id', async () => {
+      const createdKey = await createKeyManagement({ client });
+
+      await client.chain.mutation
+        .deleteKeyMangement({
+          id: createdKey.id,
+          pin: PIN_SECRET,
+        })
+        .success.get();
+
+      expect(
+        client.chain.mutation
+          .updateKeyManagementPin({
+            id: createdKey.id,
+            input: {
+              oldPin: `WRONG_PIN`,
+              newPin: 'NEW_PIN',
+            },
+          })
+          .get({
+            id: true,
+            name: true,
+          })
+      ).rejects.toBeTruthy();
+    });
     it('throws error when update key pin with wrong old pin', async () => {
       const createdKey = await createKeyManagement({ client });
       expect(
