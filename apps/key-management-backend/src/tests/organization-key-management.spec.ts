@@ -108,11 +108,18 @@ describe('Organization Key Management', () => {
         .getOrganizationKeyManagementById({ id: createdOrgKey.id })
         .get({
           id: true,
+          keyManagement: {
+            id: true,
+            name: true,
+          },
           projectOrganization: {
             id: true,
             name: true,
           },
         });
+
+      expect(result.keyManagement.id).toEqual(createdOrgKey.keyManagementId);
+      expect(result.keyManagement.name).toBeDefined();
       expect(result.projectOrganization.id).toEqual(
         createdOrgKey.projectOrganizationId
       );
@@ -183,6 +190,7 @@ describe('Organization Key Management', () => {
       expect(
         orgKeys.every((org) => org.projectOrganization.id === orgId)
       ).toBeTruthy();
+
       expect(orgKeys).toHaveLength(1);
     });
   });
