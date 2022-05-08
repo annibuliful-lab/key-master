@@ -4,6 +4,7 @@ import { ForbiddenError } from 'apollo-server-errors';
 import { verify } from 'argon2';
 import {
   CreateOrganizationKeyManagementInput,
+  OrganizationKeyManagementFilterInput,
   UpdateOrganizationKeyManagementInput,
 } from '../codegen-generated';
 
@@ -146,5 +147,32 @@ export class OrganizationKeyManagementService extends Repository<IAppContext> {
     }
 
     return organizationKeyManagement;
+  }
+
+  findManyByFilter(filter: OrganizationKeyManagementFilterInput) {
+    return this.db.organizationKeyManagement.findMany({
+      ...(filter?.cursor && { skip: 1 }),
+      ...(filter?.cursor && {
+        cursor: {
+          id: filter?.cursor,
+        },
+      }),
+      where: {
+        projectOrganizationId: filter.organizationId,
+        ...(filter?.search && {
+          keyManagement: {
+            name: {
+              contains: filter.search,
+              mode: 'insensitive',
+            },
+          },
+        }),
+        deletedAt: null,
+      },
+      orderBy: {
+        id: 'asc',
+      },
+      take: filter?.take ?? 20,
+    });
   }
 }
