@@ -141,4 +141,133 @@ describe('Project Organization', () => {
       ).toBeTruthy();
     });
   });
+
+  describe('Query', () => {
+    it('gets organization', async () => {
+      const created = await createProjectOrganization({ client });
+      const organization = await client.chain.query
+        .getProjectOrganizationById({ id: created.id })
+        .get({
+          id: true,
+          name: true,
+        });
+
+      expect(organization.id).toEqual(created.id);
+      expect(organization.name).toEqual(created.name);
+    });
+
+    it('throws error when get by wrong id', () => {
+      expect(
+        client.chain.query
+          .getProjectOrganizationById({
+            id: `WRONG_ORGANIZATION_ID_${nanoid()}`,
+          })
+          .get({
+            id: true,
+            name: true,
+          })
+      ).rejects.toBeTruthy();
+    });
+
+    it('throws error when get by deleted organization', async () => {
+      const created = await createProjectOrganization({ client });
+      await deleteProjectOrganization({ client, id: created.id });
+      expect(
+        client.chain.query
+          .getProjectOrganizationById({
+            id: created.id,
+          })
+          .get({
+            id: true,
+            name: true,
+          })
+      ).rejects.toBeTruthy();
+    });
+
+    it('returns organizations', async () => {
+      await Promise.all([
+        createProjectOrganization({ client }),
+        createProjectOrganization({ client }),
+      ]);
+      const organizations = await client.chain.query
+        .getProjectOrganizations({})
+        .get({ id: true, name: true, active: true });
+
+      expect(organizations.length).toBeGreaterThanOrEqual(2);
+    });
+
+    it('returns organizations with limit', async () => {
+      await Promise.all([
+        createProjectOrganization({ client }),
+        createProjectOrganization({ client }),
+      ]);
+      const organizations = await client.chain.query
+        .getProjectOrganizations({ filter: { take: 1 } })
+        .get({ id: true, name: true, active: true });
+      expect(organizations).toHaveLength(1);
+    });
+
+    it('returns organizations with contain search text', async () => {
+      await Promise.all([
+        createProjectOrganization({
+          client,
+          customOrganization: `SEARCH_TEXT_ORGANIZATION_${nanoid()}`,
+        }),
+        createProjectOrganization({
+          client,
+          customOrganization: `SEARCH_TEXT_ORGANIZATION_${nanoid()}`,
+        }),
+      ]);
+
+      const organizations = await client.chain.query
+        .getProjectOrganizations({
+          filter: { search: 'search_text_organization' },
+        })
+        .get({ id: true, name: true });
+      expect(
+        organizations.every((permision) =>
+          permision.name.includes('SEARCH_TEXT_ORGANIZATION')
+        )
+      ).toBeTruthy();
+    });
+
+    it('returns organizations with contain search text with limit', async () => {
+      await Promise.all([
+        createProjectOrganization({
+          client,
+          customOrganization: `SEARCH_TEXT_ORGANIZATION_LIMIT_${nanoid()}`,
+        }),
+        createProjectOrganization({
+          client,
+          customOrganization: `SEARCH_TEXT_ORGANIZATION_LIMIT_${nanoid()}`,
+        }),
+      ]);
+
+      const organizations = await client.chain.query
+        .getProjectOrganizations({
+          filter: { search: 'search_text_organization_limit', take: 1 },
+        })
+        .get({ id: true, name: true });
+      expect(organizations).toHaveLength(1);
+      expect(
+        organizations.every((permision) =>
+          permision.name.includes('SEARCH_TEXT_ORGANIZATION')
+        )
+      ).toBeTruthy();
+    });
+
+    it('returns permissiosn with cursor', async () => {
+      const [cursor] = await Promise.all([
+        createProjectOrganization({ client }),
+        createProjectOrganization({ client }),
+      ]);
+      const organizations = await client.chain.query
+        .getProjectOrganizations({
+          filter: { cursor: cursor.id },
+        })
+        .get({ id: true, name: true });
+
+      expect(organizations.every((p) => p.id !== cursor.id)).toBeTruthy();
+    });
+  });
 });
