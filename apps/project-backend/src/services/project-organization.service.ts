@@ -132,6 +132,16 @@ export class ProjectOrganizationService extends Repository<IAppContext> {
     return projectOrganization;
   }
 
+  async findByIds(ids: string[]) {
+    return this.db.projectOrganization.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    });
+  }
+
   findManyByFilter(filter: ProjectOrganizationFilterInput) {
     return this.db.projectOrganization.findMany({
       ...(filter?.cursor && { skip: 1 }),

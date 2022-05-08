@@ -13,6 +13,16 @@ export const typeDefs = gql`
     active: Boolean!
   }
 
+  type OrganizationKeyManagement
+    @key(selectionSet: "{ projectOrganizationId }") {
+    projectOrganizationId: ID!
+    projectOrganization: ProjectOrganization
+  }
+
+  input OrganizationKeyManagementKey {
+    projectOrganizationId: ID!
+  }
+
   input CreateProjectOrganizationInput {
     name: String!
     active: Boolean
@@ -49,5 +59,9 @@ export const typeDefs = gql`
     getProjectOrganizations(
       filter: ProjectOrganizationFilterInput
     ): [ProjectOrganization!]!
+
+    _projectOrganizationKeyManagement(
+      keys: [OrganizationKeyManagementKey!]!
+    ): [OrganizationKeyManagement!]! @merge(keyArg: "keys")
   }
 `;
