@@ -5,6 +5,7 @@ import { projectRoleDataLoader } from './dataloaders/project-role.dataloader';
 import { ProjectOrganizationService } from './services/project-organization.service';
 import { projectDataLoader } from './dataloaders/project.dataloader';
 import { ProjectRoleUserService } from './services/project-role-user.service';
+import { OrganizationUserService } from './services/organization-user.service';
 
 export interface IGraphqlContext {
   project: ProjectService;
@@ -12,6 +13,7 @@ export interface IGraphqlContext {
   projectRolePermission: ProjectRolePermissionService;
   projectOrganization: ProjectOrganizationService;
   projectRoleUser: ProjectRoleUserService;
+  organizationUser: OrganizationUserService;
   projectRoleDataLoader: typeof projectRoleDataLoader;
   projectDataLoader: typeof projectDataLoader;
 }

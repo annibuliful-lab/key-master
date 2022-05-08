@@ -10,6 +10,7 @@ import { ProjectOrganizationService } from './services/project-organization.serv
 import { IGraphqlContext } from './context';
 import { projectDataLoader } from './dataloaders/project.dataloader';
 import { ProjectRoleUserService } from './services/project-role-user.service';
+import { OrganizationUserService } from './services/organization-user.service';
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ createServer({
       projectRolePermission: new ProjectRolePermissionService(context),
       projectOrganization: new ProjectOrganizationService(context),
       projectRoleUser: new ProjectRoleUserService(context),
+      organizationUser: new OrganizationUserService(context),
       projectRoleDataLoader,
       projectDataLoader,
     };
