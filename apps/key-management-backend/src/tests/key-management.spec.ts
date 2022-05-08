@@ -56,5 +56,44 @@ describe('Key Management', () => {
           })
       ).rejects.toBeTruthy();
     });
+
+    it('updates name with correct id', async () => {
+      const createdKey = await createKeyManagement({ client });
+      const newName = `MOCK_NEW_NAME_${nanoid()}`;
+
+      const updated = await client.chain.mutation
+        .updateKeyManagement({
+          id: createdKey.id,
+          input: {
+            pin: PIN_SECRET,
+            name: newName,
+          },
+        })
+        .get({
+          id: true,
+          name: true,
+        });
+
+      expect(updated.id).toEqual(createdKey.id);
+      expect(updated.name).toEqual(newName);
+    });
+
+    it('throws error when update with correct id but wrong pin', async () => {
+      const createdKey = await createKeyManagement({ client });
+      expect(
+        client.chain.mutation
+          .updateKeyManagement({
+            id: createdKey.id,
+            input: {
+              pin: 'WRONG_PIN_SECRT',
+              name: 'NEW_NAME',
+            },
+          })
+          .get({
+            id: true,
+            name: true,
+          })
+      ).rejects.toBeTruthy();
+    });
   });
 });
