@@ -23,6 +23,7 @@ export async function createOrganizationUser({
     })
     .get({
       organizationId: true,
+      id: true,
       userId: true,
     });
 }
