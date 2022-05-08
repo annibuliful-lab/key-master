@@ -64,6 +64,7 @@ export class OrganizationKeyManagementService extends Repository<IAppContext> {
   async update(id: string, { active }: UpdateOrganizationKeyManagementInput) {
     const organizationKeyManagement =
       await this.db.organizationKeyManagement.findFirst({
+        select: { id: true },
         where: {
           id,
           deletedAt: null,

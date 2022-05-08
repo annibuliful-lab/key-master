@@ -1,6 +1,7 @@
 import {
   Client,
   createKeyManagement,
+  createOrganizationKeyManagement,
   createProjectOrganization,
   projectOwnerAClient,
 } from '@key-master/test';
@@ -69,6 +70,33 @@ describe('Organization Key Management', () => {
             id: true,
             projectOrganizationId: true,
           })
+      ).rejects.toBeTruthy();
+    });
+
+    it('updates an existing org key management', async () => {
+      const createdOrgKey = await createOrganizationKeyManagement({ client });
+      expect(
+        client.chain.mutation
+          .updateOrganizationKeyManagement({
+            id: createdOrgKey.id,
+            input: {
+              active: false,
+            },
+          })
+          .active.get()
+      ).toBeFalsy();
+    });
+
+    it('throws error when update wrong id', async () => {
+      expect(
+        client.chain.mutation
+          .updateOrganizationKeyManagement({
+            id: `MOCK_WRONG_ORG_KEY_ID_${nanoid()}`,
+            input: {
+              active: false,
+            },
+          })
+          .active.get()
       ).rejects.toBeTruthy();
     });
   });

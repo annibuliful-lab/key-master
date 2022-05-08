@@ -6,3 +6,4 @@ export * from './user';
 export * from './project-role-user';
 export * from './organization-user';
 export * from './key-management';
+export * from './organization-key-management';
