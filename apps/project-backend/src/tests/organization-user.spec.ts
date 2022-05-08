@@ -161,8 +161,18 @@ describe('Organization User', () => {
         .getOrganizationUserById({
           id: organizationUser.id,
         })
-        .get({ organizationId: true, userId: true, id: true });
+        .get({
+          organizationId: true,
+          userId: true,
+          id: true,
+          organization: {
+            id: true,
+            projectId: true,
+          },
+        });
 
+      expect(result.organization.id).toEqual(organizationUser.organizationId);
+      expect(result.organization.projectId).toBeDefined();
       expect(result.organizationId).toEqual(organizationUser.organizationId);
       expect(result.userId).toEqual(organizationUser.userId);
       expect(result.id).toEqual(organizationUser.id);

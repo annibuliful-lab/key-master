@@ -8,6 +8,7 @@ export const typeDefs = gql`
   type OrganizationUser {
     id: ID!
     organizationId: ID!
+    organization: ProjectOrganization
     userId: ID!
     active: Boolean!
   }

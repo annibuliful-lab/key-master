@@ -9,6 +9,7 @@ import { ProjectRolePermissionService } from './services/project-role-permission
 import { ProjectOrganizationService } from './services/project-organization.service';
 import { IGraphqlContext } from './context';
 import { projectDataLoader } from './dataloaders/project.dataloader';
+import { projectOrganizationDataLoader } from './dataloaders/project-organization.dataloader';
 import { ProjectRoleUserService } from './services/project-role-user.service';
 import { OrganizationUserService } from './services/organization-user.service';
 
@@ -29,6 +30,7 @@ createServer({
       organizationUser: new OrganizationUserService(context),
       projectRoleDataLoader,
       projectDataLoader,
+      projectOrganizationDataLoader,
     };
   },
 });
