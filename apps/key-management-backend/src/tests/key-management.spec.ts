@@ -245,5 +245,35 @@ describe('Key Management', () => {
           .get()
       ).rejects.toBeTruthy();
     });
+
+    it('gets by ids', async () => {
+      const masterKey = `MASTER_KEY_${nanoid()}`;
+      const ids = (
+        await Promise.all([
+          createKeyManagement({
+            client,
+            customMasterKey: masterKey,
+          }),
+          createKeyManagement({
+            client,
+            customMasterKey: masterKey,
+          }),
+          createKeyManagement({
+            client,
+            customMasterKey: masterKey,
+          }),
+        ])
+      ).map((id) => id.id);
+
+      expect(
+        (
+          await client.chain.query
+            .getKeyManagementByIds({
+              ids,
+            })
+            .get({ id: true })
+        ).every(({ id }) => ids.includes(id))
+      ).toBeTruthy();
+    });
   });
 });
