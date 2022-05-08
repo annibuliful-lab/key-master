@@ -13,7 +13,7 @@ export class UserService extends Repository<IAppContext> {
     return this.db.user.findMany({
       where: {
         id: {
-          in: ids,
+          in: [...new Set(ids)],
         },
       },
     });

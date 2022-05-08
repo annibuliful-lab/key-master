@@ -4,7 +4,7 @@ import DataLoader from 'dataloader';
 
 export const projectDataLoader = new DataLoader(async (ids: string[]) => {
   const projects = await prismaClient.project.findMany({
-    where: { id: { in: ids } },
+    where: { id: { in: [...new Set(ids)] } },
   });
 
   return mapDataWithIdsByCustomFieldId({
