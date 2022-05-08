@@ -6,6 +6,7 @@ import {
 } from '@key-master/graphql';
 import {
   CreateProjectOrganizationInput,
+  ProjectOrganizationFilterInput,
   UpdateProjectOrganizationInput,
 } from '../codegen-generated';
 
@@ -129,5 +130,29 @@ export class ProjectOrganizationService extends Repository<IAppContext> {
     }
 
     return projectOrganization;
+  }
+
+  findManyByFilter(filter: ProjectOrganizationFilterInput) {
+    return this.db.projectOrganization.findMany({
+      ...(filter?.cursor && { skip: 1 }),
+      ...(filter?.cursor && {
+        cursor: {
+          id: filter?.cursor,
+        },
+      }),
+      where: {
+        ...(filter?.search && {
+          permission: {
+            contains: filter?.search,
+            mode: 'insensitive',
+          },
+        }),
+        deletedAt: null,
+      },
+      orderBy: {
+        id: 'asc',
+      },
+      take: filter?.take ?? 20,
+    });
   }
 }
