@@ -8,6 +8,7 @@ export const typeDefs = gql`
     id: ID!
     projectOrganizationId: ID!
     keyManagementId: ID!
+    keyManagement: KeyManagement
     active: Boolean!
   }
 
