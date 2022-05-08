@@ -136,7 +136,7 @@ export class ProjectOrganizationService extends Repository<IAppContext> {
     return this.db.projectOrganization.findMany({
       where: {
         id: {
-          in: ids,
+          in: [...new Set(ids)],
         },
       },
     });
