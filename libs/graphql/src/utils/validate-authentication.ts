@@ -178,3 +178,16 @@ const getUserPermissions = async ({
     ),
   };
 };
+
+export const getAllPermissions = async () => {
+  return (
+    await prismaClient.permission.findMany({
+      select: {
+        permission: true,
+      },
+      where: {
+        deletedAt: null,
+      },
+    })
+  ).map((p) => p.permission);
+};
