@@ -114,4 +114,20 @@ export class ProjectOrganizationService extends Repository<IAppContext> {
 
     return { success: true };
   }
+
+  async findById(id: string) {
+    const projectOrganization = await this.db.projectOrganization.findFirst({
+      where: {
+        deletedAt: null,
+        id,
+        projectId: this.context.projectId,
+      },
+    });
+
+    if (!projectOrganization) {
+      throw new ResourceNotFound(`${id} not found`);
+    }
+
+    return projectOrganization;
+  }
 }
