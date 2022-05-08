@@ -8,6 +8,7 @@ import {
 export class ProjectRoleUserService extends Repository<IAppContext> {
   async create(input: CreateProjectRoleUserInput) {
     const user = await this.db.user.findFirst({
+      select: { id: true },
       where: {
         id: input.userId,
         deletedAt: null,
@@ -19,6 +20,7 @@ export class ProjectRoleUserService extends Repository<IAppContext> {
     }
 
     const role = await this.db.projectRole.findFirst({
+      select: { id: true },
       where: {
         deletedAt: null,
         projectId: this.context.projectId,
@@ -79,6 +81,7 @@ export class ProjectRoleUserService extends Repository<IAppContext> {
 
   async update(id: string, input: UpdateProjectRoleUserInput) {
     const projectRoleUser = await this.db.projectRoleUser.findFirst({
+      select: { id: true },
       where: {
         id,
         deletedAt: null,
@@ -99,5 +102,30 @@ export class ProjectRoleUserService extends Repository<IAppContext> {
         updatedBy: this.context.userId,
       },
     });
+  }
+
+  async delete(id: string) {
+    const projectRoleUser = await this.db.projectRoleUser.findFirst({
+      select: { id: true },
+      where: {
+        id,
+        deletedAt: null,
+        projectId: this.context.projectId,
+      },
+    });
+
+    if (!projectRoleUser) {
+      throw new ResourceNotFound(`delete project role user id ${id} not found`);
+    }
+    await this.db.projectRoleUser.update({
+      where: {
+        id,
+      },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
+
+    return { success: true };
   }
 }
