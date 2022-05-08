@@ -1,6 +1,9 @@
 import { Repository } from '@key-master/db';
 import { IAppContext, ResourceNotFound } from '@key-master/graphql';
-import { CreateProjectRoleUserInput } from '../codegen-generated';
+import {
+  CreateProjectRoleUserInput,
+  UpdateProjectRoleUserInput,
+} from '../codegen-generated';
 
 export class ProjectRoleUserService extends Repository<IAppContext> {
   async create(input: CreateProjectRoleUserInput) {
@@ -71,6 +74,30 @@ export class ProjectRoleUserService extends Repository<IAppContext> {
           updatedBy: this.context.userId,
         },
       });
+    });
+  }
+
+  async update(id: string, input: UpdateProjectRoleUserInput) {
+    const projectRoleUser = await this.db.projectRoleUser.findFirst({
+      where: {
+        id,
+        deletedAt: null,
+        projectId: this.context.projectId,
+      },
+    });
+
+    if (!projectRoleUser) {
+      throw new ResourceNotFound(`update project role user id ${id} not found`);
+    }
+
+    return this.db.projectRoleUser.update({
+      where: {
+        id,
+      },
+      data: {
+        ...input,
+        updatedBy: this.context.userId,
+      },
     });
   }
 }
