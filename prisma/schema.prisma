@@ -138,6 +138,7 @@ model OrganizationKeyManagement {
   projectOrganization   ProjectOrganization @relation(fields: [projectOrganizationId], references: [id])
   keyManagementId       String
   keyManagement         KeyManagment        @relation(fields: [keyManagementId], references: [id], onDelete: Cascade)
+  active                Boolean             @default(true)
   createdBy             String
   updatedBy             String
   createdAt             DateTime            @default(now())
