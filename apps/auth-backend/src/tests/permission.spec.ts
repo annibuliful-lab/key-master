@@ -112,7 +112,7 @@ describe('Permission', () => {
       ).toBeTruthy();
     });
 
-    it('returns permissions that contain search text and limie', async () => {
+    it('returns permissions that contain search text and limit', async () => {
       await Promise.all([
         createPermission(`SEARCH_TEXT_WITH_LIMIT_${nanoid()}`),
         createPermission(`SEARCH_TEXT_WITH_LIMIT_${nanoid()}`),
