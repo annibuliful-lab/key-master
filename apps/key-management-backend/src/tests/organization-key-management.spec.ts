@@ -106,8 +106,18 @@ describe('Organization Key Management', () => {
       const createdOrgKey = await createOrganizationKeyManagement({ client });
       const result = await client.chain.query
         .getOrganizationKeyManagementById({ id: createdOrgKey.id })
-        .id.get();
-      expect(result).toEqual(createdOrgKey.id);
+        .get({
+          id: true,
+          projectOrganization: {
+            id: true,
+            name: true,
+          },
+        });
+      expect(result.projectOrganization.id).toEqual(
+        createdOrgKey.projectOrganizationId
+      );
+      expect(result.projectOrganization.name).toBeDefined();
+      expect(result.id).toEqual(createdOrgKey.id);
     });
 
     it('throws error when get by wrong id', () => {
@@ -164,9 +174,15 @@ describe('Organization Key Management', () => {
           id: true,
           keyManagementId: true,
           projectOrganizationId: true,
+          projectOrganization: {
+            id: true,
+          },
           active: true,
         });
 
+      expect(
+        orgKeys.every((org) => org.projectOrganization.id === orgId)
+      ).toBeTruthy();
       expect(orgKeys).toHaveLength(1);
     });
   });
