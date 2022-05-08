@@ -88,4 +88,30 @@ export class ProjectOrganizationService extends Repository<IAppContext> {
       data: { ...input, updatedBy: this.context.userId },
     });
   }
+
+  async delete(id: string) {
+    const projectOrganization = await this.db.projectOrganization.findFirst({
+      select: { id: true },
+      where: {
+        deletedAt: null,
+        id,
+        projectId: this.context.projectId,
+      },
+    });
+
+    if (!projectOrganization) {
+      throw new ResourceNotFound(`delete organization id ${id} not found`);
+    }
+
+    await this.db.projectOrganization.update({
+      where: {
+        id,
+      },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
+
+    return { success: true };
+  }
 }
