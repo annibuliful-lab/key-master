@@ -1,5 +1,7 @@
 import { Repository } from '@key-master/db';
 import { IAppContext, ResourceNotFound } from '@key-master/graphql';
+import { ForbiddenError } from 'apollo-server-errors';
+import { verify } from 'argon2';
 import {
   CreateOrganizationKeyManagementInput,
   UpdateOrganizationKeyManagementInput,
@@ -84,5 +86,49 @@ export class OrganizationKeyManagementService extends Repository<IAppContext> {
         updatedBy: this.context.userId,
       },
     });
+  }
+
+  async delete(id: string, pin: string) {
+    const organizationKeyManagement =
+      await this.db.organizationKeyManagement.findFirst({
+        select: { id: true },
+        where: {
+          id,
+          deletedAt: null,
+        },
+      });
+
+    if (!organizationKeyManagement) {
+      throw new ResourceNotFound(`id ${id} not found`);
+    }
+
+    const keyManagement = await this.db.keyManagment.findUnique({
+      select: { masterKey: true, pin: true },
+      where: {
+        id,
+      },
+    });
+
+    if (!keyManagement) {
+      throw new ResourceNotFound(`id ${id} not found`);
+    }
+
+    const isCorrectPin = await verify(keyManagement.pin, pin);
+
+    if (!isCorrectPin) {
+      throw new ForbiddenError('Pin mismatch');
+    }
+
+    await this.db.organizationKeyManagement.update({
+      where: {
+        id,
+      },
+      data: {
+        deletedAt: new Date(),
+        updatedBy: this.context.userId,
+      },
+    });
+
+    return { success: true };
   }
 }
