@@ -165,6 +165,7 @@ export class OrganizationKeyManagementService extends Repository<IAppContext> {
               contains: filter.search,
               mode: 'insensitive',
             },
+            deletedAt: null,
           },
         }),
         deletedAt: null,

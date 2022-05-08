@@ -84,7 +84,7 @@ describe('Organization Key Management', () => {
             },
           })
           .active.get()
-      ).toBeFalsy();
+      ).resolves.toBeFalsy();
     });
 
     it('throws error when update wrong id', async () => {
@@ -99,5 +99,108 @@ describe('Organization Key Management', () => {
           .active.get()
       ).rejects.toBeTruthy();
     });
+  });
+
+  describe('Query', () => {
+    it('gets by id', async () => {
+      const createdOrgKey = await createOrganizationKeyManagement({ client });
+      const result = await client.chain.query
+        .getOrganizationKeyManagementById({ id: createdOrgKey.id })
+        .id.get();
+      expect(result).toEqual(createdOrgKey.id);
+    });
+
+    it('throws error when get by wrong id', () => {
+      expect(
+        client.chain.query
+          .getOrganizationKeyManagementById({
+            id: `MOCK_WRONG_ORG_KEY_ID_${nanoid()}`,
+          })
+          .id.get()
+      ).rejects.toBeTruthy();
+    });
+
+    it('returns organization keys', async () => {
+      const orgId = (await createProjectOrganization({ client })).id;
+      const [createdOrgKey] = await Promise.all([
+        createOrganizationKeyManagement({ client, orgId }),
+        createOrganizationKeyManagement({ client, orgId }),
+        createOrganizationKeyManagement({ client, orgId }),
+      ]);
+
+      const orgKeys = await client.chain.query
+        .getOrganizationKeyManagements({
+          filter: {
+            organizationId: createdOrgKey.projectOrganizationId,
+          },
+        })
+        .get({
+          id: true,
+          keyManagementId: true,
+          projectOrganizationId: true,
+          active: true,
+        });
+
+      expect(orgKeys).toHaveLength(3);
+    });
+
+    it('returns organization keys with limit', async () => {
+      const orgId = (await createProjectOrganization({ client })).id;
+
+      const [createdOrgKey] = await Promise.all([
+        createOrganizationKeyManagement({ client, orgId }),
+        createOrganizationKeyManagement({ client, orgId }),
+        createOrganizationKeyManagement({ client, orgId }),
+      ]);
+
+      const orgKeys = await client.chain.query
+        .getOrganizationKeyManagements({
+          filter: {
+            take: 1,
+            organizationId: createdOrgKey.projectOrganizationId,
+          },
+        })
+        .get({
+          id: true,
+          keyManagementId: true,
+          projectOrganizationId: true,
+          active: true,
+        });
+
+      expect(orgKeys).toHaveLength(1);
+    });
+  });
+
+  it('returns by seach key name', async () => {
+    const orgId = (await createProjectOrganization({ client })).id;
+
+    const [createdOrgKey] = await Promise.all([
+      createOrganizationKeyManagement({
+        client,
+        orgId,
+        customKeyname: `SEARCH_ORG_KEY_${nanoid()}`,
+      }),
+      createOrganizationKeyManagement({
+        client,
+        orgId,
+        customKeyname: `SEARCH_O_KEY_${nanoid()}`,
+      }),
+    ]);
+
+    const orgKeys = await client.chain.query
+      .getOrganizationKeyManagements({
+        filter: {
+          organizationId: createdOrgKey.projectOrganizationId,
+          search: 'search_org_key',
+        },
+      })
+      .get({
+        id: true,
+        keyManagementId: true,
+        projectOrganizationId: true,
+        active: true,
+      });
+
+    expect(orgKeys).toHaveLength(1);
   });
 });
