@@ -131,4 +131,20 @@ export class OrganizationKeyManagementService extends Repository<IAppContext> {
 
     return { success: true };
   }
+
+  async findById(id: string) {
+    const organizationKeyManagement =
+      await this.db.organizationKeyManagement.findFirst({
+        where: {
+          id,
+          deletedAt: null,
+        },
+      });
+
+    if (!organizationKeyManagement) {
+      throw new ResourceNotFound(`id ${id} not found`);
+    }
+
+    return organizationKeyManagement;
+  }
 }
