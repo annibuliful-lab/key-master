@@ -3,7 +3,7 @@ import { config } from 'dotenv';
 
 config();
 
-const shouldLog = process.env.LOG_PRISMA_CLIENT;
+const shouldLog = process.env.LOG_PRISMA_CLIENT === 'true';
 
 export const prismaClient = new PrismaClient(
   shouldLog
