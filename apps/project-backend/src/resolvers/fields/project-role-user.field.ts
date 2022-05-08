@@ -6,5 +6,8 @@ export const resolvers: Resolvers<IGraphqlContext> = {
     project: (parent, _args, ctx) => {
       return ctx.projectDataLoader.load(parent.projectId);
     },
+    role: (parent, _args, ctx) => {
+      return ctx.projectRoleDataLoader.load(parent.roleId);
+    },
   },
 };
