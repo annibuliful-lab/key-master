@@ -49,5 +49,6 @@ export const typeDefs = gql`
 
   type Query {
     getKeyManagementById(id: ID!): KeyManagement!
+    getKeyManagementByIds(ids: [ID!]!): [KeyManagement!]!
   }
 `;

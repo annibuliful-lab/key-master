@@ -151,6 +151,19 @@ export class KeyManagementService extends Repository<IAppContext> {
     return keyManagement;
   }
 
+  findByIds(ids: string[]) {
+    return this.db.keyManagment.findMany({
+      select: { id: true, name: true, projectId: true, pin: true },
+      where: {
+        id: {
+          in: [...new Set(ids)],
+        },
+        projectId: this.context.projectId,
+        deletedAt: null,
+      },
+    });
+  }
+
   async getMasterKey(id: string, pin: string) {
     const keyManagement = await this.db.keyManagment.findUnique({
       select: { masterKey: true, pin: true },
