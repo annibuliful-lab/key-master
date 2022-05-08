@@ -256,7 +256,7 @@ describe('Project Organization', () => {
       ).toBeTruthy();
     });
 
-    it('returns permissiosn with cursor', async () => {
+    it('returns organizations with cursor', async () => {
       const [cursor] = await Promise.all([
         createProjectOrganization({ client }),
         createProjectOrganization({ client }),
@@ -268,6 +268,22 @@ describe('Project Organization', () => {
         .get({ id: true, name: true });
 
       expect(organizations.every((p) => p.id !== cursor.id)).toBeTruthy();
+    });
+
+    it('returns an organization with project field', async () => {
+      const created = await createProjectOrganization({ client });
+      const organization = await client.chain.query
+        .getProjectOrganizationById({
+          id: created.id,
+        })
+        .get({
+          project: {
+            id: true,
+            name: true,
+          },
+        });
+      expect(organization.project.id).toEqual('TEST_PROJECT_ID');
+      expect(organization.project.name).toEqual('test-project');
     });
   });
 });
