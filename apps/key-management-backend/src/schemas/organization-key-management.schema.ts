@@ -13,6 +13,7 @@ export const typeDefs = gql`
   input CreateOrganizationKeyManagementInput {
     projectOrganizationId: ID!
     keyManagementId: ID!
+    active: Boolean
   }
 
   input UpdateOrganizationKeyManagementInput {
