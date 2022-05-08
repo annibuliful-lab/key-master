@@ -29,7 +29,7 @@ export class ProjectOrganizationService extends Repository<IAppContext> {
       },
     });
 
-    if (!projectOrganization) {
+    if (projectOrganization) {
       throw new DuplicateResouce(
         `create organization duplicated name ${input.name}`
       );

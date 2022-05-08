@@ -6,6 +6,7 @@ import { ProjectService } from './services/project.service';
 import { ProjectRoleService } from './services/project-role.service';
 import { projectRoleDataLoader } from './dataloaders/project-role.dataloader';
 import { ProjectRolePermissionService } from './services/project-role-permission.service';
+import { ProjectOrganizationService } from './services/project-organization.service';
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ createServer({
       project: new ProjectService(context),
       projectRole: new ProjectRoleService(context),
       projectRolePermission: new ProjectRolePermissionService(context),
+      projectOrganization: new ProjectOrganizationService(context),
       projectRoleDataLoader,
     };
   },
