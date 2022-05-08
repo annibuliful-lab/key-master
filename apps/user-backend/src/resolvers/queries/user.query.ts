@@ -43,4 +43,18 @@ export const query: Resolvers<IGraphqlContext>['Query'] = {
       };
     });
   },
+  _organizationUserProfile: async (_parent, { keys }, ctx) => {
+    const ids = keys.map((key) => key.userId);
+    const users = await ctx.user.findByIds(ids);
+
+    const groupedUsers = keyBy(users, (user) => user.id);
+
+    return ids.map((id) => {
+      const user = groupedUsers[id];
+      return {
+        userId: id,
+        user,
+      };
+    });
+  },
 };

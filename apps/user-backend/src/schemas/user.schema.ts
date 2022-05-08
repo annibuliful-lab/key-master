@@ -20,6 +20,15 @@ export const typeDefs = gql`
     user: User
   }
 
+  type OrganizationUser @key(selectionSet: "{ userId }") {
+    userId: ID!
+    user: User
+  }
+
+  input OrganizationUserKey {
+    userId: ID!
+  }
+
   input ProjectRoleUserKey {
     userId: ID!
   }
@@ -40,6 +49,10 @@ export const typeDefs = gql`
 
     _projectRoleUserProfile(keys: [ProjectRoleUserKey!]!): [ProjectRoleUser]!
       @merge(keyArg: "keys")
+
+    _organizationUserProfile(
+      keys: [OrganizationUserKey!]!
+    ): [OrganizationUser!]! @merge(keyArg: "keys")
   }
 
   type Mutation {
