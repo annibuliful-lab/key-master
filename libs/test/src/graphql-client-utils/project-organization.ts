@@ -20,3 +20,15 @@ export function createProjectOrganization({
     })
     .get({ id: true, name: true, active: true });
 }
+
+interface IDeleteProjectOrganizationParam {
+  client: Client;
+  id: string;
+}
+
+export function deleteProjectOrganization({
+  id,
+  client,
+}: IDeleteProjectOrganizationParam) {
+  return client.chain.mutation.deleteProjectOrganization({ id }).success.get();
+}

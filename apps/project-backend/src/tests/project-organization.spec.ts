@@ -5,6 +5,7 @@ import {
   projectOwnerAClient,
   createProject,
   deleteProject,
+  deleteProjectOrganization,
 } from '@key-master/test';
 import { nanoid } from 'nanoid';
 
@@ -114,6 +115,30 @@ describe('Project Organization', () => {
           })
           .get({ id: true, name: true, active: true })
       ).rejects.toBeTruthy();
+    });
+
+    it('throws error when update deleted organization', async () => {
+      const organization = await createProjectOrganization({ client });
+      await deleteProjectOrganization({ client, id: organization.id });
+      expect(
+        client.chain.mutation
+          .updateProjectOrganization({
+            id: organization.id,
+            input: {
+              active: false,
+            },
+          })
+          .get({ id: true, name: true, active: true })
+      ).rejects.toBeTruthy();
+    });
+
+    it('deletes an existing organization', async () => {
+      const organization = await createProjectOrganization({ client });
+      expect(
+        client.chain.mutation
+          .deleteProjectOrganization({ id: organization.id })
+          .success.get()
+      ).toBeTruthy();
     });
   });
 });
