@@ -133,4 +133,21 @@ export class KeyManagementService extends Repository<IAppContext> {
 
     return { success: true };
   }
+
+  async findById(id: string) {
+    const keyManagement = await this.db.keyManagment.findFirst({
+      select: { id: true, name: true, projectId: true },
+      where: {
+        id,
+        projectId: this.context.projectId,
+        deletedAt: null,
+      },
+    });
+
+    if (!keyManagement) {
+      throw new ResourceNotFound(`id ${id} not found`);
+    }
+
+    return keyManagement;
+  }
 }
