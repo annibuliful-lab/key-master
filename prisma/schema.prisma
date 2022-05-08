@@ -161,7 +161,7 @@ model KeyManagment {
   deletedAt                  DateTime?
   organizationKeyManagements OrganizationKeyManagement[]
 
-  @@unique([projectId, name])
+  @@index([projectId, name])
 }
 
 enum AuditType {
