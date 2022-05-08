@@ -142,7 +142,7 @@ export class ProjectOrganizationService extends Repository<IAppContext> {
       }),
       where: {
         ...(filter?.search && {
-          permission: {
+          name: {
             contains: filter?.search,
             mode: 'insensitive',
           },
