@@ -119,14 +119,28 @@ describe('Organization User', () => {
 
     it('deletes correct id', async () => {
       const organizationUser = await createOrganizationUser({ client });
+      const getBeforeDelete = await client.chain.query
+        .getOrganizationUserById({
+          id: organizationUser.id,
+        })
+        .get({ organizationId: true, userId: true, id: true });
+
+      const result = await client.chain.mutation
+        .deleteOrganizationUser({
+          id: organizationUser.id,
+        })
+        .success.get();
 
       expect(
-        client.chain.mutation
-          .deleteOrganizationUser({
+        client.chain.query
+          .getOrganizationUserById({
             id: organizationUser.id,
           })
-          .success.get()
-      ).resolves.toBeTruthy();
+          .get({ organizationId: true, userId: true, id: true })
+      ).rejects.toBeTruthy();
+
+      expect(result).toBeTruthy();
+      expect(organizationUser.id).toEqual(getBeforeDelete.id);
     });
 
     it('throws error when delete wrong id', async () => {
@@ -137,6 +151,78 @@ describe('Organization User', () => {
           })
           .success.get()
       ).rejects.toBeTruthy();
+    });
+  });
+
+  describe('Query', () => {
+    it('gets by id', async () => {
+      const organizationUser = await createOrganizationUser({ client });
+      const result = await client.chain.query
+        .getOrganizationUserById({
+          id: organizationUser.id,
+        })
+        .get({ organizationId: true, userId: true, id: true });
+
+      expect(result.organizationId).toEqual(organizationUser.organizationId);
+      expect(result.userId).toEqual(organizationUser.userId);
+      expect(result.id).toEqual(organizationUser.id);
+    });
+
+    it('throws error by wrong id', () => {
+      expect(
+        client.chain.query
+          .getOrganizationUserById({
+            id: `MOCK_WRONG_ORG_USER_${nanoid()}`,
+          })
+          .get({ organizationId: true, userId: true, id: true })
+      ).rejects.toBeTruthy();
+    });
+
+    it('returns organization users', async () => {
+      const projectOrganization = await createProjectOrganization({ client });
+
+      await Promise.all([
+        createOrganizationUser({
+          client,
+          customOrganizationId: projectOrganization.id,
+        }),
+        createOrganizationUser({
+          client,
+          customOrganizationId: projectOrganization.id,
+        }),
+      ]);
+      const organizationUsers = await client.chain.query
+        .getOrganizationUsers({
+          filter: {
+            organizationId: projectOrganization.id,
+          },
+        })
+        .get({ id: true, organizationId: true, userId: true });
+      expect(organizationUsers.length).toBeGreaterThanOrEqual(2);
+    });
+
+    it('returns organization users with limit', async () => {
+      const projectOrganization = await createProjectOrganization({ client });
+
+      await Promise.all([
+        createOrganizationUser({
+          client,
+          customOrganizationId: projectOrganization.id,
+        }),
+        createOrganizationUser({
+          client,
+          customOrganizationId: projectOrganization.id,
+        }),
+      ]);
+      const organizationUsers = await client.chain.query
+        .getOrganizationUsers({
+          filter: {
+            organizationId: projectOrganization.id,
+            take: 1,
+          },
+        })
+        .get({ id: true, organizationId: true, userId: true });
+      expect(organizationUsers.length).toEqual(1);
     });
   });
 });

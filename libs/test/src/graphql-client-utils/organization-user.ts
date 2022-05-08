@@ -6,9 +6,11 @@ interface ICreateOrganizationUserParam {
   client: Client;
   customRoleId?: string;
   customFullname?: string;
+  customOrganizationId?: string;
 }
 export async function createOrganizationUser({
   client,
+  customOrganizationId,
   ...args
 }: ICreateOrganizationUserParam) {
   const organization = await createProjectOrganization({ client });
@@ -17,7 +19,9 @@ export async function createOrganizationUser({
   return client.chain.mutation
     .createOrganizationUser({
       input: {
-        organizationId: organization.id,
+        organizationId: customOrganizationId
+          ? customOrganizationId
+          : organization.id,
         userId: projectRoleUser.userId,
       },
     })

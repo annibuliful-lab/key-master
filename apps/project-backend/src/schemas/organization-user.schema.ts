@@ -26,6 +26,7 @@ export const typeDefs = gql`
     search: String
     cursor: ID
     take: Int
+    organizationId: ID!
   }
 
   type Mutation {

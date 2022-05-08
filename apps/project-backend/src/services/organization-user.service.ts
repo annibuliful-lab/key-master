@@ -1,7 +1,9 @@
 import { Repository } from '@key-master/db';
 import { IAppContext, ResourceNotFound } from '@key-master/graphql';
+
 import {
   CreateOrganizationUserInput,
+  OrganizationUserFilterInput,
   UpdateOrganizationUserInput,
 } from '../codegen-generated';
 
@@ -87,5 +89,47 @@ export class OrganizationUserService extends Repository<IAppContext> {
     });
 
     return { success: true };
+  }
+
+  async findById(id: string) {
+    const organizationUser = await this.db.organizationUser.findFirst({
+      where: {
+        id,
+        deletedAt: null,
+      },
+    });
+
+    if (!organizationUser) {
+      throw new ResourceNotFound(`id ${id} not found`);
+    }
+
+    return organizationUser;
+  }
+
+  findManyByFilter(filter: OrganizationUserFilterInput) {
+    return this.db.organizationUser.findMany({
+      ...(filter?.cursor && { skip: 1 }),
+      ...(filter?.cursor && {
+        cursor: {
+          id: filter?.cursor,
+        },
+      }),
+      where: {
+        organizationId: filter.organizationId,
+        ...(filter?.search && {
+          user: {
+            fullname: {
+              contains: filter?.search,
+              mode: 'insensitive',
+            },
+          },
+        }),
+        deletedAt: null,
+      },
+      orderBy: {
+        id: 'asc',
+      },
+      take: filter?.take ?? 20,
+    });
   }
 }
