@@ -56,7 +56,7 @@ export class KeyManagementService extends Repository<IAppContext> {
     const isCorrectPin = await verify(keyManagement.pin, input.pin);
 
     if (!isCorrectPin) {
-      throw new ForbiddenError('Unpermitted key');
+      throw new ForbiddenError('Pin mismatch');
     }
 
     return this.db.keyManagment.update({
@@ -87,7 +87,7 @@ export class KeyManagementService extends Repository<IAppContext> {
     const isCorrectPin = await verify(keyManagement.pin, input.oldPin);
 
     if (!isCorrectPin) {
-      throw new ForbiddenError('Unpermitted key');
+      throw new ForbiddenError('Pin mismatch');
     }
 
     return this.db.keyManagment.update({
@@ -118,7 +118,7 @@ export class KeyManagementService extends Repository<IAppContext> {
     const isCorrectPin = await verify(keyManagement.pin, pin);
 
     if (!isCorrectPin) {
-      throw new ForbiddenError('Unpermitted key');
+      throw new ForbiddenError('Pin mismatch');
     }
 
     await this.db.keyManagment.update({

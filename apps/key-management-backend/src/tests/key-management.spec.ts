@@ -131,5 +131,34 @@ describe('Key Management', () => {
           })
       ).rejects.toBeTruthy();
     });
+
+    it('deletes key', async () => {
+      const createdKey = await createKeyManagement({ client });
+
+      expect(
+        client.chain.mutation
+          .deleteKeyMangement({ id: createdKey.id, pin: PIN_SECRET })
+          .success.get()
+      ).resolves.toBeTruthy();
+    });
+
+    it('throws error when delete with wrong id', async () => {
+      expect(
+        client.chain.mutation
+          .deleteKeyMangement({
+            id: `WRONG_KEY_ID_${nanoid()}`,
+            pin: PIN_SECRET,
+          })
+          .success.get()
+      ).rejects.toBeTruthy();
+    });
+    it('throws error when delete with correct id but wrong pin', async () => {
+      const createdKey = await createKeyManagement({ client });
+      expect(
+        client.chain.mutation
+          .deleteKeyMangement({ id: createdKey.id, pin: `WRONG_PIN_SECRET` })
+          .success.get()
+      ).rejects.toBeTruthy();
+    });
   });
 });
