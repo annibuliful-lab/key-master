@@ -90,6 +90,8 @@ model ProjectRoleUser {
   projectId String
   project   Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
   active    Boolean     @default(true)
+  createdBy String
+  updatedBy String
   createdAt DateTime    @default(now())
   updatedAt DateTime    @default(now()) @updatedAt
   deletedAt DateTime?
