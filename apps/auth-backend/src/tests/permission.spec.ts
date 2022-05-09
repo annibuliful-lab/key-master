@@ -1,11 +1,15 @@
-import { Client, createPermission, graphqlClient } from '@key-master/test';
+import {
+  Client,
+  createPermission,
+  projectOwnerAClient,
+} from '@key-master/test';
 import { nanoid } from 'nanoid';
 
 describe('Permission', () => {
   let client: Client = null;
 
   beforeAll(() => {
-    client = graphqlClient;
+    client = projectOwnerAClient;
   });
 
   describe('Mutation', () => {

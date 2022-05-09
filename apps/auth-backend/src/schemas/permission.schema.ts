@@ -18,12 +18,30 @@ export const typeDefs = gql`
 
   type Mutation {
     createPermission(permission: String!): Permission!
+      @access(
+        conditions: { permission: "PERMISSION_WRITE", roleName: "KeyAdmin" }
+      )
+
     updatePermission(id: ID!, permission: String!): Permission!
+      @access(
+        conditions: { permission: "PERMISSION_WRITE", roleName: "KeyAdmin" }
+      )
+
     deletePermission(id: ID!): DeleteOperationResult!
+      @access(
+        conditions: { permission: "PERMISSION_WRITE", roleName: "KeyAdmin" }
+      )
   }
 
   type Query {
     getPermissionById(id: ID!): Permission!
+      @access(
+        conditions: { permission: "PERMISSION_READ", roleName: "KeyAdmin" }
+      )
+
     getPermissions(filter: PermissionFilterInput): [Permission!]!
+      @access(
+        conditions: { permission: "PERMISSION_READ", roleName: "KeyAdmin" }
+      )
   }
 `;

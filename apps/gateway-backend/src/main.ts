@@ -72,7 +72,10 @@ const main = async () => {
       const authorization = request.headers['authorization'];
       const allowTestSecret = request.headers['x-allow-test'] as string;
 
-      if (!authorization && allowTestSecret === process.env.SKIP_AUTH_SECRET) {
+      if (
+        authorization?.startsWith('TEST-AUTH') &&
+        allowTestSecret === process.env.SKIP_AUTH_SECRET
+      ) {
         const projectId = request.headers['x-project-id'] as string;
         const userId = request.headers['x-user-id'] as string;
 
@@ -80,7 +83,7 @@ const main = async () => {
           'x-user-id': userId,
           'x-project-id': projectId,
           'x-user-permissions': await getAllPermissions(),
-          'x-user-role': 'Test-User',
+          'x-user-role': 'KeyAdmin',
           authorization,
         };
       }
