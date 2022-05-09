@@ -19,6 +19,7 @@ const keyManagementA: KeyManagementType = {
   pin: 'MOCK_PIN_A',
   masterKey: 'MASTER_KEY_A',
   masterKeyIv: 'MOCK_IV_CIPHER_A',
+  secretHash: 'MOCK_SECRET_A',
   createdBy: testUserA.id,
   updatedBy: testUserA.id,
 };
@@ -30,6 +31,7 @@ const keyManagementB: KeyManagementType = {
   pin: 'MOCK_PIN_B',
   masterKey: 'MASTER_KEY_B',
   masterKeyIv: 'MOCK_IV_CIPHER_B',
+  secretHash: 'MOCK_SECRET_B',
   createdBy: testUserA.id,
   updatedBy: testUserA.id,
 };
