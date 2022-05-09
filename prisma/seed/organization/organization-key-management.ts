@@ -20,6 +20,7 @@ export const organizationKeyManagementA: OrganizationKeyManagementType = {
   projectOrganizationId: PROJECT_ORGANIZATION_A_ID,
   createdBy: testUserA.id,
   updatedBy: testUserA.id,
+  active: true,
 };
 
 export const organizationKeyManagementB: OrganizationKeyManagementType = {
@@ -28,6 +29,7 @@ export const organizationKeyManagementB: OrganizationKeyManagementType = {
   projectOrganizationId: PROJECT_ORGANIZATION_A_ID,
   createdBy: testUserA.id,
   updatedBy: testUserA.id,
+  active: true,
 };
 
 export const createOrganizationKeyManagement = async () => {

@@ -42,6 +42,14 @@ export const permissions: Pick<Permission, 'id' | 'permission'>[] = [
     id: '65ca3188-e54a-4b31-9dd8-ba388f9d4e5a',
     permission: 'PROJECT_USER_WRITE',
   },
+  {
+    id: '1e113c99-79df-4cec-ba87-6e9b2f6aa1aa',
+    permission: 'PERMISSION_WRITE',
+  },
+  {
+    id: 'ff7ac44e-2887-4002-8698-65cbf8fb139e',
+    permission: 'PERMISSION_READ',
+  },
 ];
 
 export const createPermissions = async () => {
