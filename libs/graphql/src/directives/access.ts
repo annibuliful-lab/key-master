@@ -6,6 +6,7 @@ import { IAppContext } from '../graphql-context';
 export interface IAccessDirective {
   permission: string;
   requiredProjectId: boolean;
+  requiredOrgId: boolean;
   roleName?: string;
 }
 
@@ -17,6 +18,7 @@ export function accessDirective() {
     input AccessDirectiveInput{
       permission: String!
       requiredProjectId: Boolean = false
+      requiredOrgId: Boolean = false
       roleName: String
     }
 
@@ -46,6 +48,8 @@ export function accessDirective() {
           const requiredProjectId =
             accessDirectiveCondition?.['requiredProjectId'];
 
+          const requiredOrgId = accessDirectiveCondition?.['requiredOrgId'];
+
           const { resolve = defaultFieldResolver } = fieldConfig;
           fieldConfig.resolve = function (
             source,
@@ -61,10 +65,11 @@ export function accessDirective() {
               throw new ForbiddenError('Project id is required');
             }
 
-            if (
-              accessDirectiveCondition?.['roleName'] &&
-              context.role !== roleName
-            ) {
+            if (requiredOrgId && !context.orgId) {
+              throw new ForbiddenError('Org id is quired');
+            }
+
+            if (roleName && context.role !== roleName) {
               throw new ForbiddenError(`You must have role name: ${roleName}`);
             }
 

@@ -131,11 +131,14 @@ export const createServer = async ({
           'x-user-permissions'
         ] as string;
         const userRole = context.request.headers['x-user-role'] as string;
+        const orgId = context.request.headers['x-org-id'] as string;
+
         return contextResolver({
           userId,
           projectId,
           permissions: (permissions ?? '').split(','),
           role: userRole,
+          orgId,
         });
       }
 
@@ -153,12 +156,14 @@ export const createServer = async ({
         'x-user-permissions'
       ] as string;
       const userRole = context.request.headers['x-user-role'] as string;
+      const orgId = context.request.headers['x-org-id'] as string;
 
       return contextResolver({
         userId,
         projectId,
         permissions: permissions.split(','),
         role: userRole,
+        orgId,
       });
     },
     plugins: [
