@@ -72,7 +72,7 @@ const main = async () => {
       const authorization = request.headers['authorization'];
       const allowTestSecret = request.headers['x-allow-test'] as string;
 
-      if (allowTestSecret === process.env.SKIP_AUTH_SECRET) {
+      if (!authorization && allowTestSecret === process.env.SKIP_AUTH_SECRET) {
         const projectId = request.headers['x-project-id'] as string;
         const userId = request.headers['x-user-id'] as string;
 
@@ -88,7 +88,7 @@ const main = async () => {
       const token = authorization?.replace('Bearer ', '');
 
       if (!token) {
-        return null;
+        throw new AuthenticationError('Unauthorization');
       }
 
       const projectId = request.headers['x-project-id'] as string;
