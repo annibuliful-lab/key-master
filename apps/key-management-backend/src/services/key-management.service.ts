@@ -45,7 +45,7 @@ export class KeyManagementService extends Repository<IAppContext> {
         projectId: this.context.projectId,
         masterKey,
         masterKeyIv: `${secretHash}:${iv}`,
-        secretHash: `${key}:${secretHash} `,
+        secretHash: `${key}:${secretHash}`,
         createdBy: this.context.userId,
         updatedBy: this.context.userId,
       },
@@ -200,8 +200,8 @@ export class KeyManagementService extends Repository<IAppContext> {
       throw new ForbiddenError('Pin mismatch');
     }
 
-    const iv = keyManagement.masterKeyIv.split(':')[1].trim();
-    const secretHash = keyManagement.secretHash.split(':')[1].trim();
+    const iv = keyManagement.masterKeyIv.split(':')[1];
+    const secretHash = keyManagement.secretHash.split(':')[1];
 
     const content = keyManagement.masterKey;
     const decryptKey = decryptMaterKey({
