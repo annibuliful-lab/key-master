@@ -11,6 +11,7 @@ import {
   UpdateKeyManagementInput,
   UpdateKeyManagementPinInput,
 } from '../codegen-generated';
+import { decryptMaterKey, encryptMasterKey } from '../utils/key-encryption';
 
 export class KeyManagementService extends Repository<IAppContext> {
   async create(input: CreateKeyManagementInput) {
@@ -27,12 +28,24 @@ export class KeyManagementService extends Repository<IAppContext> {
       throw new DuplicateResouce(`duplicated key name ${input.name}`);
     }
 
-    input.pin = await hash(input.pin);
+    const hashPassword = await hash(input.pin);
+
+    input.pin = hashPassword;
+
+    const {
+      content: masterKey,
+      secretHash,
+      key,
+      iv,
+    } = await encryptMasterKey({ text: input.masterKey, secret: hashPassword });
 
     return this.db.keyManagment.create({
       data: {
         ...input,
         projectId: this.context.projectId,
+        masterKey,
+        masterKeyIv: `${secretHash}:${iv}`,
+        secretHash: `${key}:${secretHash} `,
         createdBy: this.context.userId,
         updatedBy: this.context.userId,
       },
@@ -166,7 +179,12 @@ export class KeyManagementService extends Repository<IAppContext> {
 
   async getMasterKey(id: string, pin: string) {
     const keyManagement = await this.db.keyManagment.findUnique({
-      select: { masterKey: true, pin: true },
+      select: {
+        masterKey: true,
+        pin: true,
+        masterKeyIv: true,
+        secretHash: true,
+      },
       where: {
         id,
       },
@@ -182,6 +200,18 @@ export class KeyManagementService extends Repository<IAppContext> {
       throw new ForbiddenError('Pin mismatch');
     }
 
-    return keyManagement.masterKey;
+    const iv = keyManagement.masterKeyIv.split(':')[1].trim();
+    const secretHash = keyManagement.secretHash.split(':')[1].trim();
+
+    const content = keyManagement.masterKey;
+    const decryptKey = decryptMaterKey({
+      hash: {
+        iv,
+        content,
+      },
+      secretHash,
+    });
+
+    return decryptKey;
   }
 }

@@ -212,7 +212,8 @@ describe('Key Management', () => {
           .success.get()
       ).rejects.toBeTruthy();
     });
-
+  });
+  describe('Query', () => {
     it('returns master key', async () => {
       const masterKey = `MASTER_KEY_${nanoid()}`;
       const createdKey = await createKeyManagement({
