@@ -1,5 +1,5 @@
 import { mapSchema, getDirective, MapperKind } from '@graphql-tools/utils';
-import { ForbiddenError } from 'apollo-server-core';
+import { AuthenticationError, ForbiddenError } from 'apollo-server-core';
 import { defaultFieldResolver, GraphQLSchema } from 'graphql';
 import { IAppContext } from '../graphql-context';
 
@@ -25,6 +25,10 @@ export function accessDirective() {
               context: IAppContext,
               info
             ) {
+              if (!context.userId) {
+                throw new AuthenticationError('Unauthorization');
+              }
+
               if (!context.permissions.includes(permission)) {
                 throw new ForbiddenError(
                   `You must have permission: ${permission}`
