@@ -14,9 +14,13 @@ import {
   constraintDirectiveTypeDefs,
   constraintDirective,
 } from 'graphql-constraint-directive';
+import { accessDirective } from './directives/access';
+import { deleteOperationTypeDef } from './type-defs/delete-operation-result';
 
 const { allStitchingDirectivesTypeDefs, stitchingDirectivesValidator } =
   stitchingDirectives();
+const { accessdDirectiveTypeDefs, aceessDirectiveValidator } =
+  accessDirective();
 
 interface ICreateServer {
   typeDefs: Config['typeDefs'];
@@ -46,7 +50,10 @@ export const createServer = async ({
             constraintDirectiveTypeDefs,
             typeDefs,
             gql`
+              ${accessdDirectiveTypeDefs}
               ${allStitchingDirectivesTypeDefs}
+              ${constraintDirectiveTypeDefs}
+              ${deleteOperationTypeDef}
               type Query {
                 _sdl: String!
               }
@@ -59,6 +66,7 @@ export const createServer = async ({
                 _sdl: () => {
                   return `
                   ${allStitchingDirectivesTypeDefs}
+                  ${accessdDirectiveTypeDefs}
                   ${constraintDirectiveTypeDefs}
                   ${print(typeDefs as DocumentNode)}`;
                 },
@@ -68,13 +76,21 @@ export const createServer = async ({
         })
       )
     : makeExecutableSchema({
-        typeDefs: mergeTypeDefs([constraintDirectiveTypeDefs, typeDefs]),
+        typeDefs: mergeTypeDefs([
+          constraintDirectiveTypeDefs,
+          accessdDirectiveTypeDefs,
+          constraintDirectiveTypeDefs,
+          deleteOperationTypeDef,
+          typeDefs,
+        ]),
         resolvers,
       });
 
   if (supportContastraintDirective) {
     schema = constraintDirective()(schema);
   }
+
+  schema = aceessDirectiveValidator(schema);
 
   const apolloServer = new ApolloServer({
     schema,
@@ -95,8 +111,15 @@ export const createServer = async ({
       if (skipAuth) {
         const userId = context.request.headers['x-user-id'] as string;
         const projectId = context.request.headers['x-project-id'] as string;
+        const permissions = context.request.headers[
+          'x-user-permissions'
+        ] as string;
 
-        return contextResolver({ userId, projectId, permissions: [] });
+        return contextResolver({
+          userId,
+          projectId,
+          permissions: permissions.split(','),
+        });
       }
 
       const userId = context.request.headers['x-user-id'] as string;
