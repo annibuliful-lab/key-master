@@ -2,6 +2,7 @@ import { stitchSchemas } from '@graphql-tools/stitch';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 import { fastify } from 'fastify';
 import { ApolloServer } from 'apollo-server-fastify';
+import GraphQLVoyagerFastify from 'graphql-voyager-fastify-plugin';
 import {
   ApolloServerPluginLandingPageGraphQLPlayground,
   AuthenticationError,
@@ -63,11 +64,15 @@ interface IGatewayContext {
 }
 
 const main = async () => {
-  const schema = await makeGatewaySchema();
+  const enablePlayGround =
+    process.env.ENABLE_GRAPHQL_SERVER_PLAYGROUND === 'true';
 
+  const schema = await makeGatewaySchema();
   const apolloServer = new ApolloServer({
     schema,
-    plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
+    plugins: [
+      enablePlayGround && ApolloServerPluginLandingPageGraphQLPlayground(),
+    ],
     context: async ({ request }): Promise<IGatewayContext> => {
       const authorization = request.headers['authorization'];
       const allowTestSecret = request.headers['x-allow-test'] as string;
@@ -120,6 +125,10 @@ const main = async () => {
   await apolloServer.start();
 
   app.register(apolloServer.createHandler({ path: '/graphql', cors: true }));
+  app.register(GraphQLVoyagerFastify, {
+    path: '/voyager',
+    endpoint: '/graphql',
+  });
 
   app.listen(4000, '0.0.0.0').then((url) => {
     console.log(`🚀  Server ready at ${url}/graphql `);
