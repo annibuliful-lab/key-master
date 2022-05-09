@@ -6,7 +6,6 @@ import { IAppContext } from '../graphql-context';
 export interface IAccessDirective {
   permission: string;
   requiredProjectId: boolean;
-  requiredRole: boolean;
   roleName?: string;
 }
 
@@ -18,7 +17,6 @@ export function accessDirective() {
     input AccessDirectiveInput{
       permission: String!
       requiredProjectId: Boolean = false
-      requiredRole: Boolean = false
       roleName: String
     }
 
@@ -44,7 +42,6 @@ export function accessDirective() {
           const permission = accessDirectiveCondition['permission'];
 
           const roleName = accessDirectiveCondition['roleName'];
-
           const requiredProjectId =
             accessDirectiveCondition['requiredProjectId'];
 
@@ -64,7 +61,7 @@ export function accessDirective() {
             }
 
             if (
-              accessDirectiveCondition['requiredRole'] &&
+              accessDirectiveCondition['roleName'] &&
               context.role !== roleName
             ) {
               throw new ForbiddenError(`You must have role name: ${roleName}`);
