@@ -59,7 +59,6 @@ export const decryptMaterKey = ({
   hash: { iv, content },
   secretHash,
 }: IDecryptKeyParam) => {
-  console.log('iv', { iv, content, secretHash });
   const decipher = crypto.createDecipheriv(
     algorithm,
     Buffer.from(secretHash, 'utf-8'),
