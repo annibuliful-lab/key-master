@@ -20,7 +20,7 @@ export function accessDirective() {
       roleName: String
     }
 
-    directive @${directiveName}(conditions: AccessDirectiveInput) on FIELD_DEFINITION
+    directive @${directiveName}(conditions: AccessDirectiveInput!) on FIELD_DEFINITION
     `,
     aceessDirectiveValidator: (schema: GraphQLSchema) =>
       mapSchema(schema, {
@@ -39,11 +39,12 @@ export function accessDirective() {
             'conditions'
           ] as IAccessDirective;
 
-          const permission = accessDirectiveCondition['permission'];
+          const permission = accessDirectiveCondition?.['permission'];
 
-          const roleName = accessDirectiveCondition['roleName'];
+          const roleName = accessDirectiveCondition?.['roleName'];
+
           const requiredProjectId =
-            accessDirectiveCondition['requiredProjectId'];
+            accessDirectiveCondition?.['requiredProjectId'];
 
           const { resolve = defaultFieldResolver } = fieldConfig;
           fieldConfig.resolve = function (
@@ -61,13 +62,13 @@ export function accessDirective() {
             }
 
             if (
-              accessDirectiveCondition['roleName'] &&
+              accessDirectiveCondition?.['roleName'] &&
               context.role !== roleName
             ) {
               throw new ForbiddenError(`You must have role name: ${roleName}`);
             }
 
-            if (!context.permissions.includes(permission)) {
+            if (permission && !context.permissions.includes(permission)) {
               throw new ForbiddenError(
                 `You must have permission: ${permission}`
               );

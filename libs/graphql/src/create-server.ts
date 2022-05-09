@@ -16,12 +16,15 @@ import {
 } from 'graphql-constraint-directive';
 import { accessDirective } from './directives/access';
 import { deleteOperationTypeDef } from './type-defs/delete-operation-result';
+import { authorizedDirective } from './directives/authorized';
+import compose from 'lodash/fp/compose';
 
 const { allStitchingDirectivesTypeDefs, stitchingDirectivesValidator } =
   stitchingDirectives();
 const { accessdDirectiveTypeDefs, aceessDirectiveValidator } =
   accessDirective();
-
+const { authorizedDirectiveTypeDefs, authorizedDirectiveValidator } =
+  authorizedDirective();
 interface ICreateServer {
   typeDefs: Config['typeDefs'];
   port: number;
@@ -54,6 +57,7 @@ export const createServer = async ({
               ${allStitchingDirectivesTypeDefs}
               ${constraintDirectiveTypeDefs}
               ${deleteOperationTypeDef}
+              ${authorizedDirectiveTypeDefs}
               type Query {
                 _sdl: String!
               }
@@ -68,6 +72,7 @@ export const createServer = async ({
                   ${allStitchingDirectivesTypeDefs}
                   ${accessdDirectiveTypeDefs}
                   ${constraintDirectiveTypeDefs}
+                  ${authorizedDirectiveTypeDefs}
                   ${print(typeDefs as DocumentNode)}`;
                 },
               },
@@ -81,6 +86,7 @@ export const createServer = async ({
           accessdDirectiveTypeDefs,
           constraintDirectiveTypeDefs,
           deleteOperationTypeDef,
+          authorizedDirectiveTypeDefs,
           typeDefs,
         ]),
         resolvers,
@@ -90,7 +96,10 @@ export const createServer = async ({
     schema = constraintDirective()(schema);
   }
 
-  schema = aceessDirectiveValidator(schema);
+  schema = compose(
+    aceessDirectiveValidator,
+    authorizedDirectiveValidator
+  )(schema);
 
   const apolloServer = new ApolloServer({
     schema,
