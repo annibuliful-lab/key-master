@@ -58,6 +58,7 @@ interface IGatewayContext {
   'x-user-id': string;
   'x-project-id': string;
   'x-user-permissions': string[];
+  'x-user-role': string;
   authorization: string;
 }
 
@@ -79,6 +80,7 @@ const main = async () => {
           'x-user-id': userId,
           'x-project-id': projectId,
           'x-user-permissions': await getAllPermissions(),
+          'x-user-role': 'Test-User',
           authorization,
         };
       }
@@ -105,6 +107,7 @@ const main = async () => {
         'x-user-id': userAuth.userId,
         'x-project-id': projectId,
         'x-user-permissions': userAuth.permissions,
+        'x-user-role': userAuth.role,
         authorization,
       };
     },
