@@ -18,11 +18,16 @@ import { accessDirective } from './directives/access';
 import { deleteOperationTypeDef } from './type-defs/delete-operation-result';
 import { authorizedDirective } from './directives/authorized';
 import compose from 'lodash/fp/compose';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 const { allStitchingDirectivesTypeDefs, stitchingDirectivesValidator } =
   stitchingDirectives();
+
 const { accessdDirectiveTypeDefs, aceessDirectiveValidator } =
   accessDirective();
+
 const { authorizedDirectiveTypeDefs, authorizedDirectiveValidator } =
   authorizedDirective();
 interface ICreateServer {
@@ -40,7 +45,6 @@ export const createServer = async ({
   typeDefs,
   port,
   resolvers,
-  enablePlayGround = true,
   supportSchemaStiching = true,
   skipAuth = true,
   supportContastraintDirective = true,
@@ -100,6 +104,9 @@ export const createServer = async ({
     aceessDirectiveValidator,
     authorizedDirectiveValidator
   )(schema);
+
+  const enablePlayGround =
+    process.env.ENABLE_GRAPHQL_SERVER_PLAYGROUND === 'true';
 
   const apolloServer = new ApolloServer({
     schema,

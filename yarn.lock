@@ -7048,6 +7048,13 @@ graphql-tag@^2.11.0:
   dependencies:
     tslib "^2.1.0"
 
+graphql-voyager-fastify-plugin@^0.1.3:
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/graphql-voyager-fastify-plugin/-/graphql-voyager-fastify-plugin-0.1.3.tgz#28a8b6b2ae2201d2cac00b5dde98b96a7487b9af"
+  integrity sha512-WgZh6VSU+Oit9tfyImrsRjA23D3S8+TJC75Aj9EBmgiwT1wY0xXpPlzfOTBBbN4YK/TH5FqLM0LmM5HUPXri1Q==
+  dependencies:
+    fastify-plugin "^3.0.0"
+
 graphql-ws@^5.4.1:
   version "5.7.0"
   resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-5.7.0.tgz#4b9d7a0ee9555804582f27f5d7695d10aafdbdc8"
