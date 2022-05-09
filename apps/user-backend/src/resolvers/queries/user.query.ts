@@ -11,9 +11,6 @@ export const query: Resolvers<IGraphqlContext>['Query'] = {
     }
     return user;
   },
-  users: (_parent, _input, ctx) => {
-    return ctx.user.findAll();
-  },
   _userProfile: async (_parent, { keys }, ctx) => {
     const ids = keys.map((key) => key.id);
     const users = await ctx.user.findByIds(ids);

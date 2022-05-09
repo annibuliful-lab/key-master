@@ -1,12 +1,13 @@
-import { Client, graphqlClient } from '@key-master/test';
+import { Client, graphqlClient, projectOwnerAClient } from '@key-master/test';
 import { nanoid } from 'nanoid';
 
 describe('User', () => {
   describe('Mutation', () => {
     let client: Client = null;
-
+    let authorizedClient: Client = null;
     beforeAll(() => {
       client = graphqlClient;
+      authorizedClient = projectOwnerAClient;
     });
 
     it('creates a new user', async () => {
@@ -24,6 +25,19 @@ describe('User', () => {
 
       expect(newUser.fullname).toEqual(input.fullname);
       expect(newUser.id).toBeDefined();
+    });
+
+    it('gets by authorized user', async () => {
+      const result = await authorizedClient.chain.query.me.get({
+        id: true,
+        fullname: true,
+      });
+      expect(result.id).toEqual('TEST_USER_A_ID');
+      expect(result.fullname).toBeDefined();
+    });
+
+    it('throws error when get without authorization', () => {
+      expect(client.chain.query.me.id.get()).rejects.toBeTruthy();
     });
   });
 });

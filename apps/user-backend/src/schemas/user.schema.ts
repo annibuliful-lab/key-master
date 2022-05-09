@@ -40,9 +40,7 @@ export const typeDefs = gql`
   }
 
   type Query {
-    me: User!
-
-    users: [User]
+    me: User! @authorized
 
     _userProfile(keys: [AuthUserKey!]!): [Authentication]!
       @merge(keyArg: "keys")

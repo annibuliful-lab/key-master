@@ -26,8 +26,4 @@ export class UserService extends Repository<IAppContext> {
       },
     });
   }
-
-  findAll() {
-    return this.db.user.findMany();
-  }
 }
