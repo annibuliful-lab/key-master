@@ -7,8 +7,9 @@ import { projectDataLoader } from './dataloaders/project.dataloader';
 import { ProjectRoleUserService } from './services/project-role-user.service';
 import { OrganizationUserService } from './services/organization-user.service';
 import { projectOrganizationDataLoader } from './dataloaders/project-organization.dataloader';
+import { IAppContext } from '@key-master/graphql';
 
-export interface IGraphqlContext {
+export interface IGraphqlContext extends IAppContext {
   project: ProjectService;
   projectRole: ProjectRoleService;
   projectRolePermission: ProjectRolePermissionService;

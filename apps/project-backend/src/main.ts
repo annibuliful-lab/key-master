@@ -22,6 +22,7 @@ createServer({
   resolvers,
   contextResolver: (context): IGraphqlContext => {
     return {
+      ...context,
       project: new ProjectService(context),
       projectRole: new ProjectRoleService(context),
       projectRolePermission: new ProjectRolePermissionService(context),

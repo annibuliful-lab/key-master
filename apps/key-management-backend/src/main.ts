@@ -15,6 +15,7 @@ createServer({
   resolvers,
   contextResolver: (context): IGraphqlContext => {
     return {
+      ...context,
       keyManagement: new KeyManagementService(context),
       organizationKeyManagement: new OrganizationKeyManagementService(context),
       keyManagementDataLoader,
