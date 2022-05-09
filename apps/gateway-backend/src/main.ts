@@ -69,8 +69,9 @@ const main = async () => {
     plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
     context: async ({ request }): Promise<IGatewayContext> => {
       const authorization = request.headers['authorization'];
+      const allowTestSecret = request.headers['x-allow-test'] as string;
 
-      if (process.env.ALLOW_SKIP_AUTH_TEST && authorization === 'TEST-AUTH') {
+      if (allowTestSecret === process.env.SKIP_AUTH_SECRET) {
         const projectId = request.headers['x-project-id'] as string;
         const userId = request.headers['x-user-id'] as string;
 
@@ -108,6 +109,7 @@ const main = async () => {
       };
     },
   });
+
   const app = fastify({});
   await apolloServer.start();
 
