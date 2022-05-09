@@ -155,6 +155,7 @@ model KeyManagment {
   name                       String
   pin                        String?
   masterKey                  String
+  masterKeyIv                String
   createdBy                  String
   updatedBy                  String
   createdAt                  DateTime                    @default(now())
