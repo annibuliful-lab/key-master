@@ -19,6 +19,7 @@ export const projectOwnerGraphqlClient = ({
     url: process.env.GRAPHQL_ENDPOINT,
     headers: {
       Authorization: `TEST-AUTH ${projectId}`,
+      'x-allow-test': process.env.SKIP_AUTH_SECRET,
       'x-project-id': projectId,
       'x-user-id': userId,
     },

@@ -118,7 +118,7 @@ export const createServer = async ({
         return contextResolver({
           userId,
           projectId,
-          permissions: permissions.split(','),
+          permissions: (permissions ?? '').split(','),
         });
       }
 
