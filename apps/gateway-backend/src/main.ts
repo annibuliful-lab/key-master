@@ -91,7 +91,7 @@ const main = async () => {
       const token = authorization?.replace('Bearer ', '');
 
       if (!token) {
-        throw new AuthenticationError('Unauthorization');
+        return null;
       }
 
       const projectId = request.headers['x-project-id'] as string;
