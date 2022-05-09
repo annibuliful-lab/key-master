@@ -19,7 +19,7 @@ export function accessDirective() {
           if (accessDirective) {
             const permission = accessDirective['permission'];
             const { resolve = defaultFieldResolver } = fieldConfig;
-            fieldConfig.resolve = async function (
+            fieldConfig.resolve = function (
               source,
               args,
               context: IAppContext,

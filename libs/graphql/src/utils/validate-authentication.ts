@@ -151,6 +151,9 @@ const getUserPermissions = async ({
     },
     where: {
       projectId,
+      project: {
+        deletedAt: null,
+      },
       role: {
         deletedAt: null,
         rolePermissions: {
