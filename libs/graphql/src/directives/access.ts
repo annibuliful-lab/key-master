@@ -66,7 +66,7 @@ export function accessDirective() {
             }
 
             if (requiredOrgId && !context.orgId) {
-              throw new ForbiddenError('Org id is quired');
+              throw new ForbiddenError('Organization id is quired');
             }
 
             if (roleName && context.role !== roleName) {

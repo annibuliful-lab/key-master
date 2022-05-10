@@ -2,7 +2,6 @@ import { fastify } from 'fastify';
 import { ApolloServer, Config } from 'apollo-server-fastify';
 import {
   ApolloServerPluginLandingPageGraphQLPlayground,
-  AuthenticationError,
   gql,
 } from 'apollo-server-core';
 import { makeExecutableSchema } from '@graphql-tools/schema';
@@ -46,7 +45,6 @@ export const createServer = async ({
   port,
   resolvers,
   supportSchemaStiching = true,
-  skipAuth = true,
   supportContastraintDirective = true,
   contextResolver,
 }: ICreateServer) => {
@@ -111,47 +109,8 @@ export const createServer = async ({
   const apolloServer = new ApolloServer({
     schema,
     context: (context) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const operationName = (context.request.body as any)
-        .operationName as string;
-      if (operationName === 'IntrospectionQuery') {
-        return;
-      }
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const sdlQuery = (context.request.body as any).query as string;
-      if (sdlQuery === '{\n  _sdl\n}\n' || sdlQuery.includes('_sdl')) {
-        return;
-      }
-
-      if (skipAuth) {
-        const userId = context.request.headers['x-user-id'] as string;
-        const projectId = context.request.headers['x-project-id'] as string;
-        const permissions = context.request.headers[
-          'x-user-permissions'
-        ] as string;
-        const userRole = context.request.headers['x-user-role'] as string;
-        const orgId = context.request.headers['x-org-id'] as string;
-
-        return contextResolver({
-          userId,
-          projectId,
-          permissions: (permissions ?? '').split(','),
-          role: userRole,
-          orgId,
-        });
-      }
-
       const userId = context.request.headers['x-user-id'] as string;
-      if (!userId) {
-        throw new AuthenticationError('x-user-id is required');
-      }
-
       const projectId = context.request.headers['x-project-id'] as string;
-      if (!projectId && !sdlQuery.includes('createProject')) {
-        throw new AuthenticationError('x-project-id is required');
-      }
-
       const permissions = context.request.headers[
         'x-user-permissions'
       ] as string;
@@ -161,7 +120,7 @@ export const createServer = async ({
       return contextResolver({
         userId,
         projectId,
-        permissions: permissions.split(','),
+        permissions: (permissions ?? '').split(','),
         role: userRole,
         orgId,
       });

@@ -76,14 +76,13 @@ const main = async () => {
     context: async ({ request }): Promise<IGatewayContext> => {
       const authorization = request.headers['authorization'];
       const allowTestSecret = request.headers['x-allow-test'] as string;
+      const projectId = request.headers['x-project-id'] as string;
+      const userId = request.headers['x-user-id'] as string;
 
       if (
         authorization?.startsWith('TEST-AUTH') &&
         allowTestSecret === process.env.SKIP_AUTH_SECRET
       ) {
-        const projectId = request.headers['x-project-id'] as string;
-        const userId = request.headers['x-user-id'] as string;
-
         return {
           'x-user-id': userId,
           'x-project-id': projectId,
@@ -98,8 +97,6 @@ const main = async () => {
       if (!token) {
         return null;
       }
-
-      const projectId = request.headers['x-project-id'] as string;
 
       const userAuth = await validateAuthentication({ token, projectId });
 
