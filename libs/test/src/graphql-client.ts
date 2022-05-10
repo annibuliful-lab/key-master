@@ -33,7 +33,7 @@ export const projectOwnerAClient = projectOwnerGraphqlClient({
   userId: 'TEST_USER_A_ID',
 });
 
-export const testUserWithoutPermissionClient = (permission: string[] = []) =>
+export const testUserPermissionsClient = (permission: string[] = []) =>
   createClient({
     url: process.env.GRAPHQL_ENDPOINT,
     headers: {

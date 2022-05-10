@@ -118,7 +118,7 @@ interface IGetUserPermissionsParam {
   projectId: string;
   userId: string;
 }
-const getUserPermissions = async ({
+export const getUserPermissions = async ({
   projectId,
   userId,
 }: IGetUserPermissionsParam): Promise<{

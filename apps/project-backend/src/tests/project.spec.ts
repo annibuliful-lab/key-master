@@ -7,7 +7,7 @@ import {
   expectPermissionError,
   expectUnauthorizedError,
   projectOwnerAClient,
-  testUserWithoutPermissionClient,
+  testUserPermissionsClient,
   unAuthorizationClient,
 } from '@key-master/test';
 import { nanoid } from 'nanoid';
@@ -30,7 +30,7 @@ describe('Project', () => {
 
     it('throws permission when create without correct auth permission', () => {
       expectPermissionError(
-        testUserWithoutPermissionClient(['MOCK_WRONG_PERMISSION'])
+        testUserPermissionsClient(['MOCK_WRONG_PERMISSION'])
           .chain.query.getProjectById({
             id: 'MOCK_ID',
           })

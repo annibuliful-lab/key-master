@@ -94,6 +94,7 @@ export class ProjectService extends Repository<IAppContext> {
     const project = await this.db.project.findFirst({
       where: {
         id,
+        deletedAt: null,
         OR: [
           {
             ownerId: this.context.userId,
