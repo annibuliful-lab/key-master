@@ -51,20 +51,8 @@ export const permissions: Pick<Permission, 'id' | 'permission'>[] = [
     permission: 'PERMISSION_READ',
   },
   {
-    id: 'd7be792e-f768-4ea5-a257-da4bf2db122d',
-    permission: 'PROJECT_ROLE_READ',
-  },
-  {
-    id: '86ecb4fe-6284-487b-bc01-be764b7f4db9',
-    permission: 'PROJECT_ROLE_WRITE',
-  },
-  {
     id: '7131df8e-3e19-45fa-ad14-9739164bf993',
     permission: 'PROJECT_DELETE',
-  },
-  {
-    id: 'b569cf2b-ce95-4292-8758-d88c89443dd8',
-    permission: 'PROJECT_READ',
   },
 ];
 
