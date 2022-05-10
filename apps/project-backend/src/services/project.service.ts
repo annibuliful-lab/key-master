@@ -4,6 +4,7 @@ import {
   IAppContext,
   ResourceNotFound,
 } from '@key-master/graphql';
+import { ForbiddenError } from 'apollo-server-core';
 import { CreateProjectInput, UpdateProjectInput } from '../codegen-generated';
 
 export class ProjectService extends Repository<IAppContext> {
@@ -35,16 +36,19 @@ export class ProjectService extends Repository<IAppContext> {
 
   async update(id: string, data: UpdateProjectInput) {
     const project = await this.db.project.findFirst({
-      select: { id: true },
+      select: { id: true, ownerId: true },
       where: {
-        ownerId: this.context.userId,
         deletedAt: null,
         id,
       },
     });
 
     if (!project) {
-      throw new ResourceNotFound(`update project id ${id} not found`);
+      throw new ResourceNotFound(`update project: id ${id} not found`);
+    }
+
+    if (project.ownerId !== this.context.userId) {
+      throw new ForbiddenError('update project: forbidden operation');
     }
 
     return this.db.project.update({
