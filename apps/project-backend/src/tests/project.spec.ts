@@ -2,7 +2,13 @@ import {
   Client,
   createProject,
   deleteProject,
+  expectDuplicatedError,
+  expectNotFoundError,
+  expectPermissionError,
+  expectUnauthorizedError,
   projectOwnerAClient,
+  testUserWithoutPermissionClient,
+  unAuthorizationClient,
 } from '@key-master/test';
 import { nanoid } from 'nanoid';
 
@@ -11,6 +17,28 @@ describe('Project', () => {
   beforeAll(() => {
     client = projectOwnerAClient;
   });
+
+  describe('Permission', () => {
+    it('throws error when create without auth token', () => {
+      expectUnauthorizedError(
+        createProject({
+          customProjectName: 'projectName',
+          client: unAuthorizationClient,
+        })
+      );
+    });
+
+    it('throws permission when create without correct auth permission', () => {
+      expectPermissionError(
+        testUserWithoutPermissionClient(['MOCK_WRONG_PERMISSION'])
+          .chain.query.getProjectById({
+            id: 'MOCK_ID',
+          })
+          .id.get()
+      );
+    });
+  });
+
   describe('Mutation', () => {
     it('creates new project', async () => {
       const projectName = `MOCK_PROJECT_${nanoid()}`;
@@ -32,9 +60,9 @@ describe('Project', () => {
     it('throws error when create duplicate project', async () => {
       const projectName = `MOCK_PROJECT_${nanoid()}`;
       await createProject({ customProjectName: projectName, client });
-      expect(
+      expectDuplicatedError(
         createProject({ client, customProjectName: projectName })
-      ).rejects.toBeTruthy();
+      );
     });
 
     it('updates an existing project', async () => {
@@ -68,7 +96,7 @@ describe('Project', () => {
         })
         .success.get();
 
-      expect(
+      expectNotFoundError(
         client.chain.mutation
           .updateProject({
             id: project.id,
@@ -77,7 +105,7 @@ describe('Project', () => {
             },
           })
           .id.get()
-      ).rejects.toBeTruthy();
+      );
     });
     it('deletes an existing project', async () => {
       const project = await createProject({ client });
@@ -91,13 +119,13 @@ describe('Project', () => {
     });
 
     it('throws error with wrong id', async () => {
-      expect(
+      expectNotFoundError(
         client.chain.mutation
           .deleteProject({
             id: 'MOCK_WRONG_PROJECT_ID',
           })
           .success.get()
-      ).rejects.toBeTruthy();
+      );
     });
   });
 
@@ -115,19 +143,19 @@ describe('Project', () => {
     });
 
     it('throws error when get by wrong id', () => {
-      expect(
+      expectNotFoundError(
         client.chain.query.getProjectById({ id: 'MOCK_WRONG_PROJECT_ID' }).get({
           id: true,
           name: true,
         })
-      ).rejects.toBeTruthy();
+      );
     });
     it('throws error when get by deleted id', async () => {
       const newProject = await createProject({ client });
       await deleteProject({ client, id: newProject.id });
-      expect(
-        client.chain.query.getProjectById({ id: newProject.id })
-      ).rejects.toBeTruthy();
+      expectNotFoundError(
+        client.chain.query.getProjectById({ id: newProject.id }).id.get()
+      );
     });
   });
 });
