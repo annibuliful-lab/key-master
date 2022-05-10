@@ -67,6 +67,8 @@ const main = async () => {
   const enablePlayGround =
     process.env.ENABLE_GRAPHQL_SERVER_PLAYGROUND === 'true';
 
+  const enableVoyager = process.env.ENABLE_GRAPHQL_SERVER_VOYAGER === 'true';
+
   const schema = await makeGatewaySchema();
   const apolloServer = new ApolloServer({
     schema,
@@ -122,10 +124,13 @@ const main = async () => {
   await apolloServer.start();
 
   app.register(apolloServer.createHandler({ path: '/graphql', cors: true }));
-  app.register(GraphQLVoyagerFastify, {
-    path: '/voyager',
-    endpoint: '/graphql',
-  });
+
+  if (enableVoyager) {
+    app.register(GraphQLVoyagerFastify, {
+      path: '/voyager',
+      endpoint: '/graphql',
+    });
+  }
 
   app.listen(4000, '0.0.0.0').then((url) => {
     console.log(`🚀  Server ready at ${url}/graphql `);
@@ -136,7 +141,7 @@ waitOn(
   { resources: [3000, 3001, 3002, 3003].map((port) => `tcp:${port}`) },
   (error) => {
     if (error) {
-      console.error('Gate-way-error ', error);
+      console.error('Gateway error ', error);
       return;
     }
 
