@@ -10,11 +10,13 @@ import {
 } from 'apollo-server-core';
 import {
   executeRemoteSchema,
+  getUserPermissions,
   validateAuthentication,
 } from '@key-master/graphql';
 const { stitchingDirectivesTransformer } = stitchingDirectives();
 import waitOn from 'wait-on';
 import * as dotenv from 'dotenv';
+import { isEmpty } from 'lodash';
 
 dotenv.config();
 
@@ -79,7 +81,9 @@ const main = async () => {
       const allowTestSecret = request.headers['x-allow-test'] as string;
       const projectId = request.headers['x-project-id'] as string;
       const userId = request.headers['x-user-id'] as string;
-      const permissions = request.headers['x-user-permissions'] as string;
+      const permissions = (request.headers['x-user-permissions'] ??
+        '') as string;
+
       if (
         authorization?.startsWith('TEST-AUTH') &&
         allowTestSecret === process.env.SKIP_AUTH_SECRET
@@ -87,7 +91,14 @@ const main = async () => {
         return {
           'x-user-id': userId,
           'x-project-id': projectId,
-          'x-user-permissions': permissions.split(','),
+          'x-user-permissions': !isEmpty(permissions)
+            ? permissions.split(',')
+            : (
+                await getUserPermissions({
+                  projectId,
+                  userId,
+                })
+              ).permissions,
           'x-user-role': 'KeyAdmin',
           authorization,
         };
