@@ -8,16 +8,26 @@ export const matchers = {
   meta: expect.any(Object),
 };
 
-export function expectPermissionError(): (
+export function expectPermissionError(
   request: Promise<unknown>
-) => Promise<void> {
-  return expectError(/Must have permission/);
+): Promise<void> {
+  return expectError(/You must have permission/)(request);
 }
 
-export function expectUnauthorizedError(): (
+export function expectUnauthorizedError(
   request: Promise<unknown>
-) => Promise<void> {
-  return expectError(/Unauthorization/);
+): Promise<void> {
+  return expectError(/Unauthorization/)(request);
+}
+
+export function expectDuplicatedError(
+  request: Promise<unknown>
+): Promise<void> {
+  return expectError(/DUPLICATE_RESOURCE/)(request);
+}
+
+export function expectNotFoundError(request: Promise<unknown>): Promise<void> {
+  return expectError(/RESOURCE_NOT_FOUND/)(request);
 }
 
 export function expectError(
