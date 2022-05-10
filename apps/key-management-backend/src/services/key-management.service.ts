@@ -1,6 +1,6 @@
 import { Repository } from '@key-master/db';
 import {
-  DuplicateResouce,
+  DuplicateResource,
   IAppContext,
   ResourceNotFound,
 } from '@key-master/graphql';
@@ -25,7 +25,7 @@ export class KeyManagementService extends Repository<IAppContext> {
     });
 
     if (keyManagement) {
-      throw new DuplicateResouce(`duplicated key name ${input.name}`);
+      throw new DuplicateResource(`duplicated key name ${input.name}`);
     }
 
     const hashPassword = await hash(input.pin);

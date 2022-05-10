@@ -1,6 +1,6 @@
 import { Repository } from '@key-master/db';
 import {
-  DuplicateResouce,
+  DuplicateResource,
   IAppContext,
   ResourceNotFound,
 } from '@key-master/graphql';
@@ -20,7 +20,7 @@ export class ProjectRoleService extends Repository<IAppContext> {
     });
 
     if (projectRole) {
-      throw new DuplicateResouce(`create duplicate project role ${data.role}`);
+      throw new DuplicateResource(`create duplicate project role ${data.role}`);
     }
 
     return this.db.projectRole.create({

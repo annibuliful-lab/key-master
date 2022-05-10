@@ -1,6 +1,6 @@
 import { Repository } from '@key-master/db';
 import {
-  DuplicateResouce,
+  DuplicateResource,
   IAppContext,
   ResourceNotFound,
 } from '@key-master/graphql';
@@ -34,7 +34,7 @@ export class ProjectOrganizationService extends Repository<IAppContext> {
     });
 
     if (projectOrganization) {
-      throw new DuplicateResouce(
+      throw new DuplicateResource(
         `create organization duplicated name ${input.name}`
       );
     }
@@ -76,7 +76,7 @@ export class ProjectOrganizationService extends Repository<IAppContext> {
       );
 
       if (duplicateOrganization !== null && duplicateOrganization.id !== id) {
-        throw new DuplicateResouce(
+        throw new DuplicateResource(
           `update organization duplicate name ${input.name}`
         );
       }

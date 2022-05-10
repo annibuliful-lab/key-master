@@ -22,13 +22,15 @@ export const typeDefs = gql`
   }
 
   type Mutation {
-    createProject(input: CreateProjectInput!): Project!
-    updateProject(id: ID!, input: UpdateProjectInput!): Project!
-    deleteProject(id: ID!): DeleteProjectResult!
+    createProject(input: CreateProjectInput!): Project! @authorized
+    updateProject(id: ID!, input: UpdateProjectInput!): Project! @authorized
+    deleteProject(id: ID!): DeleteProjectResult! @authorized
   }
 
   type Query {
     getProjectById(id: ID!): Project!
-    getProjectsByOwner: [Project!]!
+      @access(conditions: { permission: "PROJECT_READ" })
+
+    getProjectsByOwner: [Project!]! @authorized
   }
 `;

@@ -6,6 +6,6 @@ export const queries: Resolvers<IGraphqlContext>['Query'] = {
     return ctx.project.findById(id);
   },
   getProjectsByOwner: (_parent, _args, ctx) => {
-    return ctx.project.findManyByOwnder();
+    return ctx.project.findManyByOwner();
   },
 };

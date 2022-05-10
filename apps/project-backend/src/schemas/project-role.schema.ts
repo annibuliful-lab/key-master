@@ -20,12 +20,29 @@ export const typeDefs = gql`
 
   type Mutation {
     createProjectRole(input: CreateProjectRoleInput!): ProjectRole!
+      @access(
+        conditions: {
+          permission: "PROJECT_ROLE_WRITE"
+          requiredProjectId: true
+        }
+      )
+
     updateProjectRole(id: ID!, input: UpdateProjectRoleInput!): ProjectRole!
+      @access(conditions: { permission: "PROJECT_ROLE_WRITE" })
+
     deleteProjectRole(id: ID!): DeleteProjectRoleResult!
+      @access(conditions: { permission: "PROJECT_ROLE_WRITE" })
   }
 
   type Query {
     getProjectRolesByProject: [ProjectRole!]!
+      @access(
+        conditions: { permission: "PROJECT_ROLE_READ", requiredProjectId: true }
+      )
+
     getProjectRoleById(id: ID!): ProjectRole!
+      @access(
+        conditions: { permission: "PROJECT_ROLE_READ", requiredProjectId: true }
+      )
   }
 `;
