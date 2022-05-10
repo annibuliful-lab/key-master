@@ -1,6 +1,6 @@
 import { Repository } from '@key-master/db';
 import {
-  DuplicateResouce,
+  DuplicateResource,
   IAppContext,
   ResourceNotFound,
 } from '@key-master/graphql';
@@ -21,7 +21,7 @@ export class ProjectService extends Repository<IAppContext> {
     });
 
     if (duplicatedProjectName) {
-      throw new DuplicateResouce(
+      throw new DuplicateResource(
         `create project: duplicated project name ${input.name}`
       );
     }
@@ -61,16 +61,19 @@ export class ProjectService extends Repository<IAppContext> {
 
   async delete(id: string) {
     const project = await this.db.project.findFirst({
-      select: { id: true },
+      select: { id: true, ownerId: true },
       where: {
-        ownerId: this.context.userId,
         deletedAt: null,
         id,
       },
     });
 
     if (!project) {
-      throw new ResourceNotFound(`delete project id ${id} not found`);
+      throw new ResourceNotFound(`delete project: id ${id} not found`);
+    }
+
+    if (project.ownerId !== this.context.userId) {
+      throw new ForbiddenError('update project: forbidden operation');
     }
 
     await this.db.project.update({
@@ -113,7 +116,7 @@ export class ProjectService extends Repository<IAppContext> {
     return project;
   }
 
-  async findManyByOwnder() {
+  async findManyByOwner() {
     return this.db.project.findMany({
       where: {
         ownerId: this.context.userId,
