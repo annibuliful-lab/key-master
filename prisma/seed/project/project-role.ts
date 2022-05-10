@@ -59,23 +59,30 @@ export const createProjectRoleAndPermissions = async () => {
     })
   );
 
-  const listRoleUserPermissions = permissions.map((permission) =>
-    prismaClient.projectRolePermission.upsert({
-      where: {
-        roleId_permissionId: {
+  const listRoleUserPermissions = permissions
+    .filter(
+      (p) =>
+        !p.permission.includes('PROJECT_') ||
+        !p.permission.includes('PERMISSION_') ||
+        !p.permission.includes('ROLE_')
+    )
+    .map((permission) =>
+      prismaClient.projectRolePermission.upsert({
+        where: {
+          roleId_permissionId: {
+            roleId: roleUser.id,
+            permissionId: permission.id,
+          },
+        },
+        update: {},
+        create: {
           roleId: roleUser.id,
           permissionId: permission.id,
+          createdBy: testUserA.id,
+          updatedBy: testUserA.id,
         },
-      },
-      update: {},
-      create: {
-        roleId: roleUser.id,
-        permissionId: permission.id,
-        createdBy: testUserA.id,
-        updatedBy: testUserA.id,
-      },
-    })
-  );
+      })
+    );
 
   const result = await prismaClient.$transaction([
     createAdminRole,
