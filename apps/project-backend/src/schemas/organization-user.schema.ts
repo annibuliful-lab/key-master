@@ -34,20 +34,25 @@ export const typeDefs = gql`
     createOrganizationUser(
       input: CreateOrganizationUserInput!
     ): OrganizationUser!
+      @access(conditions: { permission: "PROJECT_ORGANIZATION_USER_WRITE" })
 
     updateOrganizationUser(
       id: ID!
       input: UpdateOrganizationUserInput!
     ): OrganizationUser!
+      @access(conditions: { permission: "PROJECT_ORGANIZATION_USER_WRITE" })
 
     deleteOrganizationUser(id: ID!): DeleteOrganizationOperationResult!
+      @access(conditions: { permission: "PROJECT_ORGANIZATION_USER_WRITE" })
   }
 
   type Query {
     getOrganizationUserById(id: ID!): OrganizationUser!
+      @access(conditions: { permission: "PROJECT_ORGANIZATION_USER_READ" })
 
     getOrganizationUsers(
       filter: OrganizationUserFilterInput!
     ): [OrganizationUser!]!
+      @access(conditions: { permission: "PROJECT_ORGANIZATION_USER_READ" })
   }
 `;
