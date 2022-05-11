@@ -1,9 +1,11 @@
 import { fastify } from 'fastify';
 import { ApolloServer, Config } from 'apollo-server-fastify';
 import {
+  ApolloServerPluginDrainHttpServer,
   ApolloServerPluginLandingPageGraphQLPlayground,
   gql,
 } from 'apollo-server-core';
+import { useServer } from 'graphql-ws/lib/use/ws';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 import { mergeResolvers, mergeTypeDefs } from '@graphql-tools/merge';
@@ -19,8 +21,7 @@ import { authorizedDirective } from './directives/authorized';
 import compose from 'lodash/fp/compose';
 import * as dotenv from 'dotenv';
 import { DuplicateResource } from './errors/duplicate-resource';
-import { SubscriptionServer } from 'subscriptions-transport-ws';
-import { execute, subscribe } from 'graphql';
+import { WebSocketServer } from 'ws';
 
 dotenv.config();
 
@@ -66,6 +67,9 @@ export const createServer = async ({
   supportSubscription = false,
   contextResolver,
 }: ICreateServer) => {
+  const enablePlayGround =
+    process.env.ENABLE_GRAPHQL_SERVER_PLAYGROUND === 'true';
+
   let schema = supportSchemaStiching
     ? stitchingDirectivesValidator(
         makeExecutableSchema({
@@ -121,19 +125,16 @@ export const createServer = async ({
     authorizedDirectiveValidator
   )(schema);
 
-  const enablePlayGround =
-    process.env.ENABLE_GRAPHQL_SERVER_PLAYGROUND === 'true';
-
   const app = fastify({});
+  let serverCleanup = null;
+  if (supportSubscription) {
+    const server = new WebSocketServer({
+      server: app.server,
+      path: '/graphql',
+    });
 
-  // Create our WebSocket server using the HTTP server we just set up.
-  // const wsServer = new WebSocketServer({
-  //   server: app.server,
-  //   path: '/graphql',
-  // });
-
-  // // Save the returned server's info so we can shutdown this server later
-  // const serverCleanup = useServer({ schema }, wsServer);
+    serverCleanup = useServer({ schema }, server);
+  }
 
   const apolloServer = new ApolloServer({
     schema,
@@ -156,6 +157,18 @@ export const createServer = async ({
     },
     plugins: [
       enablePlayGround && ApolloServerPluginLandingPageGraphQLPlayground(),
+      ApolloServerPluginDrainHttpServer({ httpServer: app.server }),
+      {
+        async serverWillStart() {
+          return {
+            async drainServer() {
+              if (serverCleanup) {
+                await serverCleanup.dispose();
+              }
+            },
+          };
+        },
+      },
     ],
     formatError,
   });
@@ -169,13 +182,6 @@ export const createServer = async ({
       disableHealthCheck: true,
     })
   );
-
-  if (supportSubscription) {
-    SubscriptionServer.create(
-      { schema, execute, subscribe },
-      { server: app.server, path: '/graphql' }
-    );
-  }
 
   app.listen(port, '0.0.0.0').then((url) => {
     console.log(`🚀  Server ready at ${url}/graphql `);
