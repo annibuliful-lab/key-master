@@ -11,18 +11,25 @@ import { AsyncExecutor, observableToAsyncIterable } from '@graphql-tools/utils';
 import { createClient } from 'graphql-ws';
 import WebSocket from 'ws';
 interface IExecuteRemoteSchemaParam {
-  httpEndpoint: string;
-  wsEndpoint?: string;
+  host: string;
+  port: number;
+  graphqlPath?: string;
+  supportWs?: boolean;
 }
 
 export const executeRemoteSchema = async ({
-  httpEndpoint,
-  wsEndpoint,
+  host,
+  port,
+  graphqlPath = 'graphql',
+  supportWs = false,
 }: IExecuteRemoteSchemaParam) => {
+  const httpEndpoint = `http://${host}:${port}/${graphqlPath}`;
+  const wsEndpoint = `ws://${host}:${port}/${graphqlPath}`;
+
   let subscriptionClient = null;
   let wsExecutor: AsyncExecutor;
 
-  if (wsEndpoint) {
+  if (supportWs) {
     subscriptionClient = createClient({
       url: wsEndpoint,
       webSocketImpl: WebSocket,
@@ -93,10 +100,7 @@ export const executeRemoteSchema = async ({
       args.operationName ? args.operationName : undefined
     );
 
-    if (
-      operation?.operation === OperationTypeNode.SUBSCRIPTION &&
-      !!wsEndpoint
-    ) {
+    if (operation?.operation === OperationTypeNode.SUBSCRIPTION && supportWs) {
       return wsExecutor && wsExecutor(args);
     }
 
