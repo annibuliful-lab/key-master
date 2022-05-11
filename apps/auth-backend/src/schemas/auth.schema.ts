@@ -20,4 +20,8 @@ export const typeDefs = gql`
     login(input: LoginInput): Authentication!
     logout: LogoutOperationResult!
   }
+
+  type Subscription {
+    logedUser: Authentication
+  }
 `;
