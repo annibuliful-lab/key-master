@@ -15,7 +15,20 @@ import { services } from './services';
 import { mergeTypeDefs } from '@graphql-tools/merge';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 import { gql } from 'apollo-server-fastify';
+
 const { allStitchingDirectivesTypeDefs } = stitchingDirectives();
+const accessdDirectiveTypeDefs = `
+input AccessDirectiveInput{
+  permission: String!
+  requiredProjectId: Boolean = false
+  requiredOrgId: Boolean = false
+  roleName: String
+}
+
+directive @access(conditions: AccessDirectiveInput!) on FIELD_DEFINITION
+`;
+
+const authorizedDirectiveTypeDefs = `directive @authorized on FIELD_DEFINITION`;
 
 interface IGenerateCodegenParam {
   schemaPath: string;
@@ -97,6 +110,8 @@ export const mergeTypeDefsWithScalarsAndDirectives = (
 ): DocumentNode => {
   return mergeTypeDefs([
     allStitchingDirectivesTypeDefs,
+    accessdDirectiveTypeDefs,
+    authorizedDirectiveTypeDefs,
     // directivesTypeDefs,
     // dateScalars,
     // jsonScalars,

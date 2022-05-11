@@ -29,6 +29,7 @@ const { accessdDirectiveTypeDefs, aceessDirectiveValidator } =
 
 const { authorizedDirectiveTypeDefs, authorizedDirectiveValidator } =
   authorizedDirective();
+
 interface ICreateServer {
   typeDefs: Config['typeDefs'];
   port: number;
