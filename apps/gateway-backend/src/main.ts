@@ -4,6 +4,7 @@ import { fastify } from 'fastify';
 import { ApolloServer } from 'apollo-server-fastify';
 import GraphQLVoyagerFastify from 'graphql-voyager-fastify-plugin';
 import {
+  ApolloServerPluginDrainHttpServer,
   ApolloServerPluginLandingPageGraphQLPlayground,
   AuthenticationError,
   ForbiddenError,
@@ -17,6 +18,8 @@ const { stitchingDirectivesTransformer } = stitchingDirectives();
 import waitOn from 'wait-on';
 import * as dotenv from 'dotenv';
 import { isEmpty } from 'lodash';
+import { WebSocketServer } from 'ws';
+import { useServer } from 'graphql-ws/lib/use/ws';
 
 dotenv.config();
 
@@ -72,10 +75,29 @@ const main = async () => {
   const enableVoyager = process.env.ENABLE_GRAPHQL_SERVER_VOYAGER === 'true';
 
   const schema = await makeGatewaySchema();
+
+  const app = fastify({});
+  const server = new WebSocketServer({
+    server: app.server,
+    path: '/graphql',
+  });
+
+  const serverCleanup = useServer({ schema }, server);
+
   const apolloServer = new ApolloServer({
     schema,
     plugins: [
       enablePlayGround && ApolloServerPluginLandingPageGraphQLPlayground(),
+      ApolloServerPluginDrainHttpServer({ httpServer: app.server }),
+      {
+        async serverWillStart() {
+          return {
+            async drainServer() {
+              await serverCleanup.dispose();
+            },
+          };
+        },
+      },
     ],
     context: async ({ request }): Promise<IGatewayContext> => {
       const authorization = request.headers['authorization'];
@@ -131,7 +153,6 @@ const main = async () => {
     },
   });
 
-  const app = fastify({});
   await apolloServer.start();
 
   app.register(apolloServer.createHandler({ path: '/graphql', cors: true }));
