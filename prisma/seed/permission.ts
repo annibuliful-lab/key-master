@@ -78,6 +78,34 @@ export const permissions: Pick<Permission, 'id' | 'permission'>[] = [
     id: '2df5d799-d713-45b3-9fec-f090ffd83d51',
     permission: 'PROJECT_ORGANIZATION_READ',
   },
+  {
+    id: '5fbbcf14-f431-4a80-adc8-a473f996d8a1',
+    permission: 'PROJECT_ROLE_PERMISSION_WRITE',
+  },
+  {
+    id: '6d51f0f6-772e-4c7c-a408-1182e16dd5e6',
+    permission: 'PROJECT_ROLE_PERMISSION_READ',
+  },
+  {
+    id: 'dd82f777-3670-4bef-a076-d4247496bf4b',
+    permission: 'ORGANIZATION_KEY_MANAGEMENT_WRITE',
+  },
+  {
+    id: '318e4d2e-309c-405a-87c8-b71c29c59b29',
+    permission: 'ORGANIZATION_KEY_MANAGEMENT_READ',
+  },
+  {
+    id: 'acbdcace-7dff-4f49-b5f3-81d661475a61',
+    permission: 'KEY_MANAGEMENT_WRITE',
+  },
+  {
+    id: '8d566c37-98e2-426a-9920-b41578f36d69',
+    permission: 'KEY_MANAGEMENT_READ',
+  },
+  {
+    id: '14659ed6-ed73-4eba-8e3c-49d768d5513f',
+    permission: 'KEY_MANAGEMENT_UPDATE_PIN',
+  },
 ];
 
 export const createPermissions = async () => {
