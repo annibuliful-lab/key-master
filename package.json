@@ -114,6 +114,7 @@
     "react": "18.0.0",
     "react-dom": "18.0.0",
     "regenerator-runtime": "0.13.7",
+    "subscriptions-transport-ws": "^0.11.0",
     "tslib": "2.3.0",
     "wait-on": "6.0.1",
     "ws": "8.6.0"

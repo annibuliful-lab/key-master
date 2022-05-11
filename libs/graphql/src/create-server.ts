@@ -1,15 +1,13 @@
 import { fastify } from 'fastify';
-import { useServer } from 'graphql-ws/lib/use/ws';
 import { ApolloServer, Config } from 'apollo-server-fastify';
 import {
-  ApolloServerPluginDrainHttpServer,
   ApolloServerPluginLandingPageGraphQLPlayground,
   gql,
 } from 'apollo-server-core';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 import { mergeResolvers, mergeTypeDefs } from '@graphql-tools/merge';
-import { DocumentNode, print } from 'graphql';
+import { DocumentNode, GraphQLError, print } from 'graphql';
 import { IAppContext } from './graphql-context';
 import {
   constraintDirectiveTypeDefs,
@@ -20,7 +18,9 @@ import { deleteOperationTypeDef } from './type-defs/delete-operation-result';
 import { authorizedDirective } from './directives/authorized';
 import compose from 'lodash/fp/compose';
 import * as dotenv from 'dotenv';
-import { WebSocketServer } from 'ws';
+import { DuplicateResource } from './errors/duplicate-resource';
+import { SubscriptionServer } from 'subscriptions-transport-ws';
+import { execute, subscribe } from 'graphql';
 
 dotenv.config();
 
@@ -43,6 +43,18 @@ interface ICreateServer {
   supportContastraintDirective?: boolean;
   supportSubscription?: boolean;
   contextResolver: (context: IAppContext) => Config['context'];
+}
+
+function formatError(error: GraphQLError) {
+  const errorCode = error.extensions.exception.code;
+  if (errorCode === 'P2002') {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const metaFields = (error.extensions.exception as any).meta
+      .target as string[];
+    throw new DuplicateResource(`Duplicated ${metaFields}`);
+  }
+
+  return error;
 }
 
 export const createServer = async ({
@@ -115,12 +127,13 @@ export const createServer = async ({
   const app = fastify({});
 
   // Create our WebSocket server using the HTTP server we just set up.
-  const wsServer = new WebSocketServer({
-    server: app.server,
-    path: '/graphql',
-  });
-  // Save the returned server's info so we can shutdown this server later
-  const serverCleanup = useServer({ schema }, wsServer);
+  // const wsServer = new WebSocketServer({
+  //   server: app.server,
+  //   path: '/graphql',
+  // });
+
+  // // Save the returned server's info so we can shutdown this server later
+  // const serverCleanup = useServer({ schema }, wsServer);
 
   const apolloServer = new ApolloServer({
     schema,
@@ -143,25 +156,26 @@ export const createServer = async ({
     },
     plugins: [
       enablePlayGround && ApolloServerPluginLandingPageGraphQLPlayground(),
-
-      supportSubscription &&
-        ApolloServerPluginDrainHttpServer({ httpServer: app.server }),
-
-      supportSubscription && {
-        async serverWillStart() {
-          return {
-            async drainServer() {
-              await serverCleanup.dispose();
-            },
-          };
-        },
-      },
     ],
+    formatError,
   });
 
   await apolloServer.start();
 
-  app.register(apolloServer.createHandler({ path: '/graphql', cors: true }));
+  app.register(
+    apolloServer.createHandler({
+      path: '/graphql',
+      cors: true,
+      disableHealthCheck: true,
+    })
+  );
+
+  if (supportSubscription) {
+    SubscriptionServer.create(
+      { schema, execute, subscribe },
+      { server: app.server, path: '/graphql' }
+    );
+  }
 
   app.listen(port, '0.0.0.0').then((url) => {
     console.log(`🚀  Server ready at ${url}/graphql `);

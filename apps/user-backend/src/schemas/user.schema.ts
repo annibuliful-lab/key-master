@@ -56,4 +56,8 @@ export const typeDefs = gql`
   type Mutation {
     createUser(input: CreateUserInput): User!
   }
+
+  type Subscription {
+    createdUser: User
+  }
 `;

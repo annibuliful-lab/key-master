@@ -23,6 +23,7 @@ dotenv.config();
 async function makeGatewaySchema() {
   const userSchema = await executeRemoteSchema({
     httpEndpoint: 'http://localhost:3000/graphql',
+    wsEndpoint: 'ws://localhost:3000/graphql',
   });
 
   const authSchema = await executeRemoteSchema({

@@ -10,3 +10,4 @@ export * from './utils/validate-authentication';
 export * from './utils/dataloader';
 export * from './directives/access';
 export * from './directives/authorized';
+export * from './pubsub';
