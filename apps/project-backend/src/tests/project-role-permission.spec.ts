@@ -96,6 +96,7 @@ describe('Project Role Permission', () => {
       const permissions = rolePermissions.flatMap(
         (p) => p.permission.permission
       );
+
       const permisionIds = rolePermissions.flatMap((p) => p.permission.id);
       expect(
         permisionIds.every((id) => permisionIds.includes(id))
