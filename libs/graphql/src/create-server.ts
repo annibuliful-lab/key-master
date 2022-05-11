@@ -1,6 +1,8 @@
 import { fastify } from 'fastify';
+import { useServer } from 'graphql-ws/lib/use/ws';
 import { ApolloServer, Config } from 'apollo-server-fastify';
 import {
+  ApolloServerPluginDrainHttpServer,
   ApolloServerPluginLandingPageGraphQLPlayground,
   gql,
 } from 'apollo-server-core';
@@ -18,6 +20,7 @@ import { deleteOperationTypeDef } from './type-defs/delete-operation-result';
 import { authorizedDirective } from './directives/authorized';
 import compose from 'lodash/fp/compose';
 import * as dotenv from 'dotenv';
+import { WebSocketServer } from 'ws';
 
 dotenv.config();
 
@@ -38,6 +41,7 @@ interface ICreateServer {
   supportSchemaStiching?: boolean;
   skipAuth?: boolean;
   supportContastraintDirective?: boolean;
+  supportSubscription?: boolean;
   contextResolver: (context: IAppContext) => Config['context'];
 }
 
@@ -47,6 +51,7 @@ export const createServer = async ({
   resolvers,
   supportSchemaStiching = true,
   supportContastraintDirective = true,
+  supportSubscription = false,
   contextResolver,
 }: ICreateServer) => {
   let schema = supportSchemaStiching
@@ -107,6 +112,16 @@ export const createServer = async ({
   const enablePlayGround =
     process.env.ENABLE_GRAPHQL_SERVER_PLAYGROUND === 'true';
 
+  const app = fastify({});
+
+  // Create our WebSocket server using the HTTP server we just set up.
+  const wsServer = new WebSocketServer({
+    server: app.server,
+    path: '/graphql',
+  });
+  // Save the returned server's info so we can shutdown this server later
+  const serverCleanup = useServer({ schema }, wsServer);
+
   const apolloServer = new ApolloServer({
     schema,
     context: (context) => {
@@ -128,10 +143,22 @@ export const createServer = async ({
     },
     plugins: [
       enablePlayGround && ApolloServerPluginLandingPageGraphQLPlayground(),
+
+      supportSubscription &&
+        ApolloServerPluginDrainHttpServer({ httpServer: app.server }),
+
+      supportSubscription && {
+        async serverWillStart() {
+          return {
+            async drainServer() {
+              await serverCleanup.dispose();
+            },
+          };
+        },
+      },
     ],
   });
 
-  const app = fastify({});
   await apolloServer.start();
 
   app.register(apolloServer.createHandler({ path: '/graphql', cors: true }));
