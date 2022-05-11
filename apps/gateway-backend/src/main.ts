@@ -97,6 +97,11 @@ const main = async () => {
         const projectId = headers['x-project-id'] as string;
         const userId = headers['x-user-id'] as string;
         const permissions = (headers['x-user-permissions'] ?? '') as string;
+        const token = authorization?.replace('Bearer ', '');
+
+        if (!token) {
+          throw new AuthenticationError('Unauthorization');
+        }
 
         if (
           authorization?.startsWith('TEST-AUTH') &&
@@ -116,12 +121,6 @@ const main = async () => {
             'x-user-role': 'KeyAdmin',
             authorization,
           };
-        }
-
-        const token = authorization?.replace('Bearer ', '');
-
-        if (!token) {
-          return null;
         }
 
         const userAuth = await validateAuthentication({ token, projectId });
