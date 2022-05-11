@@ -16,6 +16,15 @@ export const typeDefs = gql`
     take: Int
   }
 
+  type ProjectRolePermission @key(selectionSet: "{ permissionId }") {
+    permissionId: ID!
+    permission: Permission
+  }
+
+  input ProjectRolePermissionKey {
+    permissionId: ID!
+  }
+
   type Mutation {
     createPermission(permission: String!): Permission!
       @access(
@@ -43,5 +52,9 @@ export const typeDefs = gql`
       @access(
         conditions: { permission: "PERMISSION_READ", roleName: "KeyAdmin" }
       )
+
+    _projectRoleUserPermission(
+      keys: [ProjectRolePermissionKey!]!
+    ): [ProjectRolePermission]! @merge(keyArg: "keys")
   }
 `;

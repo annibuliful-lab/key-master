@@ -75,6 +75,17 @@ export class PermissionService extends Repository<IAppContext> {
     return permissionInfo;
   }
 
+  async findByIds(ids: string[]) {
+    return this.db.permission.findMany({
+      where: {
+        id: {
+          in: [...new Set(ids)],
+        },
+        deletedAt: null,
+      },
+    });
+  }
+
   findManyByFilter(filter: PermissionFilterInput) {
     return this.db.permission.findMany({
       ...(filter?.cursor && { skip: 1 }),
