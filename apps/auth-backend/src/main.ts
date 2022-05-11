@@ -12,6 +12,7 @@ createServer({
   typeDefs,
   port: 3001,
   resolvers,
+  supportSubscription: true,
   contextResolver: (context): IGraphqlContext => {
     return {
       ...context,

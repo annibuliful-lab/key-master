@@ -25,20 +25,25 @@ dotenv.config();
 
 async function makeGatewaySchema() {
   const userSchema = await executeRemoteSchema({
-    httpEndpoint: 'http://localhost:3000/graphql',
-    wsEndpoint: 'ws://localhost:3000/graphql',
+    host: 'localhost',
+    port: 3000,
+    supportWs: true,
   });
 
   const authSchema = await executeRemoteSchema({
-    httpEndpoint: 'http://localhost:3001/graphql',
+    host: 'localhost',
+    port: 3001,
+    supportWs: true,
   });
 
   const projectSchema = await executeRemoteSchema({
-    httpEndpoint: 'http://localhost:3002/graphql',
+    host: 'localhost',
+    port: 3002,
   });
 
   const keyManagementSchema = await executeRemoteSchema({
-    httpEndpoint: 'http://localhost:3003/graphql',
+    host: 'localhost',
+    port: 3003,
   });
 
   return stitchSchemas({
@@ -82,7 +87,64 @@ const main = async () => {
     path: '/graphql',
   });
 
-  const serverCleanup = useServer({ schema }, server);
+  const serverCleanup = useServer(
+    {
+      schema,
+      onConnect: async (ctx) => {
+        const headers = ctx.connectionParams as unknown as IGatewayContext;
+        const authorization = headers['authorization'];
+        const allowTestSecret = headers['x-allow-test'] as string;
+        const projectId = headers['x-project-id'] as string;
+        const userId = headers['x-user-id'] as string;
+        const permissions = (headers['x-user-permissions'] ?? '') as string;
+
+        if (
+          authorization?.startsWith('TEST-AUTH') &&
+          allowTestSecret === process.env.SKIP_AUTH_SECRET
+        ) {
+          return {
+            'x-user-id': userId,
+            'x-project-id': projectId,
+            'x-user-permissions': !isEmpty(permissions)
+              ? permissions.split(',')
+              : (
+                  await getUserPermissions({
+                    projectId,
+                    userId,
+                  })
+                ).permissions,
+            'x-user-role': 'KeyAdmin',
+            authorization,
+          };
+        }
+
+        const token = authorization?.replace('Bearer ', '');
+
+        if (!token) {
+          return null;
+        }
+
+        const userAuth = await validateAuthentication({ token, projectId });
+
+        if (typeof userAuth === 'string' && userAuth === 'FORBIDDEN') {
+          throw new ForbiddenError(`Forbidden with project id ${projectId}`);
+        }
+
+        if (!userAuth) {
+          throw new AuthenticationError('Unauthorization');
+        }
+
+        return {
+          'x-user-id': userAuth.userId,
+          'x-project-id': projectId,
+          'x-user-permissions': userAuth.permissions,
+          'x-user-role': userAuth.role,
+          authorization,
+        };
+      },
+    },
+    server
+  );
 
   const apolloServer = new ApolloServer({
     schema,
