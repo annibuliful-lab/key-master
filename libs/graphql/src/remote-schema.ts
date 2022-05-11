@@ -1,4 +1,4 @@
-import { wrapSchema } from '@graphql-tools/wrap';
+import { FilterRootFields, wrapSchema } from '@graphql-tools/wrap';
 import { fetch } from 'cross-undici-fetch';
 import {
   print,
@@ -111,6 +111,11 @@ export const executeRemoteSchema = async ({
   const schema = wrapSchema({
     schema: await fetchRemoteSchema(executor),
     executor,
+    transforms: [
+      new FilterRootFields(
+        (_operation, rootField) => !rootField.startsWith('_')
+      ),
+    ],
   });
 
   return schema;
