@@ -29,7 +29,7 @@ export const createPublishEvent = <
 
 export const createSubscriberEvent = <
   T extends keyof typeof PubSubTopic,
-  E = any
+  E = unknown
 >(
   topic: T | T[]
 ) => {
