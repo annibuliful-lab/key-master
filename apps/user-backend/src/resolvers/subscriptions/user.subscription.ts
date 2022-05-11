@@ -1,8 +1,4 @@
-import {
-  createSubscriberEvent,
-  pubsub,
-  PubSubTopic,
-} from '@key-master/graphql';
+import { createSubscriberEvent } from '@key-master/graphql';
 import { Resolvers } from '../../codegen-generated';
 import { IGraphqlContext } from '../../context';
 
