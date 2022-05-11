@@ -32,20 +32,25 @@ export const typeDefs = gql`
 
   type Mutation {
     createProjectRoleUser(input: CreateProjectRoleUserInput!): ProjectRoleUser!
+      @access(conditions: { permission: "PROJECT_ROLE_USER_WRITE" })
 
     updateProjectRoleUser(
       id: ID!
       input: UpdateProjectRoleUserInput!
     ): ProjectRoleUser!
+      @access(conditions: { permission: "PROJECT_ROLE_USER_WRITE" })
 
     deleteProjectRoleUser(id: ID!): DeleteProjectRoleUserOperationResult!
+      @access(conditions: { permission: "PROJECT_ROLE_USER_WRITE" })
   }
 
   type Query {
     getProjectRoleUserById(id: ID!): ProjectRoleUser!
+      @access(conditions: { permission: "PROJECT_ROLE_USER_READ" })
 
     getProjectRoleUsers(
       filter: ProjectRoleUserFilterInput!
     ): [ProjectRoleUser!]!
+      @access(conditions: { permission: "PROJECT_ROLE_USER_READ" })
   }
 `;

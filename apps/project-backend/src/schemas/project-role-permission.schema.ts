@@ -17,9 +17,11 @@ export const typeDefs = gql`
     setProjectRolePermissions(
       input: SetProjectRolePermissionsInput!
     ): [ProjectRolePermission!]!
+      @access(conditions: { permission: "PROJECT_ROLE_PERMISSION_WRITE" })
   }
 
   type Query {
     getProjectRolePermissionsByRoleId(id: ID!): [ProjectRolePermission!]!
+      @access(conditions: { permission: "PROJECT_ROLE_PERMISSION_READ" })
   }
 `;
