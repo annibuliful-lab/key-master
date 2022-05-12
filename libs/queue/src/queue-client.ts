@@ -10,9 +10,12 @@ export const publisherQueueClient = (
 };
 
 export const subscriberQueueClient = <T, R = void>(
-  name: string,
+  name: keyof typeof QueueTopic,
   process: Processor<T, R>,
   connection = redisClient
 ) => {
   return new Worker(name, process, { connection });
 };
+
+export const userActivityPublisherQueueClient =
+  publisherQueueClient('USER_ACTIVITY');

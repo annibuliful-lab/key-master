@@ -5,6 +5,7 @@ export const typeDefs = gql`
     CREATE
     UPDATE
     DELETE
+    READ
   }
 
   type UserActivity {

@@ -82,7 +82,7 @@ const main = async () => {
 };
 
 waitOn(
-  { resources: [3000, 3001, 3002, 3003].map((port) => `tcp:${port}`) },
+  { resources: [3000, 3001, 3002, 3003, 3004].map((port) => `tcp:${port}`) },
   (error) => {
     if (error) {
       console.error('Gateway error ', error);
