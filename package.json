@@ -27,6 +27,7 @@
     "db-mongo:generate": "prisma generate --schema prisma-mongo/schema.prisma",
     "db-mongo:seed": "ts-node prisma-mongo/seed/index.ts",
     "db-all:generate": "yarn run db:generate && yarn db-mongo:generate",
+    "db-all:seed": "yarn run db:seed && yarn run db-mongo:seed",
     "genql": "ts-node tools/bin/genql.ts",
     "codegen:backend": "ts-node tools/bin/codegen.ts",
     "generate": "yarn codegen:backend && yarn db:generate && yarn db-mongo:generate",
