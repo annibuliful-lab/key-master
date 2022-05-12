@@ -1,8 +1,9 @@
 import { redisClient } from '@key-master/db';
 import { Queue, Worker, Processor } from 'bullmq';
+import { QueueTopic } from './constants';
 
 export const publisherQueueClient = (
-  name: string,
+  name: keyof typeof QueueTopic,
   connection = redisClient
 ) => {
   return new Queue(name, { connection });
