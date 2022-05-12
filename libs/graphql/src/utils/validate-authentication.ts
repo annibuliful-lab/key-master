@@ -1,5 +1,4 @@
 import { prismaClient, redisClient } from '@key-master/db';
-import { uniq } from 'lodash';
 import type { IJwtAuthInfo } from '../@types/auth';
 import { verify } from './jwt';
 
@@ -180,7 +179,7 @@ export const getUserPermissions = async ({
   return {
     userId,
     role: userProjectRole.role.role,
-    permissions: uniq(userPermissions.map((p) => p.permission)),
+    permissions: userPermissions.map((p) => p.permission),
   };
 };
 

@@ -29,6 +29,7 @@ Object {
     "KEY_MANAGEMENT_WRITE",
     "KEY_MANAGEMENT_READ",
     "KEY_MANAGEMENT_UPDATE_PIN",
+    "USER_ACTIVITY_READ",
   ],
   "role": "ADMIN",
   "userId": "TEST_USER_A_ID",
