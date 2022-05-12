@@ -37,7 +37,7 @@ export const testUserPermissionsClient = (permission: string[] = []) =>
   createClient({
     url: process.env.GRAPHQL_ENDPOINT,
     headers: {
-      Authorization: `TEST-AUTH 'TEST_PROJECT_ID'`,
+      Authorization: `TEST-AUTH TEST_PROJECT_ID`,
       'x-allow-test': process.env.SKIP_AUTH_SECRET,
       'x-project-id': 'TEST_PROJECT_ID',
       'x-user-id': 'TEST_USER_A_ID',

@@ -21,16 +21,6 @@ enum AuditLogStatus {
     INFO
 }
 
-model Message {
-    id        String   @id @default(auto()) @map("_id") @db.ObjectId
-    content   String
-    auditId   String
-    audit     AuditLog @relation(fields: [auditId], references: [id])
-    createdAt DateTime @default(now())
-    updatedAt DateTime @default(now()) @updatedAt
-
-}
-
 model AuditLog {
     id          String         @id @default(auto()) @map("_id") @db.ObjectId
     projectId   String
@@ -40,7 +30,6 @@ model AuditLog {
     data        Json?
     createdBy   String
     updatedBy   String
-    messages    Message[]
     createdAt   DateTime       @default(now())
     updatedAt   DateTime       @default(now()) @updatedAt
 

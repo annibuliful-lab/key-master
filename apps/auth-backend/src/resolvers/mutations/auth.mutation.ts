@@ -1,4 +1,4 @@
-import { createPublishEvent } from '@key-master/graphql';
+import { publishRedisEvent } from '@key-master/graphql';
 import { Resolvers } from '../../codegen-generated';
 import { IGraphqlContext } from '../../context';
 
@@ -6,7 +6,7 @@ export const mutation: Resolvers<IGraphqlContext>['Mutation'] = {
   login: async (_parent, { input }, ctx) => {
     const logedUser = await ctx.auth.login(input);
 
-    await createPublishEvent('LOGED_USER', { logedUser });
+    await publishRedisEvent('LOGED_USER', { logedUser });
 
     return logedUser;
   },
