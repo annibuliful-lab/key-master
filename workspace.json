@@ -11,6 +11,7 @@
     "project-backend": "apps/project-backend",
     "queue": "libs/queue",
     "test": "libs/test",
+    "user-activity-backend": "apps/user-activity-backend",
     "user-backend": "apps/user-backend"
   }
 }

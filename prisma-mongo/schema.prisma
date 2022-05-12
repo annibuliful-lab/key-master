@@ -36,3 +36,23 @@ model AuditLog {
     @@index([projectId])
     @@index([serviceName, type])
 }
+
+enum UserActivityType {
+    CREATE
+    UPDATE
+    DELETE
+}
+
+model UserActivity {
+    id          String           @id @default(auto()) @map("_id") @db.ObjectId
+    userId      String
+    serviceName String
+    projectId   String?
+    description String?
+    data        Json
+    type        UserActivityType
+    createdAt   DateTime         @default(now())
+    updatedAt   DateTime         @default(now()) @updatedAt
+
+    @@index([userId, type])
+}

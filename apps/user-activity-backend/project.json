@@ -1,15 +1,15 @@
 {
-  "root": "apps/gateway-backend",
-  "sourceRoot": "apps/gateway-backend/src",
+  "root": "apps/user-activity-backend",
+  "sourceRoot": "apps/user-activity-backend/src",
   "projectType": "application",
   "targets": {
     "build": {
       "executor": "@nrwl/node:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/apps/gateway-backend",
-        "main": "apps/gateway-backend/src/main.ts",
-        "tsConfig": "apps/gateway-backend/tsconfig.app.json"
+        "outputPath": "dist/apps/user-activity-backend",
+        "main": "apps/user-activity-backend/src/main.ts",
+        "tsConfig": "apps/user-activity-backend/tsconfig.app.json"
       },
       "configurations": {
         "production": {
@@ -22,7 +22,7 @@
     "serve": {
       "executor": "@nrwl/node:node",
       "options": {
-        "buildTarget": "gateway-backend:build",
+        "buildTarget": "user-activity-backend:build",
         "inspect": false
       }
     },
@@ -30,14 +30,14 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["apps/gateway-backend/**/*.ts"]
+        "lintFilePatterns": ["apps/user-activity-backend/**/*.ts"]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/gateway-backend"],
+      "outputs": ["coverage/apps/user-activity-backend"],
       "options": {
-        "jestConfig": "apps/gateway-backend/jest.config.ts",
+        "jestConfig": "apps/user-activity-backend/jest.config.ts",
         "passWithNoTests": true
       }
     }
