@@ -106,6 +106,10 @@ export const permissions: Pick<Permission, 'id' | 'permission'>[] = [
     id: '14659ed6-ed73-4eba-8e3c-49d768d5513f',
     permission: 'KEY_MANAGEMENT_UPDATE_PIN',
   },
+  {
+    id: '35d17d49-6f9f-4fcf-b856-0356b6ed2eba',
+    permission: 'USER_ACTIVITY_READ',
+  },
 ];
 
 export const createPermissions = async () => {

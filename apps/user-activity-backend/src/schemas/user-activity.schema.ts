@@ -20,7 +20,25 @@ export const typeDefs = gql`
     updatedAt: DateTime
   }
 
+  input UserActivityFilterInput {
+    search: String
+    cursor: ID
+    take: Int
+    userId: String
+    projectId: String
+    serviceName: String
+    type: [UserActivityType!]
+  }
+
   type Query {
     getUserActivityById(id: ID!): UserActivity!
+      @access(
+        conditions: { permission: "USER_ACTIVITY_READ", roleName: "KeyAdmin" }
+      )
+
+    getUsersActivities(filter: UserActivityFilterInput!): [UserActivity!]!
+      @access(
+        conditions: { permission: "USER_ACTIVITY_READ", roleName: "KeyAdmin" }
+      )
   }
 `;
