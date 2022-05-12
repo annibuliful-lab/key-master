@@ -165,3 +165,16 @@ model KeyManagment {
 
   @@index([projectId, name])
 }
+
+model SortOrderItem {
+  id        String    @id @default(uuid())
+  parentId  String
+  keysIds   String[]
+  createdBy String
+  updatedBy String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
+  deletedAt DateTime?
+
+  @@index([parentId])
+}
