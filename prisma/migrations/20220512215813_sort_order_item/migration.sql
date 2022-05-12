@@ -19,7 +19,6 @@ DROP TYPE "AuditType";
 -- CreateTable
 CREATE TABLE "SortOrderItem" (
     "id" TEXT NOT NULL,
-    "parentId" TEXT NOT NULL,
     "keysIds" TEXT[],
     "createdBy" TEXT NOT NULL,
     "updatedBy" TEXT NOT NULL,
@@ -29,6 +28,3 @@ CREATE TABLE "SortOrderItem" (
 
     CONSTRAINT "SortOrderItem_pkey" PRIMARY KEY ("id")
 );
-
--- CreateIndex
-CREATE INDEX "SortOrderItem_parentId_idx" ON "SortOrderItem"("parentId");

@@ -167,14 +167,11 @@ model KeyManagment {
 }
 
 model SortOrderItem {
-  id        String    @id @default(uuid())
-  parentId  String
+  id        String    @id
   keysIds   String[]
   createdBy String
   updatedBy String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @default(now()) @updatedAt
   deletedAt DateTime?
-
-  @@index([parentId])
 }
