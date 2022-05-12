@@ -9,6 +9,7 @@
     "graphql": "libs/graphql",
     "key-management-backend": "apps/key-management-backend",
     "project-backend": "apps/project-backend",
+    "queue": "libs/queue",
     "test": "libs/test",
     "user-backend": "apps/user-backend"
   }

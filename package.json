@@ -94,6 +94,7 @@
     "apollo-server-core": "3.7.0",
     "apollo-server-fastify": "3.6.7",
     "argon2": "0.28.5",
+    "bullmq": "^1.82.0",
     "concurrently": "7.1.0",
     "core-js": "3.6.5",
     "dataloader": "^2.1.0",
