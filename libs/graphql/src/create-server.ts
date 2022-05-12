@@ -49,6 +49,7 @@ interface ICreateServer {
   supportContastraintDirective?: boolean;
   supportSubscription?: boolean;
   contextResolver: (context: IAppContext) => Config['context'];
+  closeEvent?: () => Promise<void> | void;
 }
 
 function formatError(error: GraphQLError) {
@@ -71,6 +72,7 @@ export const createServer = async ({
   supportContastraintDirective = true,
   supportSubscription = false,
   contextResolver,
+  closeEvent,
 }: ICreateServer) => {
   const enablePlayGround =
     process.env.ENABLE_GRAPHQL_SERVER_PLAYGROUND === 'true';
@@ -201,5 +203,13 @@ export const createServer = async ({
 
   app.listen(port, '0.0.0.0').then((url) => {
     console.log(`🚀  Server ready at ${url}/graphql `);
+  });
+
+  process.on('SIGTERM', async () => {
+    await app.close();
+    await apolloServer.stop();
+    if (closeEvent) {
+      await closeEvent();
+    }
   });
 };

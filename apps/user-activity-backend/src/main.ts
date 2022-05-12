@@ -8,7 +8,8 @@ import { initSubscriberEvents } from './queue';
 
 dotenv.config();
 
-initSubscriberEvents();
+const closeEvent = initSubscriberEvents();
+
 createServer({
   typeDefs,
   port: 3004,
@@ -16,4 +17,5 @@ createServer({
   contextResolver: (context): IGraphqlContext => {
     return { ...context, userActivity: new UserActivityService(context) };
   },
+  closeEvent,
 });

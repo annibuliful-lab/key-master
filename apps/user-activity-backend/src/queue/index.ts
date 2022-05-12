@@ -1,5 +1,9 @@
 import { userLoginSubscriberEvent } from './user-login';
 
 export const initSubscriberEvents = () => {
-  userLoginSubscriberEvent();
+  const closeUserLoginEvent = userLoginSubscriberEvent();
+
+  return async () => {
+    await closeUserLoginEvent.close();
+  };
 };

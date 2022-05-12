@@ -79,6 +79,11 @@ const main = async () => {
   app.listen(4000, '0.0.0.0').then((url) => {
     console.log(`🚀  Server ready at ${url}/graphql `);
   });
+
+  process.on('SIGTERM', async () => {
+    await app.close();
+    await apolloServer.stop();
+  });
 };
 
 waitOn(

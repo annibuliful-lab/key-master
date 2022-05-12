@@ -27,6 +27,12 @@ export const makeGatewaySchema = async () => {
     port: 3003,
   });
 
+  const userActivitySchema = await executeRemoteSchema({
+    host: 'localhost',
+    port: 3004,
+    supportWs: true,
+  });
+
   return stitchSchemas({
     subschemaConfigTransforms: [stitchingDirectivesTransformer],
     subschemas: [
@@ -41,6 +47,9 @@ export const makeGatewaySchema = async () => {
       },
       {
         schema: keyManagementSchema,
+      },
+      {
+        schema: userActivitySchema,
       },
     ],
   });
