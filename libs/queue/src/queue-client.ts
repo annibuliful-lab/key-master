@@ -8,7 +8,7 @@ export const publisherQueueClient = (
   return new Queue(name, { connection });
 };
 
-export const subsciberQueueClient = <T, R = void>(
+export const subscriberQueueClient = <T, R = void>(
   name: string,
   process: Processor<T, R>,
   connection = redisClient
