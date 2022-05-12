@@ -30,6 +30,14 @@ directive @access(conditions: AccessDirectiveInput!) on FIELD_DEFINITION
 
 const authorizedDirectiveTypeDefs = `directive @authorized on FIELD_DEFINITION`;
 
+const jsonScalarTypeDefs = `  
+scalar JSON
+scalar JSONObject
+`;
+
+const dateTimeScalarTypeDefs = `
+scalar DateTime
+`;
 interface IGenerateCodegenParam {
   schemaPath: string;
   outputFile: string;
@@ -112,9 +120,8 @@ export const mergeTypeDefsWithScalarsAndDirectives = (
     allStitchingDirectivesTypeDefs,
     accessdDirectiveTypeDefs,
     authorizedDirectiveTypeDefs,
-    // directivesTypeDefs,
-    // dateScalars,
-    // jsonScalars,
+    jsonScalarTypeDefs,
+    dateTimeScalarTypeDefs,
     typeDefs,
     gql`
       type Query {

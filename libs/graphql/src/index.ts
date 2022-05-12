@@ -12,3 +12,5 @@ export * from './directives/access';
 export * from './directives/authorized';
 export * from './pubsub';
 export * from './pubsub/topics';
+export * from './scalars/date-time';
+export * from './scalars/json';

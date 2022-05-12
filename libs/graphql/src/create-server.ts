@@ -22,6 +22,11 @@ import compose from 'lodash/fp/compose';
 import * as dotenv from 'dotenv';
 import { DuplicateResource } from './errors/duplicate-resource';
 import { WebSocketServer } from 'ws';
+import {
+  dateTimeScalarResolver,
+  dateTimeScalarTypeDefs,
+} from './scalars/date-time';
+import { jsonScalarResolver, jsonScalarTypeDefs } from './scalars/json';
 
 dotenv.config();
 
@@ -82,12 +87,16 @@ export const createServer = async ({
               ${constraintDirectiveTypeDefs}
               ${deleteOperationTypeDef}
               ${authorizedDirectiveTypeDefs}
+              ${dateTimeScalarTypeDefs}
+              ${jsonScalarTypeDefs}
               type Query {
                 _sdl: String!
               }
             `,
           ]),
           resolvers: mergeResolvers([
+            dateTimeScalarResolver,
+            jsonScalarResolver,
             resolvers as never,
             {
               Query: {
@@ -97,6 +106,8 @@ export const createServer = async ({
                   ${accessdDirectiveTypeDefs}
                   ${constraintDirectiveTypeDefs}
                   ${authorizedDirectiveTypeDefs}
+                  ${dateTimeScalarTypeDefs}
+                  ${jsonScalarTypeDefs}
                   ${print(typeDefs as DocumentNode)}`;
                 },
               },
@@ -111,9 +122,15 @@ export const createServer = async ({
           constraintDirectiveTypeDefs,
           deleteOperationTypeDef,
           authorizedDirectiveTypeDefs,
+          dateTimeScalarTypeDefs,
+          jsonScalarTypeDefs,
           typeDefs,
         ]),
-        resolvers,
+        resolvers: mergeResolvers([
+          dateTimeScalarResolver,
+          jsonScalarResolver,
+          resolvers as never,
+        ]),
       });
 
   if (supportContastraintDirective) {

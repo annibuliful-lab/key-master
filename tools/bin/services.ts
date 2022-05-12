@@ -47,9 +47,18 @@ const keyManagementService: IService = {
   outputCodegenPath: `apps/key-management-backend/${baseAppPath}/${baseOutputCodegenPath}`,
 };
 
+const userActivityService: IService = {
+  serviceName: 'UserActivity',
+  commandArg: '',
+  port: 3004,
+  appPath: `apps/user-activity-backend/${baseAppPath}`,
+  schemaPath: `apps/user-activity-backend/${baseAppPath}/${baseSchemaPath}`,
+  outputCodegenPath: `apps/user-activity-backend/${baseAppPath}/${baseOutputCodegenPath}`,
+};
 export const services = {
   authService,
   userService,
   projectService,
   keyManagementService,
+  userActivityService,
 };
