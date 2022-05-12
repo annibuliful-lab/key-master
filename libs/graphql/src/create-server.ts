@@ -91,6 +91,7 @@ export const createServer = async ({
               ${authorizedDirectiveTypeDefs}
               ${dateTimeScalarTypeDefs}
               ${jsonScalarTypeDefs}
+              ${deleteOperationTypeDef}
               type Query {
                 _sdl: String!
               }
@@ -108,7 +109,9 @@ export const createServer = async ({
                   ${accessdDirectiveTypeDefs}
                   ${constraintDirectiveTypeDefs}
                   ${authorizedDirectiveTypeDefs}
-                  
+                  ${print(dateTimeScalarTypeDefs)}
+                  ${print(jsonScalarTypeDefs)}
+                  ${print(deleteOperationTypeDef)}
                   ${print(typeDefs as DocumentNode)}`;
                 },
               },

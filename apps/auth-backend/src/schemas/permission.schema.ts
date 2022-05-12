@@ -1,7 +1,7 @@
 import { gql } from 'apollo-server-fastify';
 
 export const typeDefs = gql`
-  type DeleteOperationResult {
+  type DeletePermissionOperationResult {
     success: Boolean!
   }
 
@@ -36,7 +36,7 @@ export const typeDefs = gql`
         conditions: { permission: "PERMISSION_WRITE", roleName: "KeyAdmin" }
       )
 
-    deletePermission(id: ID!): DeleteOperationResult!
+    deletePermission(id: ID!): DeletePermissionOperationResult!
       @access(
         conditions: { permission: "PERMISSION_WRITE", roleName: "KeyAdmin" }
       )
