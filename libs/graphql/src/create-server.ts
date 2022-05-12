@@ -106,8 +106,7 @@ export const createServer = async ({
                   ${accessdDirectiveTypeDefs}
                   ${constraintDirectiveTypeDefs}
                   ${authorizedDirectiveTypeDefs}
-                  ${dateTimeScalarTypeDefs}
-                  ${jsonScalarTypeDefs}
+                  
                   ${print(typeDefs as DocumentNode)}`;
                 },
               },
