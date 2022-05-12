@@ -118,70 +118,69 @@ const getUserInfo = (id: string) => {
 interface IGetUserPermissionsParam {
   projectId: string;
   userId: string;
+  skipCache?: boolean;
 }
 export const getUserPermissions = async ({
   projectId,
   userId,
+  skipCache = false,
 }: IGetUserPermissionsParam): Promise<{
   userId: string;
   permissions: string[];
   role: string;
 } | null> => {
-  const cacheUserPermissions = await redisClient.get(`${userId}-${projectId}`);
+  if (skipCache) {
+    const cacheUserPermissions = await redisClient.get(
+      `${userId}-${projectId}`
+    );
 
-  if (cacheUserPermissions) {
-    return JSON.parse(cacheUserPermissions);
+    if (cacheUserPermissions) {
+      return JSON.parse(cacheUserPermissions);
+    }
   }
 
-  const userPermissions = await prismaClient.projectRoleUser.findFirst({
+  const userProjectRole = await prismaClient.projectRoleUser.findFirst({
     select: {
       role: {
         select: {
+          id: true,
           role: true,
-          rolePermissions: {
-            select: {
-              permission: {
-                select: {
-                  permission: true,
-                },
-              },
-            },
-          },
         },
       },
     },
     where: {
       projectId,
-      project: {
-        deletedAt: null,
-      },
-      role: {
-        deletedAt: null,
-        rolePermissions: {
-          some: {
-            permission: {
-              deletedAt: null,
-            },
-            deletedAt: null,
-          },
-        },
-      },
-      userId: userId,
+      userId,
+      deletedAt: null,
     },
   });
 
-  if (!userPermissions) {
+  if (!userProjectRole) {
+    return null;
+  }
+
+  const userPermissions = await prismaClient.permission.findMany({
+    select: {
+      permission: true,
+    },
+    where: {
+      deletedAt: null,
+      projectRolePermissions: {
+        some: {
+          roleId: userProjectRole.role.id,
+        },
+      },
+    },
+  });
+
+  if (userPermissions.length === 0) {
     return null;
   }
 
   return {
     userId,
-    role: userPermissions.role.role,
-    permissions: uniq(
-      userPermissions.role.rolePermissions.map(
-        (rolePermission) => rolePermission.permission.permission
-      )
-    ),
+    role: userProjectRole.role.role,
+    permissions: uniq(userPermissions.map((p) => p.permission)),
   };
 };
 

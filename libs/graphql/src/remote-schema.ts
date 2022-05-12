@@ -24,12 +24,13 @@ export const executeRemoteSchema = async ({
   supportWs = false,
 }: IExecuteRemoteSchemaParam) => {
   const httpEndpoint = `http://${host}:${port}/${graphqlPath}`;
-  const wsEndpoint = `ws://${host}:${port}/${graphqlPath}`;
 
   let subscriptionClient = null;
   let wsExecutor: AsyncExecutor;
 
   if (supportWs) {
+    const wsEndpoint = `ws://${host}:${port}/${graphqlPath}`;
+
     subscriptionClient = createClient({
       url: wsEndpoint,
       webSocketImpl: WebSocket,
