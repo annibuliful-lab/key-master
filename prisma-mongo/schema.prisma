@@ -41,6 +41,7 @@ enum UserActivityType {
     CREATE
     UPDATE
     DELETE
+    READ
 }
 
 model UserActivity {
