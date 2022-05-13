@@ -1,3 +1,5 @@
+import { sortBy } from 'lodash';
+
 export const reorder = <T extends { sortOrder: number }>(
   list: T[],
   startIndex: number,
@@ -21,3 +23,18 @@ export const insertAt = <T>(array: T[], index: number, newItem: T): T[] => [
   // part of the array after the specified index
   ...array.slice(index),
 ];
+
+interface IOrderByFields {
+  id: string;
+  active: boolean;
+}
+
+export const orderByActiveStatusOrSortOrderPosition = <
+  T extends IOrderByFields
+>(
+  data: T[],
+  sortOrderIds: string[]
+) =>
+  sortBy(data, (item) =>
+    item.active ? -Infinity : sortOrderIds.findIndex((id) => item.id === id)
+  );

@@ -1,9 +1,11 @@
 import { Repository } from '@key-master/db';
 import { IAppContext, ResourceNotFound } from '@key-master/graphql';
-import { insertAt } from '@key-master/utils';
+import {
+  insertAt,
+  orderByActiveStatusOrSortOrderPosition,
+} from '@key-master/utils';
 import { ForbiddenError } from 'apollo-server-errors';
 import { verify } from 'argon2';
-import { sortBy } from 'lodash';
 import {
   CreateOrganizationKeyManagementInput,
   OrganizationKeyManagementFilterInput,
@@ -258,8 +260,9 @@ export class OrganizationKeyManagementService extends Repository<IAppContext> {
         take: filter?.take ?? 20,
       });
 
-    return sortBy(organizationKeyManagements, (item) =>
-      item.active ? -Infinity : sortOrderIds.findIndex((id) => item.id === id)
+    return orderByActiveStatusOrSortOrderPosition(
+      organizationKeyManagements,
+      sortOrderIds
     );
   }
 }
