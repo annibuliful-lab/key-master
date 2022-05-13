@@ -16,7 +16,7 @@ export function accessDirective() {
   return {
     accessdDirectiveTypeDefs: `
     input AccessDirectiveInput{
-      permission: String!
+      permission: String
       requiredProjectId: Boolean = false
       requiredOrgId: Boolean = false
       roleName: String

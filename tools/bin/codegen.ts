@@ -19,7 +19,7 @@ import { gql } from 'apollo-server-fastify';
 const { allStitchingDirectivesTypeDefs } = stitchingDirectives();
 const accessdDirectiveTypeDefs = `
 input AccessDirectiveInput{
-  permission: String!
+  permission: String
   requiredProjectId: Boolean = false
   requiredOrgId: Boolean = false
   roleName: String
