@@ -17,7 +17,9 @@ export class ProjectRoleUserService extends Repository<IAppContext> {
     });
 
     if (!user) {
-      throw new ResourceNotFound(`create role user ${input.userId} not found`);
+      throw new ResourceNotFound(
+        `create project role: user ${input.userId} not found`
+      );
     }
 
     const role = await this.db.projectRole.findFirst({
@@ -31,7 +33,7 @@ export class ProjectRoleUserService extends Repository<IAppContext> {
 
     if (!role) {
       throw new ResourceNotFound(
-        `create project role id ${input.roleId} not found`
+        `create project role: id ${input.roleId} not found`
       );
     }
 
@@ -116,7 +118,9 @@ export class ProjectRoleUserService extends Repository<IAppContext> {
     });
 
     if (!projectRoleUser) {
-      throw new ResourceNotFound(`delete project role user id ${id} not found`);
+      throw new ResourceNotFound(
+        `delete project role: user id ${id} not found`
+      );
     }
     await this.db.projectRoleUser.update({
       where: {

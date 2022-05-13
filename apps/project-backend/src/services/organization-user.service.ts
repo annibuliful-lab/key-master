@@ -35,7 +35,9 @@ export class OrganizationUserService extends Repository<IAppContext> {
     });
 
     if (!projectRoleUser) {
-      throw new ResourceNotFound(`user id ${input.userId} not found`);
+      throw new ResourceNotFound(
+        `create organization user: id ${input.userId} not found`
+      );
     }
 
     return this.db.organizationUser.create({
@@ -57,7 +59,9 @@ export class OrganizationUserService extends Repository<IAppContext> {
     });
 
     if (!organizationUser) {
-      throw new ResourceNotFound(`id ${id} not found`);
+      throw new ResourceNotFound(
+        `update organization user: id ${id} not found`
+      );
     }
 
     return this.db.organizationUser.update({
@@ -81,7 +85,9 @@ export class OrganizationUserService extends Repository<IAppContext> {
     });
 
     if (!organizationUser) {
-      throw new ResourceNotFound(`id ${id} not found`);
+      throw new ResourceNotFound(
+        `delete organization user: id ${id} not found`
+      );
     }
 
     await this.db.organizationUser.delete({

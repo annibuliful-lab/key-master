@@ -6,7 +6,7 @@ interface IEncryptKeyParam {
   secret: string;
 }
 
-const makeid = (length: number) => {
+const generateUniquRandomString = (length: number) => {
   let result = '';
   const characters =
     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -21,7 +21,7 @@ const generateMasterKey = (
   hash: string,
   replace = '$argon2i$v=19$m=4096,t=3,p=1$'
 ) => {
-  const key = makeid(32);
+  const key = generateUniquRandomString(32);
   const secretHash = crypto
     .createHash('md5')
     .update(hash.replace(replace, '').substring(0, hash.length - 1))
@@ -33,7 +33,7 @@ const generateMasterKey = (
 export const encryptMasterKey = ({ text, secret }: IEncryptKeyParam) => {
   const { key, secretHash } = generateMasterKey(secret);
 
-  const iv = makeid(16);
+  const iv = generateUniquRandomString(16);
 
   const cipher = crypto.createCipheriv(algorithm, secretHash, iv);
 

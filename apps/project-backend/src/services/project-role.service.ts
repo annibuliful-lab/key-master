@@ -20,7 +20,7 @@ export class ProjectRoleService extends Repository<IAppContext> {
     });
 
     if (projectRole) {
-      throw new DuplicateResource(`create duplicate project role ${data.role}`);
+      throw new DuplicateResource(`duplicate project role ${data.role}`);
     }
 
     return this.db.projectRole.create({
@@ -41,7 +41,7 @@ export class ProjectRoleService extends Repository<IAppContext> {
     });
 
     if (!projectRole) {
-      throw new ResourceNotFound(`update project role id ${id} not found`);
+      throw new ResourceNotFound(`update project role: id ${id} not found`);
     }
 
     return this.db.projectRole.update({
@@ -61,7 +61,7 @@ export class ProjectRoleService extends Repository<IAppContext> {
       },
     });
     if (!projectRole) {
-      throw new ResourceNotFound(`delete project role id ${id} not found`);
+      throw new ResourceNotFound(`delete project role: id ${id} not found`);
     }
 
     await this.db.projectRole.update({
