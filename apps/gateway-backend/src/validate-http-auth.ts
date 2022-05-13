@@ -17,12 +17,14 @@ export const validateHttpAuth = async ({
   const projectId = request.headers['x-project-id'] as string;
   const userId = request.headers['x-user-id'] as string;
   const permissions = (request.headers['x-user-permissions'] ?? '') as string;
+  const orgId = (request.headers['x-org-id'] as string) ?? null;
 
   if (
     authorization?.startsWith('TEST-AUTH') &&
     allowTestSecret === process.env.SKIP_AUTH_SECRET
   ) {
     return {
+      'x-org-id': orgId,
       'x-user-id': userId,
       'x-project-id': projectId,
       'x-user-permissions': !isEmpty(permissions)
@@ -55,6 +57,7 @@ export const validateHttpAuth = async ({
   }
 
   return {
+    'x-org-id': orgId,
     'x-user-id': userAuth.userId,
     'x-project-id': projectId,
     'x-user-permissions': userAuth.permissions,
