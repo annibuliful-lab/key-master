@@ -69,15 +69,28 @@ export class ProjectRolePermissionService extends Repository<IAppContext> {
         });
       }
 
-      await prisma.projectRolePermission.createMany({
-        skipDuplicates: true,
-        data: input.permissionIds.map((permissionId) => ({
-          permissionId,
-          roleId: input.roleId,
-          createdBy: this.context.userId,
-          updatedBy: this.context.userId,
-        })),
-      });
+      const listUpsertPermissions = input.permissionIds.map((permissionId) =>
+        prisma.projectRolePermission.upsert({
+          where: {
+            roleId_permissionId: {
+              roleId: input.roleId,
+              permissionId,
+            },
+          },
+
+          update: {
+            deletedAt: null,
+          },
+          create: {
+            permissionId,
+            roleId: input.roleId,
+            createdBy: this.context.userId,
+            updatedBy: this.context.userId,
+          },
+        })
+      );
+
+      await Promise.all(listUpsertPermissions);
     });
 
     return this.db.projectRolePermission.findMany({
