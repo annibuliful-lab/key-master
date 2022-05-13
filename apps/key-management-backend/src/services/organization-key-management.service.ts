@@ -1,5 +1,6 @@
 import { Repository } from '@key-master/db';
 import { IAppContext, ResourceNotFound } from '@key-master/graphql';
+import { insertAt } from '@key-master/utils';
 import { ForbiddenError } from 'apollo-server-errors';
 import { verify } from 'argon2';
 import {
@@ -44,30 +45,52 @@ export class OrganizationKeyManagementService extends Repository<IAppContext> {
       );
     }
 
-    return this.db.organizationKeyManagement.upsert({
-      where: {
-        projectOrganizationId_keyManagementId: {
-          projectOrganizationId,
-          keyManagementId,
+    return this.db.$transaction(async (prisma) => {
+      await prisma.sortOrderItem.upsert({
+        where: {
+          id: projectOrganizationId,
         },
-      },
-      update: {
-        deletedAt: null,
-      },
-      create: {
-        keyManagementId,
-        projectOrganizationId,
-        active,
-        createdBy: this.context.userId,
-        updatedBy: this.context.userId,
-      },
+        update: {
+          keysIds: {
+            push: keyManagementId,
+          },
+        },
+        create: {
+          id: projectOrganizationId,
+          keysIds: [keyManagementId],
+          createdBy: this.context.userId,
+          updatedBy: this.context.userId,
+        },
+      });
+
+      return prisma.organizationKeyManagement.upsert({
+        where: {
+          projectOrganizationId_keyManagementId: {
+            projectOrganizationId,
+            keyManagementId,
+          },
+        },
+        update: {
+          deletedAt: null,
+        },
+        create: {
+          keyManagementId,
+          projectOrganizationId,
+          active,
+          createdBy: this.context.userId,
+          updatedBy: this.context.userId,
+        },
+      });
     });
   }
 
-  async update(id: string, { active }: UpdateOrganizationKeyManagementInput) {
+  async update(
+    id: string,
+    { active, sortOrder }: UpdateOrganizationKeyManagementInput
+  ) {
     const organizationKeyManagement =
       await this.db.organizationKeyManagement.findFirst({
-        select: { id: true },
+        select: { id: true, projectOrganizationId: true },
         where: {
           id,
           deletedAt: null,
@@ -78,21 +101,51 @@ export class OrganizationKeyManagementService extends Repository<IAppContext> {
       throw new ResourceNotFound(`id ${id} not found`);
     }
 
-    return this.db.organizationKeyManagement.update({
-      where: {
-        id,
-      },
-      data: {
-        active,
-        updatedBy: this.context.userId,
-      },
+    const projectOrganizationId =
+      organizationKeyManagement.projectOrganizationId;
+
+    return this.db.$transaction(async (prisma) => {
+      if (sortOrder) {
+        const sortOrderItem = await prisma.sortOrderItem.findUnique({
+          select: { keysIds: true },
+          where: {
+            id: projectOrganizationId,
+          },
+        });
+
+        const newSortOrderItem = insertAt(
+          sortOrderItem.keysIds ?? [],
+          sortOrder,
+          id
+        );
+
+        await prisma.sortOrderItem.update({
+          where: {
+            id: projectOrganizationId,
+          },
+          data: {
+            keysIds: newSortOrderItem,
+            updatedBy: this.context.userId,
+          },
+        });
+      }
+
+      return prisma.organizationKeyManagement.update({
+        where: {
+          id,
+        },
+        data: {
+          active,
+          updatedBy: this.context.userId,
+        },
+      });
     });
   }
 
   async delete(id: string, pin: string) {
     const organizationKeyManagement =
       await this.db.organizationKeyManagement.findFirst({
-        select: { id: true },
+        select: { id: true, projectOrganizationId: true },
         where: {
           id,
           deletedAt: null,
@@ -120,14 +173,36 @@ export class OrganizationKeyManagementService extends Repository<IAppContext> {
       throw new ForbiddenError('Pin mismatch');
     }
 
-    await this.db.organizationKeyManagement.update({
-      where: {
-        id,
-      },
-      data: {
-        deletedAt: new Date(),
-        updatedBy: this.context.userId,
-      },
+    await this.db.$transaction(async (prisma) => {
+      const sortOrderItem = await prisma.sortOrderItem.findUnique({
+        select: { keysIds: true },
+        where: {
+          id: organizationKeyManagement.projectOrganizationId,
+        },
+      });
+
+      const newSortOrderItem = (sortOrderItem.keysIds ?? []).filter(
+        (item) => item !== id
+      );
+      await prisma.sortOrderItem.update({
+        where: {
+          id: organizationKeyManagement.projectOrganizationId,
+        },
+        data: {
+          keysIds: newSortOrderItem,
+          updatedBy: this.context.userId,
+        },
+      });
+
+      await prisma.organizationKeyManagement.update({
+        where: {
+          id,
+        },
+        data: {
+          deletedAt: new Date(),
+          updatedBy: this.context.userId,
+        },
+      });
     });
 
     return { success: true };

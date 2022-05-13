@@ -19,7 +19,8 @@
       "@key-master/db": ["libs/db/src/index.ts"],
       "@key-master/graphql": ["libs/graphql/src/index.ts"],
       "@key-master/queue": ["libs/queue/src/index.ts"],
-      "@key-master/test": ["libs/test/src/index.ts"]
+      "@key-master/test": ["libs/test/src/index.ts"],
+      "@key-master/utils": ["libs/utils/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

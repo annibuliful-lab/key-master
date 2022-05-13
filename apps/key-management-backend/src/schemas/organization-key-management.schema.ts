@@ -20,6 +20,7 @@ export const typeDefs = gql`
 
   input UpdateOrganizationKeyManagementInput {
     active: Boolean
+    sortOrder: Int
   }
 
   input OrganizationKeyManagementFilterInput {
