@@ -47,20 +47,14 @@ export class OrganizationKeyManagementService extends Repository<IAppContext> {
     }
 
     return this.db.$transaction(async (prisma) => {
-      await prisma.sortOrderItem.upsert({
+      await prisma.sortOrderItem.update({
         where: {
           id: projectOrganizationId,
         },
-        update: {
+        data: {
           keysIds: {
             push: keyManagementId,
           },
-        },
-        create: {
-          id: projectOrganizationId,
-          keysIds: [keyManagementId],
-          createdBy: this.context.userId,
-          updatedBy: this.context.userId,
         },
       });
 

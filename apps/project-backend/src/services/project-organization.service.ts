@@ -22,7 +22,7 @@ export class ProjectOrganizationService extends Repository<IAppContext> {
 
     if (!project) {
       throw new ResourceNotFound(
-        `create organization project id ${this.context.projectId} not found`
+        `create organization: project id ${this.context.projectId} not found`
       );
     }
 
@@ -35,17 +35,30 @@ export class ProjectOrganizationService extends Repository<IAppContext> {
 
     if (projectOrganization) {
       throw new DuplicateResource(
-        `create organization duplicated name ${input.name}`
+        `create organization: duplicated name ${input.name}`
       );
     }
 
-    return this.db.projectOrganization.create({
-      data: {
-        ...input,
-        projectId: this.context.projectId,
-        createdBy: this.context.userId,
-        updatedBy: this.context.userId,
-      },
+    return this.db.$transaction(async (prisma) => {
+      const createdOrg = await prisma.projectOrganization.create({
+        data: {
+          ...input,
+          projectId: this.context.projectId,
+          createdBy: this.context.userId,
+          updatedBy: this.context.userId,
+        },
+      });
+
+      await prisma.sortOrderItem.create({
+        data: {
+          id: createdOrg.id,
+          keysIds: [],
+          createdBy: this.context.userId,
+          updatedBy: this.context.userId,
+        },
+      });
+
+      return createdOrg;
     });
   }
 
@@ -60,7 +73,7 @@ export class ProjectOrganizationService extends Repository<IAppContext> {
     });
 
     if (!projectOrganization) {
-      throw new ResourceNotFound(`update organization id ${id} not found`);
+      throw new ResourceNotFound(`update organization: id ${id} not found`);
     }
 
     if (input.name) {
@@ -77,7 +90,7 @@ export class ProjectOrganizationService extends Repository<IAppContext> {
 
       if (duplicateOrganization !== null && duplicateOrganization.id !== id) {
         throw new DuplicateResource(
-          `update organization duplicate name ${input.name}`
+          `update organization: duplicate name ${input.name}`
         );
       }
     }
@@ -101,7 +114,7 @@ export class ProjectOrganizationService extends Repository<IAppContext> {
     });
 
     if (!projectOrganization) {
-      throw new ResourceNotFound(`delete organization id ${id} not found`);
+      throw new ResourceNotFound(`delete organization: id ${id} not found`);
     }
 
     await this.db.projectOrganization.update({
