@@ -65,17 +65,18 @@ model Project {
 }
 
 model User {
-  id                String             @id @default(uuid())
-  username          String
-  password          String
-  fullname          String
-  avatar            String?
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @default(now()) @updatedAt
-  deletedAt         DateTime?
-  projectRoleUsers  ProjectRoleUser[]
-  organizationUsers OrganizationUser[]
-  projects          Project[]
+  id                                     String                                  @id @default(uuid())
+  username                               String
+  password                               String
+  fullname                               String
+  avatar                                 String?
+  createdAt                              DateTime                                @default(now())
+  updatedAt                              DateTime                                @default(now()) @updatedAt
+  deletedAt                              DateTime?
+  projectRoleUsers                       ProjectRoleUser[]
+  organizationUsers                      OrganizationUser[]
+  projects                               Project[]
+  organizationKeyManagementUserBookmarks OrganizationKeyManagementUserBookmark[]
 
   @@unique([username])
 }
@@ -99,18 +100,19 @@ model ProjectRoleUser {
 }
 
 model ProjectOrganization {
-  id                         String                      @id @default(uuid())
-  projectId                  String
-  project                    Project                     @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  name                       String
-  active                     Boolean                     @default(true)
-  createdAt                  DateTime                    @default(now())
-  updatedAt                  DateTime                    @default(now()) @updatedAt
-  deletedAt                  DateTime?
-  createdBy                  String
-  updatedBy                  String
-  organizationKeyManagements OrganizationKeyManagement[]
-  organizationUsers          OrganizationUser[]
+  id                                     String                                  @id @default(uuid())
+  projectId                              String
+  project                                Project                                 @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  name                                   String
+  active                                 Boolean                                 @default(true)
+  createdAt                              DateTime                                @default(now())
+  updatedAt                              DateTime                                @default(now()) @updatedAt
+  deletedAt                              DateTime?
+  createdBy                              String
+  updatedBy                              String
+  organizationKeyManagements             OrganizationKeyManagement[]
+  organizationUsers                      OrganizationUser[]
+  organizationKeyManagementUserBookmarks OrganizationKeyManagementUserBookmark[]
 
   @@index([projectId, name])
 }
@@ -148,22 +150,40 @@ model OrganizationKeyManagement {
 }
 
 model KeyManagment {
-  id                         String                      @id @default(uuid())
-  projectId                  String
-  project                    Project                     @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  name                       String
-  pin                        String?
-  masterKey                  String
-  masterKeyIv                String
-  secretHash                 String
-  createdBy                  String
-  updatedBy                  String
-  createdAt                  DateTime                    @default(now())
-  updatedAt                  DateTime                    @default(now()) @updatedAt
-  deletedAt                  DateTime?
-  organizationKeyManagements OrganizationKeyManagement[]
+  id                                     String                                  @id @default(uuid())
+  projectId                              String
+  project                                Project                                 @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  name                                   String
+  pin                                    String?
+  masterKey                              String
+  masterKeyIv                            String
+  secretHash                             String
+  createdBy                              String
+  updatedBy                              String
+  createdAt                              DateTime                                @default(now())
+  updatedAt                              DateTime                                @default(now()) @updatedAt
+  deletedAt                              DateTime?
+  organizationKeyManagements             OrganizationKeyManagement[]
+  organizationKeyManagementUserBookmarks OrganizationKeyManagementUserBookmark[]
 
   @@index([projectId, name])
+}
+
+model OrganizationKeyManagementUserBookmark {
+  id                    String              @id @default(uuid())
+  projectOrganizationId String
+  projectOrganization   ProjectOrganization @relation(fields: [projectOrganizationId], references: [id], onDelete: Cascade)
+  userId                String
+  user                  User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  keyManagementId       String
+  keyManagement         KeyManagment        @relation(fields: [keyManagementId], references: [id], onDelete: Cascade)
+  createdBy             String
+  updatedBy             String
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @default(now()) @updatedAt
+  deletedAt             DateTime?
+
+  @@unique([projectOrganizationId, keyManagementId, userId])
 }
 
 model SortOrderItem {
