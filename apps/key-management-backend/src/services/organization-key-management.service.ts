@@ -3,6 +3,7 @@ import { IAppContext, ResourceNotFound } from '@key-master/graphql';
 import { insertAt } from '@key-master/utils';
 import { ForbiddenError } from 'apollo-server-errors';
 import { verify } from 'argon2';
+import { sortBy } from 'lodash';
 import {
   CreateOrganizationKeyManagementInput,
   OrganizationKeyManagementFilterInput,
@@ -224,31 +225,47 @@ export class OrganizationKeyManagementService extends Repository<IAppContext> {
     return organizationKeyManagement;
   }
 
-  findManyByFilter(filter: OrganizationKeyManagementFilterInput) {
-    return this.db.organizationKeyManagement.findMany({
-      ...(filter?.cursor && { skip: 1 }),
-      ...(filter?.cursor && {
-        cursor: {
-          id: filter?.cursor,
-        },
-      }),
+  async findManyByFilter(filter: OrganizationKeyManagementFilterInput) {
+    const sortOrderItems = await this.db.sortOrderItem.findUnique({
+      select: {
+        keysIds: true,
+      },
       where: {
-        projectOrganizationId: filter.organizationId,
-        ...(filter?.search && {
-          keyManagement: {
-            name: {
-              contains: filter.search,
-              mode: 'insensitive',
-            },
-            deletedAt: null,
+        id: filter.organizationId,
+      },
+    });
+
+    const sortOrderIds = sortOrderItems?.keysIds ?? [];
+
+    const organizationKeyManagements =
+      await this.db.organizationKeyManagement.findMany({
+        ...(filter?.cursor && { skip: 1 }),
+        ...(filter?.cursor && {
+          cursor: {
+            id: filter?.cursor,
           },
         }),
-        deletedAt: null,
-      },
-      orderBy: {
-        id: 'asc',
-      },
-      take: filter?.take ?? 20,
-    });
+        where: {
+          projectOrganizationId: filter.organizationId,
+          ...(filter?.search && {
+            keyManagement: {
+              name: {
+                contains: filter.search,
+                mode: 'insensitive',
+              },
+              deletedAt: null,
+            },
+          }),
+          deletedAt: null,
+        },
+        orderBy: {
+          id: 'asc',
+        },
+        take: filter?.take ?? 20,
+      });
+
+    return sortBy(organizationKeyManagements, (item) =>
+      item.active ? -Infinity : sortOrderIds.findIndex((id) => item.id === id)
+    );
   }
 }
