@@ -2,6 +2,9 @@ import {
   Client,
   projectOwnerAClient,
   createKeyManagement,
+  expectDuplicatedError,
+  expectNotFoundError,
+  expectForbiddenError,
 } from '@key-master/test';
 import { config } from 'dotenv';
 import { nanoid } from 'nanoid';
@@ -41,7 +44,7 @@ describe('Key Management', () => {
     it('throws error when create duplicated name', async () => {
       const dupKey = `MOCK_DUPLICATE_${nanoid()}`;
       await createKeyManagement({ client, customName: dupKey });
-      expect(
+      expectDuplicatedError(
         client.chain.mutation
           .createKeyManagement({
             input: {
@@ -54,7 +57,7 @@ describe('Key Management', () => {
             id: true,
             name: true,
           })
-      ).rejects.toBeTruthy();
+      );
     });
 
     it('updates name with correct id', async () => {
@@ -88,7 +91,7 @@ describe('Key Management', () => {
         })
         .success.get();
 
-      expect(
+      expectNotFoundError(
         client.chain.mutation
           .updateKeyManagement({
             id: createdKey.id,
@@ -101,12 +104,12 @@ describe('Key Management', () => {
             id: true,
             name: true,
           })
-      ).rejects.toBeTruthy();
+      );
     });
 
     it('throws error when update with correct id but wrong pin', async () => {
       const createdKey = await createKeyManagement({ client });
-      expect(
+      expectForbiddenError(
         client.chain.mutation
           .updateKeyManagement({
             id: createdKey.id,
@@ -119,7 +122,7 @@ describe('Key Management', () => {
             id: true,
             name: true,
           })
-      ).rejects.toBeTruthy();
+      );
     });
 
     it('updates key pin', async () => {
@@ -150,7 +153,7 @@ describe('Key Management', () => {
         })
         .success.get();
 
-      expect(
+      expectNotFoundError(
         client.chain.mutation
           .updateKeyManagementPin({
             id: createdKey.id,
@@ -163,11 +166,11 @@ describe('Key Management', () => {
             id: true,
             name: true,
           })
-      ).rejects.toBeTruthy();
+      );
     });
     it('throws error when update key pin with wrong old pin', async () => {
       const createdKey = await createKeyManagement({ client });
-      expect(
+      expectForbiddenError(
         client.chain.mutation
           .updateKeyManagementPin({
             id: createdKey.id,
@@ -180,7 +183,7 @@ describe('Key Management', () => {
             id: true,
             name: true,
           })
-      ).rejects.toBeTruthy();
+      );
     });
 
     it('deletes key', async () => {
@@ -194,23 +197,23 @@ describe('Key Management', () => {
     });
 
     it('throws error when delete with wrong id', async () => {
-      expect(
+      expectNotFoundError(
         client.chain.mutation
           .deleteKeyMangement({
             id: `WRONG_KEY_ID_${nanoid()}`,
             pin: PIN_SECRET,
           })
           .success.get()
-      ).rejects.toBeTruthy();
+      );
     });
 
     it('throws error when delete with correct id but wrong pin', async () => {
       const createdKey = await createKeyManagement({ client });
-      expect(
+      expectForbiddenError(
         client.chain.mutation
           .deleteKeyMangement({ id: createdKey.id, pin: `WRONG_PIN_SECRET` })
           .success.get()
-      ).rejects.toBeTruthy();
+      );
     });
   });
   describe('Query', () => {
@@ -237,14 +240,14 @@ describe('Key Management', () => {
         customMasterKey: masterKey,
       });
 
-      expect(
+      expectForbiddenError(
         client.chain.query
           .getKeyManagementById({
             id: createdKey.id,
           })
           .masterKey({ pin: `WRONG_PIN_SECRET_${nanoid()}` })
           .get()
-      ).rejects.toBeTruthy();
+      );
     });
 
     it('gets by ids', async () => {
