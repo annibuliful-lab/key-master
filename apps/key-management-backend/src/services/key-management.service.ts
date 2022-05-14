@@ -134,7 +134,7 @@ export class KeyManagementService extends Repository<IAppContext> {
       throw new ForbiddenError('Pin mismatch');
     }
 
-    await this.db.keyManagment.update({
+    return this.db.keyManagment.update({
       where: {
         id,
       },
@@ -143,8 +143,6 @@ export class KeyManagementService extends Repository<IAppContext> {
         updatedBy: this.context.userId,
       },
     });
-
-    return { success: true };
   }
 
   async findById(id: string) {
