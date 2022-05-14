@@ -58,4 +58,34 @@ export class OrganizationKeyManagementUserBookmarkService extends Repository<IAp
       },
     });
   }
+
+  async delete(id: string) {
+    const bookmark =
+      await this.db.organizationKeyManagementUserBookmark.findFirst({
+        select: { userId: true },
+        where: {
+          id,
+          deletedAt: null,
+        },
+      });
+
+    if (!bookmark) {
+      throw new ResourceNotFound(`delete user key bookmark: ${id} not found`);
+    }
+
+    if (bookmark.userId !== this.context.userId) {
+      throw new ForbiddenError('you are not owner');
+    }
+
+    await this.db.organizationKeyManagementUserBookmark.update({
+      where: {
+        id,
+      },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
+
+    return { success: true };
+  }
 }
