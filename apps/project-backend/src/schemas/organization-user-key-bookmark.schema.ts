@@ -8,6 +8,7 @@ export const typeDefs = gql`
   type OrganizationKeyManagementUserBookmark {
     id: ID!
     projectOrganizationId: ID!
+    projectOrganization: ProjectOrganization
     userId: ID!
     keyManagementId: ID!
   }
