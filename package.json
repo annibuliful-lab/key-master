@@ -21,6 +21,7 @@
     "project-backend:dev": "nx serve project-backend",
     "user-activity-backend:dev": "nx serve user-activity-backend",
     "gateway-backend:dev": "nx serve gateway-backend",
+    "dashboard:dev": "nx serve dashboard",
     "db:migrate": "prisma migrate dev",
     "db:seed": "prisma db seed",
     "db:generate": "prisma generate",
@@ -30,6 +31,8 @@
     "db-all:seed": "yarn run db:seed && yarn run db-mongo:seed",
     "genql": "ts-node tools/bin/genql.ts",
     "codegen:backend": "ts-node tools/bin/codegen.ts",
+    "codegen:frontend": "graphql-codegen --config codegen.yml",
+    "codegen": "yarn run codegen:backend & yarn run codegen:frontend",
     "generate": "yarn codegen:backend && yarn db:generate && yarn db-mongo:generate",
     "seed": "yarn db:seed && yarn db-mongo:seed"
   },
@@ -81,6 +84,7 @@
     "typescript": "~4.6.2"
   },
   "dependencies": {
+    "@apollo/client": "3.6.2",
     "@fastify/websocket": "^5.0.0",
     "@genql/cli": "2.10.0",
     "@genql/runtime": "2.10.0",
@@ -105,7 +109,7 @@
     "eslint-plugin-unused-imports": "2.0.0",
     "fast-glob": "3.2.11",
     "fastify": "3.28.0",
-    "graphql": "16.3.0",
+    "graphql": "16.5.0",
     "graphql-constraint-directive": "v2",
     "graphql-redis-subscriptions": "^2.4.2",
     "graphql-subscriptions": "2.0.0",
