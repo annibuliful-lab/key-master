@@ -1,4 +1,4 @@
-import { Grid } from '@geist-ui/react';
+import { Grid, Tabs } from '@geist-ui/react';
 import { useEffect } from 'react';
 import { useCreateDashboardUserMutation } from '../graphql/generated';
 
@@ -19,9 +19,16 @@ export function Index() {
   }, []);
 
   return (
-    <Grid.Container gap={2} justify="center" height="100px">
-      <Grid>Test</Grid>
-      <Grid>Test</Grid>
+    <Grid.Container mt={4} gap={2} justify="center" width="80vw">
+      <Tabs initialValue="1" hideDivider>
+        <Tabs.Item label="http" value="1">
+          HTTP is stateless, but not sessionless.
+        </Tabs.Item>
+        <Tabs.Item label="proxies" value="2">
+          Between the Web browser and the server, numerous computers and
+          machines relay the HTTP messages.
+        </Tabs.Item>
+      </Tabs>
     </Grid.Container>
   );
 }
