@@ -2,6 +2,7 @@ import {
   Client,
   createPermission,
   createProjectRole,
+  expectNotFoundError,
   projectOwnerAClient,
 } from '@key-master/test';
 
@@ -45,7 +46,7 @@ describe('Project Role Permission', () => {
         .deletePermission({ id: deletePermissionId })
         .success.get();
 
-      expect(
+      expectNotFoundError(
         client.chain.mutation
           .setProjectRolePermissions({
             input: {
@@ -54,7 +55,7 @@ describe('Project Role Permission', () => {
             },
           })
           .get({ permissionId: true, roleId: true })
-      ).rejects.toBeTruthy();
+      );
     });
   });
 

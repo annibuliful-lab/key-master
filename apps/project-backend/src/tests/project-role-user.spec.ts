@@ -2,6 +2,8 @@ import {
   Client,
   createProjectRoleUser,
   createUser,
+  expectForbiddenError,
+  expectNotFoundError,
   projectOwnerAClient,
 } from '@key-master/test';
 import { nanoid } from 'nanoid';
@@ -35,10 +37,10 @@ describe('Project Role User', () => {
         expect(projectRoleUser.userId).toEqual(user.id);
     });
 
-    it('throws error when role id not found', async () => {
+    it('throws error when create with role id not found', async () => {
       const user = await createUser({});
 
-      expect(
+      expectNotFoundError(
         client.chain.mutation
           .createProjectRoleUser({
             input: {
@@ -50,11 +52,11 @@ describe('Project Role User', () => {
             roleId: true,
             userId: true,
           })
-      ).rejects.toBeTruthy();
+      );
     });
 
     it('throws error when user id not found', () => {
-      expect(
+      expectForbiddenError(
         client.chain.mutation
           .createProjectRoleUser({
             input: {
@@ -66,9 +68,10 @@ describe('Project Role User', () => {
             roleId: true,
             userId: true,
           })
-      ).rejects.toBeTruthy();
+      );
     });
   });
+
   it('updates an existing completely', async () => {
     const projectRoleUser = await createProjectRoleUser({ client });
     const updated = await client.chain.mutation
@@ -91,7 +94,7 @@ describe('Project Role User', () => {
   });
 
   it('it throws error with wrong id', () => {
-    expect(
+    expectNotFoundError(
       client.chain.mutation
         .updateProjectRoleUser({
           id: `MOCK_WRONG_PROJECT_ROLE_USER_ID_${nanoid()}`,
@@ -105,7 +108,7 @@ describe('Project Role User', () => {
           active: true,
           roleId: true,
         })
-    ).rejects.toBeTruthy();
+    );
   });
 
   it('deletes with correct id', async () => {
@@ -136,13 +139,13 @@ describe('Project Role User', () => {
   });
 
   it('throws error when delete with wrong id', () => {
-    expect(
+    expectNotFoundError(
       client.chain.mutation
         .deleteProjectRoleUser({
           id: `MOCK_WRONG_PROJECT_ROLE_${nanoid()}`,
         })
         .success.get()
-    ).rejects.toBeTruthy();
+    );
   });
 
   describe('Query', () => {
@@ -157,13 +160,13 @@ describe('Project Role User', () => {
     });
 
     it('throws error when get with wrong id', async () => {
-      expect(
+      expectNotFoundError(
         client.chain.query
           .getProjectRoleUserById({
             id: `MOCK_WRONG_PROJECT_ROLE_USER_${nanoid()}`,
           })
           .id.get()
-      ).rejects.toBeTruthy();
+      );
     });
 
     it('throws error when get deleted id', async () => {
@@ -174,13 +177,13 @@ describe('Project Role User', () => {
         })
         .success.get();
 
-      expect(
+      expectNotFoundError(
         client.chain.query
           .getProjectRoleUserById({
             id: projectRoleUser.id,
           })
           .id.get()
-      ).rejects.toBeTruthy();
+      );
     });
 
     it('returns project role users', async () => {

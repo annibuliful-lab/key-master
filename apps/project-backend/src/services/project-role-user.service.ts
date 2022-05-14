@@ -1,5 +1,6 @@
 import { Repository } from '@key-master/db';
 import { IAppContext, ResourceNotFound } from '@key-master/graphql';
+import { ForbiddenError } from 'apollo-server-fastify';
 import {
   CreateProjectRoleUserInput,
   ProjectRoleUserFilterInput,
@@ -17,7 +18,7 @@ export class ProjectRoleUserService extends Repository<IAppContext> {
     });
 
     if (!user) {
-      throw new ResourceNotFound(
+      throw new ForbiddenError(
         `create project role: user ${input.userId} not found`
       );
     }
