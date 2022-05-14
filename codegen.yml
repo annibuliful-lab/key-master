@@ -1,8 +1,8 @@
 overwrite: true
-schema: 'http://localhost:4000'
-documents: 'apps/dashboard/**/*.gql'
+schema: 'http://localhost:4000/graphql'
+documents: 'apps/dashboard/graphql/**/*.gql'
 generates:
-  src/apps/dashboard/generated.ts:
+  apps/dashboard/graphql/generated.ts:
     plugins:
       - typescript
       - typescript-operations

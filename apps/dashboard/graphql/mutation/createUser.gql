@@ -1,0 +1,12 @@
+mutation createDashboardUser($input: LoginInput) {
+  login(input: $input) {
+    id
+    fullname
+    token
+    refreshToken
+    user {
+      fullname
+      id
+    }
+  }
+}
