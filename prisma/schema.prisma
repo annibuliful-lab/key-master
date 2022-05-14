@@ -113,6 +113,7 @@ model ProjectOrganization {
   organizationKeyManagements             OrganizationKeyManagement[]
   organizationUsers                      OrganizationUser[]
   organizationKeyManagementUserBookmarks OrganizationKeyManagementUserBookmark[]
+  organizationTags                       OrganizationTag[]
 
   @@index([projectId, name])
 }
@@ -147,6 +148,20 @@ model OrganizationKeyManagement {
   deletedAt             DateTime?
 
   @@unique([projectOrganizationId, keyManagementId])
+}
+
+model OrganizationTag {
+  id                    String              @id
+  tag                   String
+  projectOrganizationId String
+  projectOrganization   ProjectOrganization @relation(fields: [projectOrganizationId], references: [id])
+  createdBy             String
+  updatedBy             String
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @default(now()) @updatedAt
+  deletedAt             DateTime?
+
+  @@index([tag])
 }
 
 model KeyManagment {
