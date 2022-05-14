@@ -3,6 +3,7 @@ import {
   createKeyManagement,
   createOrganizationKeyManagement,
   createProjectOrganization,
+  expectNotFoundError,
   projectOwnerAClient,
 } from '@key-master/test';
 import { nanoid } from 'nanoid';
@@ -57,7 +58,7 @@ describe('Organization Key Management', () => {
     it('throws error when create with correct organization id but wrong id', async () => {
       const createdOrg = await createProjectOrganization({ client });
 
-      expect(
+      expectNotFoundError(
         client.chain.mutation
           .createOrganizationKeyManagement({
             input: {
@@ -70,7 +71,7 @@ describe('Organization Key Management', () => {
             id: true,
             projectOrganizationId: true,
           })
-      ).rejects.toBeTruthy();
+      );
     });
 
     it('updates an existing org key management', async () => {
@@ -88,7 +89,7 @@ describe('Organization Key Management', () => {
     });
 
     it('throws error when update wrong id', async () => {
-      expect(
+      expectNotFoundError(
         client.chain.mutation
           .updateOrganizationKeyManagement({
             id: `MOCK_WRONG_ORG_KEY_ID_${nanoid()}`,
@@ -97,7 +98,7 @@ describe('Organization Key Management', () => {
             },
           })
           .active.get()
-      ).rejects.toBeTruthy();
+      );
     });
   });
 
@@ -128,13 +129,13 @@ describe('Organization Key Management', () => {
     });
 
     it('throws error when get by wrong id', () => {
-      expect(
+      expectNotFoundError(
         client.chain.query
           .getOrganizationKeyManagementById({
             id: `MOCK_WRONG_ORG_KEY_ID_${nanoid()}`,
           })
           .id.get()
-      ).rejects.toBeTruthy();
+      );
     });
 
     it('returns organization keys', async () => {
