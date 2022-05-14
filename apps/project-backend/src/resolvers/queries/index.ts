@@ -5,6 +5,7 @@ import { queries as ProjectRolePermissionQuery } from './project-role-permission
 import { queries as ProjectOrganizationQuery } from './project-organization.query';
 import { queries as ProjectRoleUserQuery } from './project-role-user.query';
 import { queries as OrganizationUserQuery } from './organization-user.query';
+import { queries as OrganizationKeyManagementUserBookmarkQuery } from './organization-user-key-bookmark.query';
 
 export const queries: Resolvers['Query'] = {
   ...ProjectQuery,
@@ -13,4 +14,5 @@ export const queries: Resolvers['Query'] = {
   ...ProjectOrganizationQuery,
   ...ProjectRoleUserQuery,
   ...OrganizationUserQuery,
+  ...OrganizationKeyManagementUserBookmarkQuery,
 };

@@ -1,6 +1,7 @@
 import {
   Client,
   createKeyManagement,
+  createOrganizationKeyManagementUserBookmark,
   createProjectOrganization,
   expectForbiddenError,
   expectNotFoundError,
@@ -11,20 +12,20 @@ import {
 import { nanoid } from 'nanoid';
 
 describe('Organization User Key Bookmark', () => {
-  describe('Mutation', () => {
-    let client: Client = null;
-    let organizationId: string = null;
+  let client: Client = null;
+  let organizationId: string = null;
 
-    beforeAll(async () => {
-      const organization = await createProjectOrganization({
-        client: projectOwnerAClient,
-      });
-      organizationId = organization.id;
-      client = projectOwnerAClientWithOrganizationClient({
-        orgId: organization.id,
-      });
+  beforeAll(async () => {
+    const organization = await createProjectOrganization({
+      client: projectOwnerAClient,
     });
+    organizationId = organization.id;
+    client = projectOwnerAClientWithOrganizationClient({
+      orgId: organization.id,
+    });
+  });
 
+  describe('Mutation', () => {
     it('creates new key bookmark', async () => {
       const key = await createKeyManagement({ client });
       const createdBookmark = await client.chain.mutation
@@ -95,6 +96,103 @@ describe('Organization User Key Bookmark', () => {
             input: {
               keyManagementId: key.id,
             },
+          })
+          .id.get()
+      );
+    });
+
+    it('deletes correct it', async () => {
+      const createdBookmark = await createOrganizationKeyManagementUserBookmark(
+        { client }
+      );
+      const beforeDelete = await client.chain.query
+        .getOrganizationKeyManagementUserBookmarkById({
+          id: createdBookmark.id,
+        })
+        .get({ id: true });
+      const successDelete = await client.chain.mutation
+        .deletedOrganizationKeyManagementUserBookmark({
+          id: createdBookmark.id,
+        })
+        .success.get();
+      expect(createdBookmark.id).toEqual(beforeDelete.id);
+      expect(successDelete).toBeTruthy();
+      expectNotFoundError(
+        client.chain.query
+          .getOrganizationKeyManagementUserBookmarkById({
+            id: createdBookmark.id,
+          })
+          .id.get()
+      );
+    });
+
+    it('throw not found error when delete wrong id', () => {
+      expectNotFoundError(
+        client.chain.query
+          .getOrganizationKeyManagementUserBookmarkById({
+            id: `MOCK_WRONG_BOOKMARK_ID_${nanoid()}`,
+          })
+          .id.get()
+      );
+    });
+  });
+
+  describe('Query', () => {
+    it('gets by id', async () => {
+      const createdBookmark = await createOrganizationKeyManagementUserBookmark(
+        { client }
+      );
+      const getResultId = await client.chain.query
+        .getOrganizationKeyManagementUserBookmarkById({
+          id: createdBookmark.id,
+        })
+        .id.get();
+      expect(getResultId).toEqual(createdBookmark.id);
+    });
+
+    it('throws not found error when get with wrong id', () => {
+      expectNotFoundError(
+        client.chain.query
+          .getOrganizationKeyManagementUserBookmarkById({
+            id: `MOCK_WRONG_BOOKMARK_ID_${nanoid()}`,
+          })
+          .id.get()
+      );
+    });
+
+    it('throws not found error when get with deleted id', async () => {
+      const createdBookmark = await createOrganizationKeyManagementUserBookmark(
+        { client }
+      );
+
+      await client.chain.mutation
+        .deletedOrganizationKeyManagementUserBookmark({
+          id: createdBookmark.id,
+        })
+        .success.get();
+
+      expectNotFoundError(
+        client.chain.query
+          .getOrganizationKeyManagementUserBookmarkById({
+            id: createdBookmark.id,
+          })
+          .id.get()
+      );
+    });
+
+    it('throws forbidden error when not owner bookmark', async () => {
+      const createdBookmark = await createOrganizationKeyManagementUserBookmark(
+        { client }
+      );
+
+      const wrongUserClient = userBClient(
+        createdBookmark.projectOrganizationId
+      );
+
+      expectForbiddenError(
+        wrongUserClient.chain.query
+          .getOrganizationKeyManagementUserBookmarkById({
+            id: createdBookmark.id,
           })
           .id.get()
       );

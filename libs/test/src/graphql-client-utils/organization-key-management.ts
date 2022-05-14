@@ -32,3 +32,26 @@ export async function createOrganizationKeyManagement({
       projectOrganizationId: true,
     });
 }
+
+interface ICreateOrganizationKeyManagementUserBookmarkParam {
+  client: Client;
+}
+export async function createOrganizationKeyManagementUserBookmark({
+  client,
+}: ICreateOrganizationKeyManagementUserBookmarkParam) {
+  const key = await createKeyManagement({ client });
+  const createdBookmark = await client.chain.mutation
+    .createOrganizationKeyManagementUserBookmark({
+      input: {
+        keyManagementId: key.id,
+      },
+    })
+    .get({
+      id: true,
+      keyManagementId: true,
+      userId: true,
+      projectOrganizationId: true,
+    });
+
+  return createdBookmark;
+}
