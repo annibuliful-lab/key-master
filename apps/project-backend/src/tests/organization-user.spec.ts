@@ -3,6 +3,7 @@ import {
   createOrganizationUser,
   createProjectOrganization,
   createProjectRoleUser,
+  expectNotFoundError,
   projectOwnerAClient,
 } from '@key-master/test';
 import { nanoid } from 'nanoid';
@@ -36,7 +37,7 @@ describe('Organization User', () => {
     });
 
     it('throws error when create with wrong organization id', () => {
-      expect(
+      expectNotFoundError(
         client.chain.mutation
           .createOrganizationUser({
             input: {
@@ -48,13 +49,13 @@ describe('Organization User', () => {
             organizationId: true,
             userId: true,
           })
-      ).rejects.toBeTruthy();
+      );
     });
 
     it('throws error when create with wrong user id', async () => {
       const organization = await createProjectOrganization({ client });
 
-      expect(
+      expectNotFoundError(
         client.chain.mutation
           .createOrganizationUser({
             input: {
@@ -66,7 +67,7 @@ describe('Organization User', () => {
             organizationId: true,
             userId: true,
           })
-      ).rejects.toBeTruthy();
+      );
     });
 
     it('updates correctly', async () => {
@@ -85,7 +86,7 @@ describe('Organization User', () => {
     });
 
     it('throws error when update with wrong id', () => {
-      expect(
+      expectNotFoundError(
         client.chain.mutation
           .updateOrganizationUser({
             id: `MOCK_WRONG_ORGANIZATION_ID_${nanoid()}`,
@@ -94,7 +95,7 @@ describe('Organization User', () => {
             },
           })
           .get({ id: true, active: true })
-      ).rejects.toBeTruthy();
+      );
     });
 
     it('throws error when update with deleted id', async () => {
@@ -105,7 +106,7 @@ describe('Organization User', () => {
         })
         .success.get();
 
-      expect(
+      expectNotFoundError(
         client.chain.mutation
           .updateOrganizationUser({
             id: organizationUser.id,
@@ -114,7 +115,7 @@ describe('Organization User', () => {
             },
           })
           .get({ id: true, active: true })
-      ).rejects.toBeTruthy();
+      );
     });
 
     it('deletes correct id', async () => {
@@ -144,13 +145,13 @@ describe('Organization User', () => {
     });
 
     it('throws error when delete wrong id', async () => {
-      expect(
+      expectNotFoundError(
         client.chain.mutation
           .deleteOrganizationUser({
             id: `MOCK_WRONG_DELETE_ORG_USER_${nanoid()}`,
           })
           .success.get()
-      ).rejects.toBeTruthy();
+      );
     });
   });
 
@@ -179,13 +180,13 @@ describe('Organization User', () => {
     });
 
     it('throws error by wrong id', () => {
-      expect(
+      expectNotFoundError(
         client.chain.query
           .getOrganizationUserById({
             id: `MOCK_WRONG_ORG_USER_${nanoid()}`,
           })
           .get({ organizationId: true, userId: true, id: true })
-      ).rejects.toBeTruthy();
+      );
     });
 
     it('returns organization users', async () => {
