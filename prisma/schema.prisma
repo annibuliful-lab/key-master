@@ -61,7 +61,11 @@ model Project {
   roles                ProjectRole[]
   projectRoleUsers     ProjectRoleUser[]
   projectOrganizations ProjectOrganization[]
+  organizationTags     OrganizationTag[]
+  projectTags          ProjectTag[]
 
+  @@unique([ownerId, name])
+  @@index([ownerId])
 }
 
 model User {
@@ -113,6 +117,7 @@ model ProjectOrganization {
   organizationKeyManagements             OrganizationKeyManagement[]
   organizationUsers                      OrganizationUser[]
   organizationKeyManagementUserBookmarks OrganizationKeyManagementUserBookmark[]
+  organizationTags                       OrganizationTag[]
 
   @@index([projectId, name])
 }
@@ -147,6 +152,40 @@ model OrganizationKeyManagement {
   deletedAt             DateTime?
 
   @@unique([projectOrganizationId, keyManagementId])
+}
+
+model OrganizationTag {
+  id                    String              @id @default(uuid())
+  tagId                 String
+  tag                   ProjectTag          @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  projectId             String
+  project               Project             @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectOrganizationId String
+  projectOrganization   ProjectOrganization @relation(fields: [projectOrganizationId], references: [id])
+  createdBy             String
+  updatedBy             String
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @default(now()) @updatedAt
+  deletedAt             DateTime?
+
+  @@index([tagId])
+  @@index([projectId])
+  @@index([projectOrganizationId])
+}
+
+model ProjectTag {
+  id               String            @id @default(uuid())
+  tag              String
+  projectId        String
+  project          Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdBy        String
+  updatedBy        String
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @default(now()) @updatedAt
+  deletedAt        DateTime?
+  organizationTags OrganizationTag[]
+
+  @@index([tag, projectId])
 }
 
 model KeyManagment {
