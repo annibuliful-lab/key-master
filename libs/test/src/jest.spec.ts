@@ -12,6 +12,12 @@ export function expectForbiddenError(request: Promise<unknown>): Promise<void> {
   return expectError(/FORBIDDEN/)(request);
 }
 
+export function expectAuthenticationError(
+  request: Promise<unknown>
+): Promise<void> {
+  return expectError(/AuthenticationError/)(request);
+}
+
 export function expectPermissionError(
   request: Promise<unknown>
 ): Promise<void> {
