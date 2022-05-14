@@ -49,6 +49,15 @@ export class ProjectOrganizationService extends Repository<IAppContext> {
         },
       });
 
+      await prisma.organizationUser.create({
+        data: {
+          organizationId: createdOrg.id,
+          userId: this.context.userId,
+          createdBy: this.context.userId,
+          updatedBy: this.context.userId,
+        },
+      });
+
       await prisma.sortOrderItem.create({
         data: {
           id: createdOrg.id,
