@@ -35,11 +35,13 @@ export async function createOrganizationKeyManagement({
 
 interface ICreateOrganizationKeyManagementUserBookmarkParam {
   client: Client;
+  customKeyName?: string;
 }
 export async function createOrganizationKeyManagementUserBookmark({
   client,
+  customKeyName,
 }: ICreateOrganizationKeyManagementUserBookmarkParam) {
-  const key = await createKeyManagement({ client });
+  const key = await createKeyManagement({ client, customName: customKeyName });
   const createdBookmark = await client.chain.mutation
     .createOrganizationKeyManagementUserBookmark({
       input: {

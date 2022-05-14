@@ -142,12 +142,33 @@ describe('Organization User Key Bookmark', () => {
       const createdBookmark = await createOrganizationKeyManagementUserBookmark(
         { client }
       );
-      const getResultId = await client.chain.query
+      const userOrgKeyBookmark = await client.chain.query
         .getOrganizationKeyManagementUserBookmarkById({
           id: createdBookmark.id,
         })
-        .id.get();
-      expect(getResultId).toEqual(createdBookmark.id);
+        .get({
+          id: true,
+          keyManagementId: true,
+          keyManagement: {
+            id: true,
+            name: true,
+          },
+          projectOrganizationId: true,
+          projectOrganization: {
+            id: true,
+            name: true,
+          },
+        });
+
+      expect(userOrgKeyBookmark.keyManagement.id).toEqual(
+        createdBookmark.keyManagementId
+      );
+      expect(userOrgKeyBookmark.keyManagement.name).toBeDefined();
+      expect(userOrgKeyBookmark.projectOrganization.id).toEqual(
+        createdBookmark.projectOrganizationId
+      );
+      expect(userOrgKeyBookmark.projectOrganization.name).toBeDefined();
+      expect(userOrgKeyBookmark.id).toEqual(createdBookmark.id);
     });
 
     it('throws not found error when get with wrong id', () => {
