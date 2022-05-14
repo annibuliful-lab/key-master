@@ -61,7 +61,10 @@ model Project {
   roles                ProjectRole[]
   projectRoleUsers     ProjectRoleUser[]
   projectOrganizations ProjectOrganization[]
+  organizationTags     OrganizationTag[]
 
+  @@unique([ownerId, name])
+  @@index([ownerId])
 }
 
 model User {
@@ -153,6 +156,8 @@ model OrganizationKeyManagement {
 model OrganizationTag {
   id                    String              @id
   tag                   String
+  projectId             String
+  project               Project             @relation(fields: [projectId], references: [id], onDelete: Cascade)
   projectOrganizationId String
   projectOrganization   ProjectOrganization @relation(fields: [projectOrganizationId], references: [id])
   createdBy             String
