@@ -1,9 +1,19 @@
 import { Repository } from '@key-master/db';
-import { IAppContext } from '@key-master/graphql';
+import { DuplicateResource, IAppContext } from '@key-master/graphql';
 import { hash } from 'argon2';
 import { CreateUserInput } from '../codegen-generated';
 export class UserService extends Repository<IAppContext> {
   async createUser(data: CreateUserInput) {
+    const user = await this.db.user.findUnique({
+      where: {
+        username: data.username,
+      },
+    });
+
+    if (user) {
+      throw new DuplicateResource(`duplicated username ${data.username}`);
+    }
+
     data.password = await hash(data.password);
 
     return this.db.user.create({ data });

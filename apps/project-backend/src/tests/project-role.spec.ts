@@ -1,6 +1,8 @@
 import {
   Client,
   createProjectRole,
+  expectDuplicatedError,
+  expectNotFoundError,
   projectOwnerAClient,
 } from '@key-master/test';
 
@@ -28,7 +30,7 @@ describe('Project Role', () => {
     it('throws error when create duplicate role', async () => {
       const role = `MOCK_ROLE_${nanoid()}`;
       await createProjectRole({ client, customRole: role });
-      expect(
+      expectDuplicatedError(
         client.chain.mutation
           .createProjectRole({
             input: {
@@ -36,7 +38,7 @@ describe('Project Role', () => {
             },
           })
           .role.get()
-      ).rejects.toBeTruthy();
+      );
     });
 
     it('updates an existing project role', async () => {
@@ -56,14 +58,16 @@ describe('Project Role', () => {
     });
 
     it('throws error when update wrong id', async () => {
-      expect(
-        client.chain.mutation.updateProjectRole({
-          id: `MOCK_WRONG_ID_${nanoid()}`,
-          input: {
-            role: 'NEW',
-          },
-        })
-      ).rejects.toBeTruthy();
+      expectNotFoundError(
+        client.chain.mutation
+          .updateProjectRole({
+            id: `MOCK_WRONG_ID_${nanoid()}`,
+            input: {
+              role: 'NEW',
+            },
+          })
+          .id.get()
+      );
     });
 
     it('deletes an existing', async () => {
@@ -78,13 +82,13 @@ describe('Project Role', () => {
     });
 
     it('throws error when delete wrong id', async () => {
-      expect(
+      expectNotFoundError(
         client.chain.mutation
           .deleteProjectRole({
             id: 'MOCK_ROLE_ID',
           })
           .success.get()
-      ).rejects.toBeTruthy();
+      );
     });
   });
 
@@ -98,11 +102,11 @@ describe('Project Role', () => {
     });
 
     it('throws error when gets with wrong id', async () => {
-      expect(
+      expectNotFoundError(
         client.chain.query
           .getProjectRoleById({ id: `WRONG_ROLE_ID_${nanoid()}` })
           .id.get()
-      ).rejects.toBeTruthy();
+      );
     });
 
     it('throws error when gets with deleted wrong id', async () => {
@@ -118,9 +122,9 @@ describe('Project Role', () => {
         .success.get();
 
       expect(roleBeforeDelete).toEqual(createdRole.id);
-      expect(
+      expectNotFoundError(
         client.chain.query.getProjectRoleById({ id: createdRole.id }).id.get()
-      ).rejects.toBeTruthy();
+      );
     });
 
     it('gets by project id', async () => {
