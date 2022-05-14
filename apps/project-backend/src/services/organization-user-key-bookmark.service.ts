@@ -1,10 +1,23 @@
 import { IAppContext, ResourceNotFound } from '@key-master/graphql';
 import { Repository } from '@key-master/db';
 import { CreateOrganizationKeyManagementUserBookmarkInput } from '../codegen-generated';
+import { ForbiddenError } from 'apollo-server-fastify';
 
 export class OrganizationKeyManagementUserBookmarkService extends Repository<IAppContext> {
-  create(data: CreateOrganizationKeyManagementUserBookmarkInput) {
-    const organization = this.db.projectOrganization.findFirst({
+  async create(data: CreateOrganizationKeyManagementUserBookmarkInput) {
+    const organization = await this.db.projectOrganization.findFirst({
+      select: {
+        id: true,
+        organizationUsers: {
+          where: {
+            userId: this.context.userId,
+            deletedAt: null,
+          },
+          select: {
+            userId: true,
+          },
+        },
+      },
       where: {
         id: this.context.orgId,
         deletedAt: null,
@@ -15,6 +28,14 @@ export class OrganizationKeyManagementUserBookmarkService extends Repository<IAp
       throw new ResourceNotFound(
         `create user key bookmark: id ${this.context.orgId} not found`
       );
+    }
+
+    const isOrganizationUser = organization.organizationUsers.some(
+      (user) => user.userId === this.context.userId
+    );
+
+    if (!isOrganizationUser) {
+      throw new ForbiddenError('you are not in this organization');
     }
 
     return this.db.organizationKeyManagementUserBookmark.upsert({
