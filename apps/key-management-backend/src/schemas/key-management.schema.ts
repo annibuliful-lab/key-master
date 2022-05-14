@@ -12,6 +12,12 @@ export const typeDefs = gql`
     masterKey(pin: String): String
   }
 
+  type OrganizationKeyManagementUserBookmark
+    @key(selectionSet: "{ keyManagementId }") {
+    keyManagementId: ID!
+    keyManagement: KeyManagement
+  }
+
   input CreateKeyManagementInput {
     name: String!
     pin: String!
@@ -57,5 +63,10 @@ export const typeDefs = gql`
 
     getKeyManagementByIds(ids: [ID!]!): [KeyManagement!]!
       @access(conditions: { permission: "KEY_MANAGEMENT_READ" })
+
+    _organizationUserKeyBookmark(
+      ids: [ID!]!
+    ): [OrganizationKeyManagementUserBookmark!]!
+      @merge(keyField: "keyManagementId")
   }
 `;
