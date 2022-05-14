@@ -1,6 +1,9 @@
 import { IAppContext, ResourceNotFound } from '@key-master/graphql';
 import { Repository } from '@key-master/db';
-import { CreateOrganizationKeyManagementUserBookmarkInput } from '../codegen-generated';
+import {
+  CreateOrganizationKeyManagementUserBookmarkInput,
+  OrganizationKeyManagementUserBookmarkFilterInput,
+} from '../codegen-generated';
 import { ForbiddenError } from 'apollo-server-fastify';
 
 export class OrganizationKeyManagementUserBookmarkService extends Repository<IAppContext> {
@@ -107,5 +110,43 @@ export class OrganizationKeyManagementUserBookmarkService extends Repository<IAp
     }
 
     return bookmark;
+  }
+
+  findManyByFilter(filter: OrganizationKeyManagementUserBookmarkFilterInput) {
+    return this.db.organizationKeyManagementUserBookmark.findMany({
+      ...(filter?.cursor && { skip: 1 }),
+      ...(filter?.cursor && {
+        cursor: {
+          id: filter?.cursor,
+        },
+      }),
+      where: {
+        ...(filter?.search && {
+          OR: [
+            {
+              projectOrganization: {
+                name: {
+                  contains: filter?.search,
+                  mode: 'insensitive',
+                },
+              },
+            },
+            {
+              keyManagement: {
+                name: {
+                  contains: filter?.search,
+                  mode: 'insensitive',
+                },
+              },
+            },
+          ],
+        }),
+        deletedAt: null,
+      },
+      orderBy: {
+        id: 'asc',
+      },
+      take: filter?.take ?? 20,
+    });
   }
 }
