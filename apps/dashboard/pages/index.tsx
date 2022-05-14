@@ -1,3 +1,4 @@
+import { Grid } from '@geist-ui/react';
 import { useEffect } from 'react';
 import { useCreateDashboardUserMutation } from '../graphql/generated';
 
@@ -17,7 +18,12 @@ export function Index() {
     });
   }, []);
 
-  return <div>asdasdasd</div>;
+  return (
+    <Grid.Container gap={2} justify="center" height="100px">
+      <Grid>Test</Grid>
+      <Grid>Test</Grid>
+    </Grid.Container>
+  );
 }
 
 export default Index;
