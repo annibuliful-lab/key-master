@@ -19,7 +19,7 @@ export const mutations: Resolvers<IGraphqlContext>['Mutation'] = {
     await userActivityKeyManagementQueueClient.add('UPDATE', {
       keyManagementId: updatedKey.id,
       name: updatedKey.name,
-      userId: updatedKey.createdBy,
+      userId: updatedKey.updatedBy,
       createdAt: updatedKey.createdAt.toString(),
     });
     return updatedKey;
@@ -30,7 +30,7 @@ export const mutations: Resolvers<IGraphqlContext>['Mutation'] = {
     await userActivityKeyManagementQueueClient.add('UPDATE_PIN', {
       keyManagementId: updatedKeyPin.id,
       name: updatedKeyPin.name,
-      userId: updatedKeyPin.createdBy,
+      userId: updatedKeyPin.updatedBy,
       createdAt: updatedKeyPin.createdAt.toString(),
     });
 
@@ -42,7 +42,7 @@ export const mutations: Resolvers<IGraphqlContext>['Mutation'] = {
     await userActivityKeyManagementQueueClient.add('DELETE', {
       keyManagementId: deletedKey.id,
       name: deletedKey.name,
-      userId: deletedKey.createdBy,
+      userId: deletedKey.updatedBy,
       createdAt: deletedKey.createdAt.toString(),
     });
 
