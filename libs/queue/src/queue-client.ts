@@ -19,3 +19,6 @@ export const subscriberQueueClient = <T, R = void>(
 
 export const userActivityPublisherQueueClient =
   publisherQueueClient('USER_ACTIVITY');
+
+export const userActivityKeyManagementQueueClient =
+  publisherQueueClient('KEY_MANAGEMENT');
