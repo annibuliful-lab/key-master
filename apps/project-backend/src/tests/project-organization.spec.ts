@@ -6,6 +6,9 @@ import {
   createProject,
   deleteProject,
   deleteProjectOrganization,
+  expectDuplicatedError,
+  expectNotFoundError,
+  expectForbiddenError,
 } from '@key-master/test';
 import { nanoid } from 'nanoid';
 
@@ -37,7 +40,7 @@ describe('Project Organization', () => {
         client,
         customOrganization: organizationName,
       });
-      expect(
+      expectDuplicatedError(
         client.chain.mutation
           .createProjectOrganization({
             input: {
@@ -45,10 +48,10 @@ describe('Project Organization', () => {
             },
           })
           .get({ id: true, name: true, active: true })
-      ).rejects.toBeTruthy();
+      );
     });
 
-    it('throws error when create organization with create', async () => {
+    it('throws error when create organization with deleted project', async () => {
       const project = await createProject({ client });
       const projectClient = projectOwnerGraphqlClient({
         projectId: project.id,
@@ -57,7 +60,7 @@ describe('Project Organization', () => {
 
       await deleteProject({ client, id: project.id });
 
-      expect(
+      expectForbiddenError(
         projectClient.chain.mutation
           .createProjectOrganization({
             input: {
@@ -65,7 +68,7 @@ describe('Project Organization', () => {
             },
           })
           .get({ id: true, name: true, active: true })
-      ).rejects.toBeTruthy();
+      );
     });
 
     it('update an existing organization', async () => {
@@ -87,7 +90,7 @@ describe('Project Organization', () => {
     });
 
     it('throws error when update wrong organization', async () => {
-      expect(
+      expectNotFoundError(
         client.chain.mutation
           .updateProjectOrganization({
             id: `WRONG_ORGANIZATION_ID_${nanoid()}`,
@@ -96,15 +99,16 @@ describe('Project Organization', () => {
             },
           })
           .get({ id: true, name: true, active: true })
-      ).rejects.toBeTruthy();
+      );
     });
+
     it('throws error when update with duplicated organization name', async () => {
       const [organizationA, organizationB] = await Promise.all([
         createProjectOrganization({ client }),
         createProjectOrganization({ client }),
       ]);
 
-      expect(
+      expectDuplicatedError(
         client.chain.mutation
           .updateProjectOrganization({
             id: organizationB.id,
@@ -114,13 +118,13 @@ describe('Project Organization', () => {
             },
           })
           .get({ id: true, name: true, active: true })
-      ).rejects.toBeTruthy();
+      );
     });
 
     it('throws error when update deleted organization', async () => {
       const organization = await createProjectOrganization({ client });
       await deleteProjectOrganization({ client, id: organization.id });
-      expect(
+      expectNotFoundError(
         client.chain.mutation
           .updateProjectOrganization({
             id: organization.id,
@@ -129,7 +133,7 @@ describe('Project Organization', () => {
             },
           })
           .get({ id: true, name: true, active: true })
-      ).rejects.toBeTruthy();
+      );
     });
 
     it('deletes an existing organization', async () => {
@@ -157,7 +161,7 @@ describe('Project Organization', () => {
     });
 
     it('throws error when get by wrong id', () => {
-      expect(
+      expectNotFoundError(
         client.chain.query
           .getProjectOrganizationById({
             id: `WRONG_ORGANIZATION_ID_${nanoid()}`,
@@ -166,13 +170,13 @@ describe('Project Organization', () => {
             id: true,
             name: true,
           })
-      ).rejects.toBeTruthy();
+      );
     });
 
     it('throws error when get by deleted organization', async () => {
       const created = await createProjectOrganization({ client });
       await deleteProjectOrganization({ client, id: created.id });
-      expect(
+      expectNotFoundError(
         client.chain.query
           .getProjectOrganizationById({
             id: created.id,
@@ -181,7 +185,7 @@ describe('Project Organization', () => {
             id: true,
             name: true,
           })
-      ).rejects.toBeTruthy();
+      );
     });
 
     it('returns organizations', async () => {
