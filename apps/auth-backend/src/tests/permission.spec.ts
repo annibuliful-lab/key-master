@@ -1,6 +1,7 @@
 import {
   Client,
   createPermission,
+  expectNotFoundError,
   projectOwnerAClient,
 } from '@key-master/test';
 import { nanoid } from 'nanoid';
@@ -33,13 +34,11 @@ describe('Permission', () => {
       expect(updatedPermission).toEqual(newPermissionName);
     });
     it('throws error when update wrong id', async () => {
-      try {
-        await client.chain.mutation
+      expectNotFoundError(
+        client.chain.mutation
           .updatePermission({ id: `WRONG_ID_${nanoid()}`, permission: 'NEW' })
-          .permission.get();
-      } catch (error) {
-        expect(error).toBeDefined();
-      }
+          .permission.get()
+      );
     });
 
     it('delets an existing', async () => {
@@ -72,17 +71,17 @@ describe('Permission', () => {
         .deletePermission({ id: newPermission.id })
         .success.get();
 
-      expect(
+      expectNotFoundError(
         client.chain.query.getPermissionById({ id: newPermission.id }).id.get()
-      ).rejects.toBeTruthy();
+      );
     });
 
     it('throws error when get by wrong id', () => {
-      expect(
+      expectNotFoundError(
         client.chain.query
           .getPermissionById({ id: `WRONG_ID_${nanoid()}` })
           .id.get()
-      ).rejects.toBeTruthy();
+      );
     });
 
     it('returns permissions', async () => {
