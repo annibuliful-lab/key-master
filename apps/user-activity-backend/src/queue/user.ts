@@ -1,5 +1,6 @@
 import { mongoClient } from '@key-master/db';
 import { subscriberQueueClient } from '@key-master/queue';
+import { UserActivityType } from '../codegen-generated';
 
 type UserLoginData = {
   id: string;
@@ -20,6 +21,7 @@ export const userLoginSubscriberEvent = () =>
           type: 'READ',
         },
       });
+      await job.remove();
       return;
     }
   });
@@ -27,7 +29,7 @@ export const userLoginSubscriberEvent = () =>
 type UserKeyManagementData = {
   name: string;
   userId: string;
-  createdAt: Date;
+  createdAt: string;
 };
 
 const getKeyManagementActivityByType = (type: string) => {
@@ -54,13 +56,14 @@ export const userKeyManagementSubscriberEvent = () =>
         data: {
           userId: jobData.userId,
           description: getKeyManagementActivityByType(job.name),
-          type: 'CREATE',
+          type: job.name as UserActivityType,
           serviceName: 'KeyManagement',
           data: {
             ...jobData,
-            createdAt: jobData.createdAt.getDate(),
+            createdAt: jobData.createdAt,
           },
         },
       });
+      await job.remove();
     }
   );

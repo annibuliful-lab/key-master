@@ -9,7 +9,7 @@ export const mutations: Resolvers<IGraphqlContext>['Mutation'] = {
       keyManagementId: createdKey.id,
       name: createdKey.name,
       userId: createdKey.createdBy,
-      createdAt: createdKey.createdAt,
+      createdAt: createdKey.createdAt.toString(),
     });
 
     return createdKey;
@@ -20,7 +20,7 @@ export const mutations: Resolvers<IGraphqlContext>['Mutation'] = {
       keyManagementId: updatedKey.id,
       name: updatedKey.name,
       userId: updatedKey.createdBy,
-      createdAt: updatedKey.createdAt,
+      createdAt: updatedKey.createdAt.toString(),
     });
     return updatedKey;
   },
@@ -31,7 +31,7 @@ export const mutations: Resolvers<IGraphqlContext>['Mutation'] = {
       keyManagementId: updatedKeyPin.id,
       name: updatedKeyPin.name,
       userId: updatedKeyPin.createdBy,
-      createdAt: updatedKeyPin.createdAt,
+      createdAt: updatedKeyPin.createdAt.toString(),
     });
 
     return updatedKeyPin;
@@ -43,7 +43,7 @@ export const mutations: Resolvers<IGraphqlContext>['Mutation'] = {
       keyManagementId: deletedKey.id,
       name: deletedKey.name,
       userId: deletedKey.createdBy,
-      createdAt: deletedKey.createdAt,
+      createdAt: deletedKey.createdAt.toString(),
     });
 
     return { success: true };
