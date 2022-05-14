@@ -180,7 +180,7 @@ describe('Organization User Key Bookmark', () => {
       );
     });
 
-    it('throws forbidden error when not owner bookmark', async () => {
+    it('throws forbidden error when not owner', async () => {
       const createdBookmark = await createOrganizationKeyManagementUserBookmark(
         { client }
       );
@@ -196,6 +196,78 @@ describe('Organization User Key Bookmark', () => {
           })
           .id.get()
       );
+    });
+
+    it('returns bookmarks list', async () => {
+      const organization = await createProjectOrganization({
+        client: projectOwnerAClient,
+      });
+      organizationId = organization.id;
+      client = projectOwnerAClientWithOrganizationClient({
+        orgId: organization.id,
+      });
+      await Promise.all([
+        createOrganizationKeyManagementUserBookmark({ client }),
+        createOrganizationKeyManagementUserBookmark({ client }),
+        createOrganizationKeyManagementUserBookmark({ client }),
+      ]);
+
+      const bookmarks = await client.chain.query
+        .getOrganizationKeyManagementUserBookmarks({})
+        .get({ id: true, keyManagementId: true, projectOrganizationId: true });
+
+      expect(bookmarks.length).toBeGreaterThanOrEqual(3);
+    });
+
+    it('returns bookmarks with limit', async () => {
+      const organization = await createProjectOrganization({
+        client: projectOwnerAClient,
+      });
+      organizationId = organization.id;
+      client = projectOwnerAClientWithOrganizationClient({
+        orgId: organization.id,
+      });
+      await Promise.all([
+        createOrganizationKeyManagementUserBookmark({ client }),
+        createOrganizationKeyManagementUserBookmark({ client }),
+        createOrganizationKeyManagementUserBookmark({ client }),
+      ]);
+      const bookmarks = await client.chain.query
+        .getOrganizationKeyManagementUserBookmarks({
+          filter: {
+            take: 2,
+          },
+        })
+        .get({ id: true, keyManagementId: true, projectOrganizationId: true });
+      expect(bookmarks).toHaveLength(2);
+    });
+
+    it('returns bookmarks with organization id', async () => {
+      const organization = await createProjectOrganization({
+        client: projectOwnerAClient,
+      });
+      organizationId = organization.id;
+      client = projectOwnerAClientWithOrganizationClient({
+        orgId: organization.id,
+      });
+      await Promise.all([
+        createOrganizationKeyManagementUserBookmark({ client }),
+        createOrganizationKeyManagementUserBookmark({ client }),
+        createOrganizationKeyManagementUserBookmark({ client }),
+      ]);
+      const bookmarks = await client.chain.query
+        .getOrganizationKeyManagementUserBookmarks({
+          filter: {
+            take: 2,
+            organizationId: organization.id,
+          },
+        })
+        .get({ id: true, keyManagementId: true, projectOrganizationId: true });
+
+      expect(
+        bookmarks.every((b) => b.projectOrganizationId === organization.id)
+      ).toBeTruthy();
+      expect(bookmarks).toHaveLength(2);
     });
   });
 });
