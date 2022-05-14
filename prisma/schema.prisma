@@ -62,6 +62,7 @@ model Project {
   projectRoleUsers     ProjectRoleUser[]
   projectOrganizations ProjectOrganization[]
   organizationTags     OrganizationTag[]
+  tags                 Tag[]
 
   @@unique([ownerId, name])
   @@index([ownerId])
@@ -154,8 +155,9 @@ model OrganizationKeyManagement {
 }
 
 model OrganizationTag {
-  id                    String              @id
-  tag                   String
+  id                    String              @id @default(uuid())
+  tagId                 String
+  tag                   Tag                 @relation(fields: [tagId], references: [id], onDelete: Cascade)
   projectId             String
   project               Project             @relation(fields: [projectId], references: [id], onDelete: Cascade)
   projectOrganizationId String
@@ -166,7 +168,24 @@ model OrganizationTag {
   updatedAt             DateTime            @default(now()) @updatedAt
   deletedAt             DateTime?
 
-  @@index([tag])
+  @@index([tagId])
+  @@index([projectId])
+  @@index([projectOrganizationId])
+}
+
+model Tag {
+  id               String            @id @default(uuid())
+  tag              String
+  projectId        String
+  project          Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdBy        String
+  updatedBy        String
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @default(now()) @updatedAt
+  deletedAt        DateTime?
+  organizationTags OrganizationTag[]
+
+  @@index([tag, projectId])
 }
 
 model KeyManagment {
