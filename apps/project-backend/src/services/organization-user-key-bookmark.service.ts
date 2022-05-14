@@ -121,6 +121,10 @@ export class OrganizationKeyManagementUserBookmarkService extends Repository<IAp
         },
       }),
       where: {
+        userId: this.context.userId,
+        ...(filter?.organizationId && {
+          projectOrganizationId: filter?.organizationId,
+        }),
         ...(filter?.search && {
           OR: [
             {
