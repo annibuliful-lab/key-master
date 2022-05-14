@@ -88,4 +88,24 @@ export class OrganizationKeyManagementUserBookmarkService extends Repository<IAp
 
     return { success: true };
   }
+
+  async findById(id: string) {
+    const bookmark =
+      await this.db.organizationKeyManagementUserBookmark.findFirst({
+        where: {
+          id,
+          deletedAt: null,
+        },
+      });
+
+    if (!bookmark) {
+      throw new ResourceNotFound(`${id} not found`);
+    }
+
+    if (bookmark.userId !== this.context.userId) {
+      throw new ForbiddenError('you are not owner');
+    }
+
+    return bookmark;
+  }
 }
