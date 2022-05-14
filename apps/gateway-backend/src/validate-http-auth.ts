@@ -34,7 +34,7 @@ export const validateHttpAuth = async ({
               projectId,
               userId,
             })
-          ).permissions,
+          )?.permissions || [],
       'x-user-role': 'KeyAdmin',
       authorization,
     };
