@@ -8,6 +8,10 @@ export const matchers = {
   meta: expect.any(Object),
 };
 
+export function expectForbiddenError(request: Promise<unknown>): Promise<void> {
+  return expectError(/FORBIDDEN/)(request);
+}
+
 export function expectPermissionError(
   request: Promise<unknown>
 ): Promise<void> {

@@ -31,10 +31,17 @@ export const projectOwnerGraphqlClient = ({
   });
 };
 
-export const projectOwnerAClientWithOrganizationClient = (orgId: string) =>
+interface IProjectOwnerAClientWithOrganizationClientParam {
+  orgId: string;
+  userId?: string;
+}
+export const projectOwnerAClientWithOrganizationClient = ({
+  userId,
+  orgId,
+}: IProjectOwnerAClientWithOrganizationClientParam) =>
   projectOwnerGraphqlClient({
     projectId: 'TEST_PROJECT_ID',
-    userId: 'TEST_USER_A_ID',
+    userId: userId ?? 'TEST_USER_A_ID',
     options: {
       'x-org-id': orgId,
     },
@@ -44,6 +51,14 @@ export const projectOwnerAClient = projectOwnerGraphqlClient({
   projectId: 'TEST_PROJECT_ID',
   userId: 'TEST_USER_A_ID',
 });
+export const userBClient = (orgId: string) =>
+  projectOwnerGraphqlClient({
+    projectId: 'TEST_PROJECT_ID',
+    userId: 'TEST_USER_B_ID',
+    options: {
+      'x-org-id': orgId,
+    },
+  });
 
 export const testUserPermissionsClient = (permission: string[] = []) =>
   createClient({
