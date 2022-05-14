@@ -86,6 +86,8 @@
   "dependencies": {
     "@apollo/client": "3.6.2",
     "@fastify/websocket": "^5.0.0",
+    "@geist-ui/core": "^2.3.8",
+    "@geist-ui/react": "^2.2.5",
     "@genql/cli": "2.10.0",
     "@genql/runtime": "2.10.0",
     "@graphql-tools/merge": "8.2.10",
