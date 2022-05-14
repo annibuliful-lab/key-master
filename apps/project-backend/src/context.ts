@@ -8,6 +8,7 @@ import { ProjectRoleUserService } from './services/project-role-user.service';
 import { OrganizationUserService } from './services/organization-user.service';
 import { projectOrganizationDataLoader } from './dataloaders/project-organization.dataloader';
 import { IAppContext } from '@key-master/graphql';
+import { OrganizationKeyManagementUserBookmarkService } from './services/organization-user-key-bookmark.service';
 
 export interface IGraphqlContext extends IAppContext {
   project: ProjectService;
@@ -16,6 +17,7 @@ export interface IGraphqlContext extends IAppContext {
   projectOrganization: ProjectOrganizationService;
   projectRoleUser: ProjectRoleUserService;
   organizationUser: OrganizationUserService;
+  organizationUserKeyBookmark: OrganizationKeyManagementUserBookmarkService;
   projectRoleDataLoader: typeof projectRoleDataLoader;
   projectDataLoader: typeof projectDataLoader;
   projectOrganizationDataLoader: typeof projectOrganizationDataLoader;

@@ -5,6 +5,7 @@ import { mutations as ProjectRolePermissionMutation } from './project-role-permi
 import { mutations as ProjectOrganizationMutation } from './project-organization.mutation';
 import { mutations as ProjectRoleUserMutation } from './project-role-user.mutation';
 import { mutations as OrganizationUserMutation } from './organization-user.mutation';
+import { mutations as OrganizationKeyManagementUserBookmark } from './organization-user-key-bookmark.mutation';
 
 export const mutations: Resolvers['Mutation'] = {
   ...ProjectMutation,
@@ -13,4 +14,5 @@ export const mutations: Resolvers['Mutation'] = {
   ...ProjectOrganizationMutation,
   ...ProjectRoleUserMutation,
   ...OrganizationUserMutation,
+  ...OrganizationKeyManagementUserBookmark,
 };

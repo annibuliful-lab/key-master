@@ -12,6 +12,7 @@ import { projectDataLoader } from './dataloaders/project.dataloader';
 import { projectOrganizationDataLoader } from './dataloaders/project-organization.dataloader';
 import { ProjectRoleUserService } from './services/project-role-user.service';
 import { OrganizationUserService } from './services/organization-user.service';
+import { OrganizationKeyManagementUserBookmarkService } from './services/organization-user-key-bookmark.service';
 
 dotenv.config();
 
@@ -29,6 +30,8 @@ createServer({
       projectOrganization: new ProjectOrganizationService(context),
       projectRoleUser: new ProjectRoleUserService(context),
       organizationUser: new OrganizationUserService(context),
+      organizationUserKeyBookmark:
+        new OrganizationKeyManagementUserBookmarkService(context),
       projectRoleDataLoader,
       projectDataLoader,
       projectOrganizationDataLoader,
