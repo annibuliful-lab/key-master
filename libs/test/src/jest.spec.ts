@@ -8,38 +8,33 @@ export const matchers = {
   meta: expect.any(Object),
 };
 
-export function expectForbiddenError(request: Promise<unknown>): Promise<void> {
+export function expectForbiddenError(request: Promise<unknown>) {
   return expectError(/FORBIDDEN/)(request);
 }
 
-export function expectAuthenticationError(
-  request: Promise<unknown>
-): Promise<void> {
+export function expectAuthenticationError(request: Promise<unknown>) {
   return expectError(/AuthenticationError/)(request);
 }
 
-export function expectPermissionError(
-  request: Promise<unknown>
-): Promise<void> {
+export function expectPermissionError(request: Promise<unknown>) {
   return expectError(/You must have permission/)(request);
 }
 
-export function expectUnauthorizedError(
-  request: Promise<unknown>
-): Promise<void> {
+export function expectUnauthorizedError(request: Promise<unknown>) {
   return expectError(/Unauthorization/)(request);
 }
 
-export function expectDuplicatedError(
-  request: Promise<unknown>
-): Promise<void> {
+export function expectDuplicatedError(request: Promise<unknown>) {
   return expectError(/DUPLICATE_RESOURCE/)(request);
 }
 
-export function expectNotFoundError(request: Promise<unknown>): Promise<void> {
+export function expectNotFoundError(request: Promise<unknown>) {
   return expectError(/RESOURCE_NOT_FOUND/)(request);
 }
 
+export function expectInternalServerError(request: Promise<unknown>) {
+  return expectError(/Internal Server Error/)(request);
+}
 export function expectError(
   error?: string | RegExp | Error
 ): (request: Promise<unknown>) => Promise<void> {
