@@ -8,10 +8,22 @@ export const typeDefs = gql`
     READ
   }
 
+  enum ServiceName {
+    KeyManagement
+    Authentication
+    Project
+    ProjectOrganization
+    OrganizationUserKeyBookmark
+    ProjectRole
+    ProjectRoleUser
+    ProjectRolePermission
+    ProjectTag
+  }
+
   type UserActivity {
     id: ID!
     userId: ID!
-    serviceName: ID!
+    serviceName: ServiceName!
     projectId: ID
     description: String
     data: JSON
@@ -33,7 +45,7 @@ export const typeDefs = gql`
 
   input CreateUserActivityInput {
     userId: ID!
-    serviceName: ID!
+    serviceName: ServiceName!
     projectId: ID
     parentPkId: ID!
     description: String
