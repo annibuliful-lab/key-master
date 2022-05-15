@@ -110,11 +110,11 @@ export class OrganizationKeyManagementService extends Repository<IAppContext> {
           },
         });
 
-        const newSortOrderItem = insertAt(
-          sortOrderItem.keysIds ?? [],
-          sortOrder,
-          id
-        );
+        const newSortOrderItem = insertAt({
+          array: sortOrderItem.keysIds,
+          index: sortOrder,
+          newItem: id,
+        });
 
         await prisma.sortOrderItem.update({
           where: {
