@@ -9,13 +9,15 @@
       "options": {
         "outputPath": "dist/apps/user-backend",
         "main": "apps/user-backend/src/main.ts",
-        "tsConfig": "apps/user-backend/tsconfig.app.json"
+        "tsConfig": "apps/user-backend/tsconfig.app.json",
+        "generatePackageJson": true
       },
       "configurations": {
         "production": {
           "optimization": true,
           "extractLicenses": true,
-          "inspect": false
+          "inspect": false,
+          "generatePackageJson": true
         }
       }
     },
