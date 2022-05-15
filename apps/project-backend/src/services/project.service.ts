@@ -95,23 +95,22 @@ export class ProjectService extends Repository<IAppContext> {
       where: {
         id,
         deletedAt: null,
-        OR: [
-          {
-            ownerId: this.context.userId,
-          },
-          {
-            projectRoleUsers: {
-              some: {
-                userId: this.context.userId,
-              },
-            },
-          },
-        ],
       },
     });
 
     if (!project) {
       throw new ResourceNotFound(`get project by id ${id} not found`);
+    }
+
+    const projectRoleUser = await this.db.projectRoleUser.findFirst({
+      where: {
+        projectId: this.context.userId,
+        deletedAt: null,
+      },
+    });
+
+    if (project.ownerId !== this.context.userId || !!projectRoleUser) {
+      throw new ForbiddenError('you are not in this project');
     }
 
     return project;

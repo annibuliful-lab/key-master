@@ -4,6 +4,7 @@ import {
   createProjectTag,
   deleteProject,
   expectDuplicatedError,
+  expectForbiddenError,
   expectNotFoundError,
   expectPermissionError,
   expectUnauthorizedError,
@@ -167,7 +168,22 @@ describe('Project', () => {
       expect(project).toEqual(getProject);
     });
 
-    it('throws error when get by wrong id', () => {
+    it('throws fobidden error when user is not in a project', async () => {
+      const project = await createProject({ client });
+      const wrongUserClient = projectOwnerGraphqlClient({
+        userId: 'TEST_USER_B_ID',
+        projectId: 'TEST_PROJECT_ID',
+      });
+
+      expectForbiddenError(
+        wrongUserClient.chain.query.getProjectById({ id: project.id }).get({
+          id: true,
+          name: true,
+        })
+      );
+    });
+
+    it('throws not found error when get by wrong id', () => {
       expectNotFoundError(
         client.chain.query.getProjectById({ id: 'MOCK_WRONG_PROJECT_ID' }).get({
           id: true,
