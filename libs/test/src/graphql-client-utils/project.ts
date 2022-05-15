@@ -37,3 +37,21 @@ export function deleteProject({ client, id }: IDeleteProjectParam) {
     })
     .success.get();
 }
+
+interface ICreateProjectTagParam {
+  client: Client;
+  tag?: string;
+}
+export function createProjectTag({ client, tag }: ICreateProjectTagParam) {
+  return client.chain.mutation
+    .createProjectTag({
+      input: {
+        tag: tag ?? `MOCK_PROJECT_TAG_${nanoid()}`,
+      },
+    })
+    .get({
+      projectId: true,
+      id: true,
+      tag: true,
+    });
+}
