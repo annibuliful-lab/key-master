@@ -31,6 +31,16 @@ export const typeDefs = gql`
     type: [UserActivityType!]
   }
 
+  input CreateUserActivityInput {
+    userId: ID!
+    serviceName: ID!
+    projectId: ID
+    parentPkId: ID!
+    description: String
+    data: JSON
+    type: UserActivityType!
+  }
+
   type Query {
     getUserActivityById(id: ID!): UserActivity!
       @access(
@@ -40,6 +50,13 @@ export const typeDefs = gql`
     getUsersActivities(filter: UserActivityFilterInput!): [UserActivity!]!
       @access(
         conditions: { permission: "USER_ACTIVITY_READ", roleName: "KeyAdmin" }
+      )
+  }
+
+  type Mutation {
+    createUserActivity(input: CreateUserActivityInput): UserActivity!
+      @access(
+        conditions: { permission: "USER_ACTIVITY_WRITE", roleName: "KeyAdmin" }
       )
   }
 `;
