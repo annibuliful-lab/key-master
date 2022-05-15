@@ -8,7 +8,6 @@ import {
   deleteProjectOrganization,
   expectDuplicatedError,
   expectNotFoundError,
-  expectForbiddenError,
 } from '@key-master/test';
 import { nanoid } from 'nanoid';
 
@@ -60,7 +59,7 @@ describe('Project Organization', () => {
 
       await deleteProject({ client, id: project.id });
 
-      expectForbiddenError(
+      expectNotFoundError(
         projectClient.chain.mutation
           .createProjectOrganization({
             input: {

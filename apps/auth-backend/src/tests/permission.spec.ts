@@ -1,8 +1,8 @@
 import {
+  adminOwnerClient,
   Client,
   createPermission,
   expectNotFoundError,
-  projectOwnerAClient,
 } from '@key-master/test';
 import { nanoid } from 'nanoid';
 
@@ -10,7 +10,7 @@ describe('Permission', () => {
   let client: Client = null;
 
   beforeAll(() => {
-    client = projectOwnerAClient;
+    client = adminOwnerClient;
   });
 
   describe('Mutation', () => {
@@ -33,6 +33,7 @@ describe('Permission', () => {
         .permission.get();
       expect(updatedPermission).toEqual(newPermissionName);
     });
+
     it('throws error when update wrong id', async () => {
       expectNotFoundError(
         client.chain.mutation
