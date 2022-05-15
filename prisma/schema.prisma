@@ -185,7 +185,7 @@ model ProjectTag {
   deletedAt        DateTime?
   organizationTags OrganizationTag[]
 
-  @@index([tag, projectId])
+  @@unique([tag, projectId])
 }
 
 model KeyManagment {
