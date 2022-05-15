@@ -1,11 +1,19 @@
-import { Resolvers } from '../../codegen-generated';
+import { Resolvers, ServiceName } from '../../codegen-generated';
 import { IGraphqlContext } from '../../context';
 
 export const queries: Resolvers<IGraphqlContext>['Query'] = {
-  getUserActivityById: (_parent, { id }, ctx) => {
-    return ctx.userActivity.findById(id);
+  getUserActivityById: async (_parent, { id }, ctx) => {
+    const activity = await ctx.userActivity.findById(id);
+    return {
+      ...activity,
+      serviceName: activity.serviceName as ServiceName,
+    };
   },
-  getUsersActivities: (_parent, { filter }, ctx) => {
-    return ctx.userActivity.findManyByFilter(filter);
+  getUsersActivities: async (_parent, { filter }, ctx) => {
+    const activities = await ctx.userActivity.findManyByFilter(filter);
+    return activities.map((activity) => ({
+      ...activity,
+      serviceName: activity.serviceName as ServiceName,
+    }));
   },
 };
