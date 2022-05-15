@@ -2,7 +2,7 @@ import { gql } from 'apollo-server-fastify';
 
 export const typeDefs = gql`
   input KeyManagementHistoryLogFilterInput {
-    cursor: ID
+    skip: Int
     take: Int
   }
 
