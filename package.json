@@ -12,7 +12,7 @@
     "test": "yarn run test:backend && yarn run utils:test && yarn run graphql:test",
     "graphql:test": "nx test graphql",
     "test:backend": "concurrently \"yarn:*-backend:test\"",
-    "all-services:dev": "ts-node tools/bin/run-service.ts",
+    "all-services:dev": "concurrently \"yarn:*-backend:dev\"",
     "user-backend:test": "nx test user-backend",
     "auth-backend:test": "nx test auth-backend",
     "project-backend:test": "nx test project-backend",
