@@ -52,6 +52,14 @@ export const projectOwnerAClient = projectOwnerGraphqlClient({
   userId: 'TEST_USER_A_ID',
 });
 
+export const adminOwnerClient = projectOwnerGraphqlClient({
+  projectId: 'TEST_PROJECT_ID',
+  userId: 'TEST_USER_A_ID',
+  options: {
+    'x-user-permissions': 'PERMISSION_WRITE,PERMISSION_READ',
+  },
+});
+
 export const userBClient = (orgId: string) =>
   projectOwnerGraphqlClient({
     projectId: 'TEST_PROJECT_ID',
