@@ -1,4 +1,5 @@
 import {
+  adminOwnerClient,
   Client,
   createPermission,
   createProjectRole,
@@ -42,7 +43,7 @@ describe('Project Role Permission', () => {
 
     it('throws error when assign with array that contains deleted permissions', async () => {
       const deletePermissionId = permissionIds[0];
-      await client.chain.mutation
+      await adminOwnerClient.chain.mutation
         .deletePermission({ id: deletePermissionId })
         .success.get();
 
