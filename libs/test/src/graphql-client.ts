@@ -51,6 +51,7 @@ export const projectOwnerAClient = projectOwnerGraphqlClient({
   projectId: 'TEST_PROJECT_ID',
   userId: 'TEST_USER_A_ID',
 });
+
 export const userBClient = (orgId: string) =>
   projectOwnerGraphqlClient({
     projectId: 'TEST_PROJECT_ID',

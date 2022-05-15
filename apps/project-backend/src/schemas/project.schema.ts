@@ -9,6 +9,7 @@ export const typeDefs = gql`
     id: ID!
     name: String!
     logo: String
+    tags: [ProjectTag]
   }
 
   input CreateProjectInput {

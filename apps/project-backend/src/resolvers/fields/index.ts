@@ -3,6 +3,7 @@ import { resolvers as ProjectOrganizationFieldsResolvers } from './project-organ
 import { resolvers as ProjectRoleUserFieldsResolvers } from './project-role-user.field';
 import { resolvers as OrganizationUserFieldsResolvers } from './organization-user.field';
 import { resolvers as OrganizationKeyManagementUserBookmarkFieldsResolvers } from './organization-user-key-bookmark.field';
+import { resolvers as ProjectFieldsResolvers } from './project.field';
 
 import { Resolvers } from '../../codegen-generated';
 
@@ -12,4 +13,5 @@ export const fieldResolvers: Resolvers = {
   ...ProjectRoleUserFieldsResolvers,
   ...OrganizationUserFieldsResolvers,
   ...OrganizationKeyManagementUserBookmarkFieldsResolvers,
+  ...ProjectFieldsResolvers,
 };

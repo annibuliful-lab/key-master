@@ -10,6 +10,7 @@ import { projectOrganizationDataLoader } from './dataloaders/project-organizatio
 import { IAppContext } from '@key-master/graphql';
 import { OrganizationKeyManagementUserBookmarkService } from './services/organization-user-key-bookmark.service';
 import { ProjectTagService } from './services/project-tag.service';
+import { projectTagDataLoader } from './dataloaders/project-tag.dataloader';
 
 export interface IGraphqlContext extends IAppContext {
   project: ProjectService;
@@ -23,4 +24,5 @@ export interface IGraphqlContext extends IAppContext {
   projectRoleDataLoader: typeof projectRoleDataLoader;
   projectDataLoader: typeof projectDataLoader;
   projectOrganizationDataLoader: typeof projectOrganizationDataLoader;
+  projectTagDataLoader: typeof projectTagDataLoader;
 }
