@@ -11,14 +11,14 @@ interface ICreateKeyManagementParam {
   customName?: string;
   customMasterKey?: string;
 }
-export function createKeyManagement({
+export async function createKeyManagement({
   client,
   customName,
   customMasterKey,
 }: ICreateKeyManagementParam) {
   const name = customName ?? `MOCK_NAME_${nanoid()}`;
 
-  return client.chain.mutation
+  const createdKey = await client.chain.mutation
     .createKeyManagement({
       input: {
         name,
@@ -30,4 +30,24 @@ export function createKeyManagement({
       id: true,
       name: true,
     });
+
+  await client.chain.mutation
+    .createUserActivity({
+      input: {
+        serviceName: 'KeyManagement',
+        parentPkId: createdKey.id,
+        userId: 'TEST_USER_A_ID',
+        data: {
+          name: createdKey.name,
+        },
+        type: 'CREATE',
+      },
+    })
+    .get({
+      id: true,
+      parentPkId: true,
+      serviceName: true,
+    });
+
+  return createdKey;
 }
