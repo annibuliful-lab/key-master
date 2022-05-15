@@ -16,7 +16,7 @@ const MOCK_LIST = [
 ];
 
 describe('reorder funciton ', () => {
-  it('it should update sort order when given index', () => {
+  it('should update sort order when given index', () => {
     const itemOneIndex = 0;
 
     const newList = reorder(MOCK_LIST, itemOneIndex, 1);
@@ -38,12 +38,26 @@ describe('reorder funciton ', () => {
 });
 
 describe('insertAt function', () => {
-  it('it should add number to specified index', () => {
-    const MOCK_ARRAY = [1, 2, 3, 4, 5];
-    expect(insertAt(MOCK_ARRAY, 3, 6)).toEqual([1, 2, 3, 6, 4, 5]);
+  it('should add number to specified index', () => {
+    const MOCK_ARRAY = [1, 2, 3, 4, 5, 6];
+    expect(insertAt({ array: MOCK_ARRAY, index: 3, newItem: 6 })).toEqual([
+      1, 2, 3, 6, 4, 5,
+    ]);
   });
 
-  it('it should add object to specified index', () => {
+  it('should not removed duplicated item', () => {
+    const MOCK_ARRAY = [1, 2, 3, 4, 5, 6];
+    expect(
+      insertAt({
+        array: MOCK_ARRAY,
+        index: 3,
+        newItem: 6,
+        preventDuplicatedItem: false,
+      })
+    ).toEqual([1, 2, 3, 6, 4, 5, 6]);
+  });
+
+  it('should add object to specified index', () => {
     const MOCK_ARRAY_OBJECT = [
       {
         id: 1,
@@ -69,9 +83,13 @@ describe('insertAt function', () => {
     };
 
     expect(
-      insertAt(MOCK_ARRAY_OBJECT, 2, {
-        id: 4,
-        name: 'MOCK_NAME_4',
+      insertAt({
+        array: MOCK_ARRAY_OBJECT,
+        index: 2,
+        newItem: {
+          id: 4,
+          name: 'MOCK_NAME_4',
+        },
       })[2]
     ).toEqual(MOCK_DATA);
   });

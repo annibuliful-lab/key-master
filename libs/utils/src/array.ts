@@ -15,14 +15,42 @@ export const reorder = <T extends { sortOrder: number }>(
 /**
  * {@link https://stackoverflow.com/questions/586182/how-to-insert-an-item-into-an-array-at-a-specific-index-javascript}
  */
-export const insertAt = <T>(array: T[], index: number, newItem: T): T[] => [
-  // part of the array before the specified index
-  ...array.slice(0, index),
-  // inserted item
+
+interface IInsertAtParam<T> {
+  array: T[];
+  index: number;
+  newItem: T;
+  preventDuplicatedItem?: boolean;
+}
+
+export const insertAt = <T>({
+  array,
+  index,
   newItem,
-  // part of the array after the specified index
-  ...array.slice(index),
-];
+  preventDuplicatedItem = true,
+}: IInsertAtParam<T>): T[] => {
+  if (preventDuplicatedItem) {
+    const removedDuplicatedItem = array.filter((item) => item !== newItem);
+
+    return [
+      // part of the array before the specified index
+      ...removedDuplicatedItem.slice(0, index),
+      // inserted item
+      newItem,
+      // part of the array after the specified index
+      ...removedDuplicatedItem.slice(index),
+    ];
+  }
+
+  return [
+    // part of the array before the specified index
+    ...array.slice(0, index),
+    // inserted item
+    newItem,
+    // part of the array after the specified index
+    ...array.slice(index),
+  ];
+};
 
 interface IOrderByFields {
   id: string;
