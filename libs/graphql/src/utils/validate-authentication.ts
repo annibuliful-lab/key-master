@@ -138,6 +138,22 @@ export const getUserPermissions = async ({
     }
   }
 
+  const isProjectOwner = await prismaClient.project.findFirst({
+    select: { id: true },
+    where: {
+      id: projectId,
+      ownerId: userId,
+    },
+  });
+
+  if (isProjectOwner) {
+    return {
+      userId,
+      role: 'OWNER',
+      permissions: await getAllPermissions(),
+    };
+  }
+
   const userProjectRole = await prismaClient.projectRoleUser.findFirst({
     select: {
       role: {

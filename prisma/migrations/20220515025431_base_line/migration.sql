@@ -1,9 +1,3 @@
--- CreateEnum
-CREATE TYPE "AuditType" AS ENUM ('CREATE', 'UPDATE', 'DELETE');
-
--- CreateEnum
-CREATE TYPE "AuditLogStatus" AS ENUM ('ERROR', 'WARN', 'SUCCESS', 'INFO');
-
 -- CreateTable
 CREATE TABLE "Permission" (
     "id" TEXT NOT NULL,
@@ -75,6 +69,8 @@ CREATE TABLE "ProjectRoleUser" (
     "roleId" TEXT NOT NULL,
     "projectId" TEXT NOT NULL,
     "active" BOOLEAN NOT NULL DEFAULT true,
+    "createdBy" TEXT NOT NULL,
+    "updatedBy" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "deletedAt" TIMESTAMP(3),
@@ -91,6 +87,8 @@ CREATE TABLE "ProjectOrganization" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "deletedAt" TIMESTAMP(3),
+    "createdBy" TEXT NOT NULL,
+    "updatedBy" TEXT NOT NULL,
 
     CONSTRAINT "ProjectOrganization_pkey" PRIMARY KEY ("id")
 );
@@ -101,6 +99,8 @@ CREATE TABLE "OrganizationUser" (
     "organizationId" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "active" BOOLEAN NOT NULL DEFAULT true,
+    "createdBy" TEXT NOT NULL,
+    "updatedBy" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "deletedAt" TIMESTAMP(3),
@@ -113,6 +113,7 @@ CREATE TABLE "OrganizationKeyManagement" (
     "id" TEXT NOT NULL,
     "projectOrganizationId" TEXT NOT NULL,
     "keyManagementId" TEXT NOT NULL,
+    "active" BOOLEAN NOT NULL DEFAULT true,
     "createdBy" TEXT NOT NULL,
     "updatedBy" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -123,12 +124,43 @@ CREATE TABLE "OrganizationKeyManagement" (
 );
 
 -- CreateTable
+CREATE TABLE "OrganizationTag" (
+    "id" TEXT NOT NULL,
+    "tagId" TEXT NOT NULL,
+    "projectId" TEXT NOT NULL,
+    "projectOrganizationId" TEXT NOT NULL,
+    "createdBy" TEXT NOT NULL,
+    "updatedBy" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "deletedAt" TIMESTAMP(3),
+
+    CONSTRAINT "OrganizationTag_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ProjectTag" (
+    "id" TEXT NOT NULL,
+    "tag" TEXT NOT NULL,
+    "projectId" TEXT NOT NULL,
+    "createdBy" TEXT NOT NULL,
+    "updatedBy" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "deletedAt" TIMESTAMP(3),
+
+    CONSTRAINT "ProjectTag_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "KeyManagment" (
     "id" TEXT NOT NULL,
     "projectId" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "pin" TEXT,
     "masterKey" TEXT NOT NULL,
+    "masterKeyIv" TEXT NOT NULL,
+    "secretHash" TEXT NOT NULL,
     "createdBy" TEXT NOT NULL,
     "updatedBy" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -139,27 +171,47 @@ CREATE TABLE "KeyManagment" (
 );
 
 -- CreateTable
-CREATE TABLE "AuditLog" (
+CREATE TABLE "OrganizationKeyManagementUserBookmark" (
     "id" TEXT NOT NULL,
-    "projectId" TEXT NOT NULL,
-    "serviceName" TEXT NOT NULL,
-    "type" "AuditType" NOT NULL,
-    "status" "AuditLogStatus" NOT NULL,
-    "message" TEXT NOT NULL,
-    "data" JSONB,
+    "projectOrganizationId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "keyManagementId" TEXT NOT NULL,
     "createdBy" TEXT NOT NULL,
     "updatedBy" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "deletedAt" TIMESTAMP(3),
 
-    CONSTRAINT "AuditLog_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "OrganizationKeyManagementUserBookmark_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "SortOrderItem" (
+    "id" TEXT NOT NULL,
+    "keysIds" TEXT[],
+    "createdBy" TEXT NOT NULL,
+    "updatedBy" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "deletedAt" TIMESTAMP(3),
+
+    CONSTRAINT "SortOrderItem_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "ProjectRole_projectId_role_key" ON "ProjectRole"("projectId", "role");
+CREATE UNIQUE INDEX "Permission_permission_key" ON "Permission"("permission");
+
+-- CreateIndex
+CREATE INDEX "ProjectRole_projectId_role_idx" ON "ProjectRole"("projectId", "role");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "ProjectRolePermission_roleId_permissionId_key" ON "ProjectRolePermission"("roleId", "permissionId");
+
+-- CreateIndex
+CREATE INDEX "Project_ownerId_idx" ON "Project"("ownerId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Project_ownerId_name_key" ON "Project"("ownerId", "name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
@@ -168,7 +220,7 @@ CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 CREATE UNIQUE INDEX "ProjectRoleUser_roleId_userId_projectId_key" ON "ProjectRoleUser"("roleId", "userId", "projectId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "ProjectOrganization_projectId_name_key" ON "ProjectOrganization"("projectId", "name");
+CREATE INDEX "ProjectOrganization_projectId_name_idx" ON "ProjectOrganization"("projectId", "name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "OrganizationUser_organizationId_userId_key" ON "OrganizationUser"("organizationId", "userId");
@@ -177,13 +229,22 @@ CREATE UNIQUE INDEX "OrganizationUser_organizationId_userId_key" ON "Organizatio
 CREATE UNIQUE INDEX "OrganizationKeyManagement_projectOrganizationId_keyManageme_key" ON "OrganizationKeyManagement"("projectOrganizationId", "keyManagementId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "KeyManagment_projectId_name_key" ON "KeyManagment"("projectId", "name");
+CREATE INDEX "OrganizationTag_tagId_idx" ON "OrganizationTag"("tagId");
 
 -- CreateIndex
-CREATE INDEX "AuditLog_projectId_idx" ON "AuditLog"("projectId");
+CREATE INDEX "OrganizationTag_projectId_idx" ON "OrganizationTag"("projectId");
 
 -- CreateIndex
-CREATE INDEX "AuditLog_serviceName_type_idx" ON "AuditLog"("serviceName", "type");
+CREATE INDEX "OrganizationTag_projectOrganizationId_idx" ON "OrganizationTag"("projectOrganizationId");
+
+-- CreateIndex
+CREATE INDEX "ProjectTag_tag_projectId_idx" ON "ProjectTag"("tag", "projectId");
+
+-- CreateIndex
+CREATE INDEX "KeyManagment_projectId_name_idx" ON "KeyManagment"("projectId", "name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "OrganizationKeyManagementUserBookmark_projectOrganizationId_key" ON "OrganizationKeyManagementUserBookmark"("projectOrganizationId", "keyManagementId", "userId");
 
 -- AddForeignKey
 ALTER TABLE "ProjectRole" ADD CONSTRAINT "ProjectRole_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -222,7 +283,25 @@ ALTER TABLE "OrganizationKeyManagement" ADD CONSTRAINT "OrganizationKeyManagemen
 ALTER TABLE "OrganizationKeyManagement" ADD CONSTRAINT "OrganizationKeyManagement_keyManagementId_fkey" FOREIGN KEY ("keyManagementId") REFERENCES "KeyManagment"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "OrganizationTag" ADD CONSTRAINT "OrganizationTag_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "OrganizationTag" ADD CONSTRAINT "OrganizationTag_projectOrganizationId_fkey" FOREIGN KEY ("projectOrganizationId") REFERENCES "ProjectOrganization"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "OrganizationTag" ADD CONSTRAINT "OrganizationTag_tagId_fkey" FOREIGN KEY ("tagId") REFERENCES "ProjectTag"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ProjectTag" ADD CONSTRAINT "ProjectTag_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "KeyManagment" ADD CONSTRAINT "KeyManagment_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "AuditLog" ADD CONSTRAINT "AuditLog_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "OrganizationKeyManagementUserBookmark" ADD CONSTRAINT "OrganizationKeyManagementUserBookmark_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "OrganizationKeyManagementUserBookmark" ADD CONSTRAINT "OrganizationKeyManagementUserBookmark_projectOrganizationI_fkey" FOREIGN KEY ("projectOrganizationId") REFERENCES "ProjectOrganization"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "OrganizationKeyManagementUserBookmark" ADD CONSTRAINT "OrganizationKeyManagementUserBookmark_keyManagementId_fkey" FOREIGN KEY ("keyManagementId") REFERENCES "KeyManagment"("id") ON DELETE CASCADE ON UPDATE CASCADE;

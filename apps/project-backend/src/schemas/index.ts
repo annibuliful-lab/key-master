@@ -5,7 +5,8 @@ import { typeDefs as ProjectRolePermissionSchema } from './project-role-permissi
 import { typeDefs as ProjectOrganizationSchema } from './project-organization.schema';
 import { typeDefs as ProjectRoleUserSchema } from './project-role-user.schema';
 import { typeDefs as OrganizationUserSchema } from './organization-user.schema';
-import { typeDefs as OrganizationUserKeyBookmark } from './organization-user-key-bookmark.schema';
+import { typeDefs as OrganizationUserKeyBookmarkSchema } from './organization-user-key-bookmark.schema';
+import { typeDefs as ProjectTagSchema } from './project-tag.schema';
 
 export const typeDefs = mergeTypeDefs([
   ProjectOrganizationSchema,
@@ -14,5 +15,6 @@ export const typeDefs = mergeTypeDefs([
   ProjectRolePermissionSchema,
   ProjectRoleUserSchema,
   OrganizationUserSchema,
-  OrganizationUserKeyBookmark,
+  OrganizationUserKeyBookmarkSchema,
+  ProjectTagSchema,
 ]);

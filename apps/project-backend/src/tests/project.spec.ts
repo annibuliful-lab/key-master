@@ -1,12 +1,14 @@
 import {
   Client,
   createProject,
+  createProjectTag,
   deleteProject,
   expectDuplicatedError,
   expectNotFoundError,
   expectPermissionError,
   expectUnauthorizedError,
   projectOwnerAClient,
+  projectOwnerGraphqlClient,
   testUserPermissionsClient,
   unAuthorizationClient,
 } from '@key-master/test';
@@ -53,8 +55,31 @@ describe('Project', () => {
           name: true,
         });
 
+      const newProjectClient = projectOwnerGraphqlClient({
+        projectId: project.id,
+        userId: 'TEST_USER_A_ID',
+      });
+
+      await Promise.all([
+        createProjectTag({ client: newProjectClient, tag: 'AAAA' }),
+        createProjectTag({ client: newProjectClient, tag: 'BBBB' }),
+      ]);
+
+      const newProjectById = await newProjectClient.chain.query
+        .getProjectById({ id: project.id })
+        .get({
+          tags: {
+            id: true,
+            tag: true,
+          },
+        });
+
       expect(project.id).toBeDefined();
       expect(project.name).toEqual(projectName);
+
+      expect(
+        newProjectById.tags.every((tag) => ['AAAA', 'BBBB'].includes(tag.tag))
+      ).toBeTruthy();
     });
 
     it('throws error when create duplicate project', async () => {
