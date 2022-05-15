@@ -13,7 +13,6 @@ Object {
     "PROJECT_ROLE_WRITE",
     "PROJECT_USER_READ",
     "PROJECT_USER_WRITE",
-    "PERMISSION_WRITE",
     "PERMISSION_READ",
     "PROJECT_DELETE",
     "PROJECT_ROLE_USER_WRITE",
@@ -31,7 +30,7 @@ Object {
     "KEY_MANAGEMENT_UPDATE_PIN",
     "USER_ACTIVITY_READ",
   ],
-  "role": "ADMIN",
+  "role": "OWNER",
   "userId": "TEST_USER_A_ID",
 }
 `;
