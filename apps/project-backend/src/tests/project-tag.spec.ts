@@ -90,5 +90,28 @@ describe('Project Tag', () => {
           })
       );
     });
+
+    it('deletes by id', async () => {
+      const createdTag = await createProjectTag({
+        client,
+      });
+      expect(
+        client.chain.mutation
+          .deleteProjectTag({
+            id: createdTag.id,
+          })
+          .success.get()
+      ).resolves.toBeTruthy();
+    });
+
+    it('throws not found error when delete with wrong id', () => {
+      expectNotFoundError(
+        client.chain.mutation
+          .deleteProjectTag({
+            id: `MOCK_WRONG_PROJECT_ID_${nanoid()}`,
+          })
+          .success.get()
+      );
+    });
   });
 });

@@ -75,6 +75,7 @@ export class ProjectTagService extends Repository<IAppContext> {
         deletedAt: null,
       },
     });
+
     if (!projectTag) {
       throw new ResourceNotFound(`delete project tag: ${id} not found`);
     }

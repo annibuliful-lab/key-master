@@ -8,4 +8,9 @@ export const mutations: Resolvers<IGraphqlContext>['Mutation'] = {
   updateProjectTag: (_parent, { input, id }, ctx) => {
     return ctx.projectTag.update(id, input);
   },
+  deleteProjectTag: async (_parent, { id }, ctx) => {
+    await ctx.projectTag.delete(id);
+
+    return { success: true };
+  },
 };
