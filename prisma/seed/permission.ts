@@ -140,6 +140,11 @@ export const permissions: Pick<
     permission: 'USER_ACTIVITY_READ',
     allowOnlyInternalAdmin: false,
   },
+  {
+    id: '74434d65-2763-466b-8e26-2324f27a2420',
+    permission: 'USER_ACTIVITY_WRITE',
+    allowOnlyInternalAdmin: true,
+  },
 ];
 
 export const createPermissions = async () => {

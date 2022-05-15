@@ -8,10 +8,23 @@ export const typeDefs = gql`
     READ
   }
 
+  enum ServiceName {
+    KeyManagement
+    Authentication
+    Project
+    ProjectOrganization
+    OrganizationUserKeyBookmark
+    ProjectRole
+    ProjectRoleUser
+    ProjectRolePermission
+    ProjectTag
+  }
+
   type UserActivity {
     id: ID!
     userId: ID!
-    serviceName: ID!
+    serviceName: ServiceName!
+    parentPkId: ID!
     projectId: ID
     description: String
     data: JSON
@@ -26,8 +39,19 @@ export const typeDefs = gql`
     take: Int
     userId: String
     projectId: String
+    parentPkId: String
     serviceName: String
     type: [UserActivityType!]
+  }
+
+  input CreateUserActivityInput {
+    userId: ID!
+    serviceName: ServiceName!
+    projectId: ID
+    parentPkId: ID!
+    description: String
+    data: JSON
+    type: UserActivityType!
   }
 
   type Query {
@@ -39,6 +63,13 @@ export const typeDefs = gql`
     getUsersActivities(filter: UserActivityFilterInput!): [UserActivity!]!
       @access(
         conditions: { permission: "USER_ACTIVITY_READ", roleName: "KeyAdmin" }
+      )
+  }
+
+  type Mutation {
+    createUserActivity(input: CreateUserActivityInput): UserActivity!
+      @access(
+        conditions: { permission: "USER_ACTIVITY_WRITE", roleName: "KeyAdmin" }
       )
   }
 `;

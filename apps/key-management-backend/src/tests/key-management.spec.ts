@@ -5,6 +5,7 @@ import {
   expectDuplicatedError,
   expectNotFoundError,
   expectForbiddenError,
+  adminOwnerClient,
 } from '@key-master/test';
 import { config } from 'dotenv';
 import { nanoid } from 'nanoid';
@@ -37,6 +38,52 @@ describe('Key Management', () => {
           name: true,
         });
 
+      const createdActivity = await adminOwnerClient.chain.mutation
+        .createUserActivity({
+          input: {
+            serviceName: 'KeyManagement',
+            parentPkId: created.id,
+            userId: 'TEST_USER_A_ID',
+            data: {
+              name: created.name,
+            },
+            type: 'CREATE',
+            description: 'Create new key management',
+          },
+        })
+        .get({
+          id: true,
+          parentPkId: true,
+          serviceName: true,
+        });
+
+      const createdKey = await client.chain.query
+        .getKeyManagementById({ id: created.id })
+        .get({
+          historyLogs: {
+            type: true,
+            parentPkId: true,
+            serviceName: true,
+            data: true,
+            userId: true,
+          },
+        });
+
+      const history = createdKey.historyLogs[0];
+
+      expect(createdKey.historyLogs.length).toBeGreaterThanOrEqual(1);
+      expect(history.data).toEqual(
+        expect.objectContaining({
+          name: created.name,
+          userId: 'TEST_USER_A_ID',
+          keyManagementId: created.id,
+        })
+      );
+      expect(history.parentPkId).toEqual(created.id);
+      expect(history.serviceName).toEqual('KeyManagement');
+      expect(history.type).toEqual('CREATE');
+      expect(createdActivity.parentPkId).toEqual(created.id);
+      expect(createdActivity.serviceName).toEqual('KeyManagement');
       expect(created.id).toBeDefined();
       expect(created.name).toEqual(name);
     });

@@ -16,6 +16,7 @@ export const userLoginSubscriberEvent = () =>
       await mongoClient.userActivity.create({
         data: {
           userId: jobData.id,
+          parentPkId: jobData.id,
           serviceName: 'Authentication',
           data: jobData,
           type: 'READ',
@@ -27,6 +28,7 @@ export const userLoginSubscriberEvent = () =>
   });
 
 type UserKeyManagementData = {
+  keyManagementId: string;
   name: string;
   userId: string;
   createdAt: string;
@@ -54,6 +56,7 @@ export const userKeyManagementSubscriberEvent = () =>
       const jobData = job.data;
       await mongoClient.userActivity.create({
         data: {
+          parentPkId: jobData.keyManagementId,
           userId: jobData.userId,
           description: getKeyManagementActivityByType(job.name),
           type: job.name as UserActivityType,

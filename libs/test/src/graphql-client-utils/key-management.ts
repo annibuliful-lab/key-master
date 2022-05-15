@@ -1,6 +1,7 @@
 import { Client } from '@key-master/test';
 import { config } from 'dotenv';
 import { nanoid } from 'nanoid';
+import { adminOwnerClient } from '../graphql-client';
 config();
 
 const PIN_SECRET = process.env.PIN_TEST_KEY;
@@ -11,14 +12,14 @@ interface ICreateKeyManagementParam {
   customName?: string;
   customMasterKey?: string;
 }
-export function createKeyManagement({
+export async function createKeyManagement({
   client,
   customName,
   customMasterKey,
 }: ICreateKeyManagementParam) {
   const name = customName ?? `MOCK_NAME_${nanoid()}`;
 
-  return client.chain.mutation
+  const createdKey = await client.chain.mutation
     .createKeyManagement({
       input: {
         name,
@@ -30,4 +31,24 @@ export function createKeyManagement({
       id: true,
       name: true,
     });
+
+  await adminOwnerClient.chain.mutation
+    .createUserActivity({
+      input: {
+        serviceName: 'KeyManagement',
+        parentPkId: createdKey.id,
+        userId: 'TEST_USER_A_ID',
+        data: {
+          name: createdKey.name,
+        },
+        type: 'CREATE',
+      },
+    })
+    .get({
+      id: true,
+      parentPkId: true,
+      serviceName: true,
+    });
+
+  return createdKey;
 }
