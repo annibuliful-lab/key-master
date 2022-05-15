@@ -150,7 +150,7 @@ export const getUserPermissions = async ({
     return {
       userId,
       role: 'OWNER',
-      permissions: await getAllPermissions(),
+      permissions: await getOwnerPermissions(),
     };
   }
 
@@ -207,6 +207,20 @@ export const getAllPermissions = async () => {
       },
       where: {
         deletedAt: null,
+      },
+    })
+  ).map((p) => p.permission);
+};
+
+export const getOwnerPermissions = async () => {
+  return (
+    await prismaClient.permission.findMany({
+      select: {
+        permission: true,
+      },
+      where: {
+        deletedAt: null,
+        allowOnlyInternalAdmin: false,
       },
     })
   ).map((p) => p.permission);
