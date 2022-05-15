@@ -23,3 +23,27 @@ Array [
   },
 ]
 `;
+
+exports[`dataloader mapDatasWithIdsByCustomField returns map muliple data structure with custom field 1`] = `
+Array [
+  Array [
+    Object {
+      "id": "2860e6ff-87ef-44c8-995f-7c4b516c1794",
+      "projectId": "TEST_PROJECT_ID_1",
+      "tag": "TAG_A",
+    },
+    Object {
+      "id": "2860e6ff-87ef-44c8-995f-7c4b516c1890",
+      "projectId": "TEST_PROJECT_ID_1",
+      "tag": "TAG_C",
+    },
+  ],
+  Array [
+    Object {
+      "id": "6f5b77dd-7859-4229-86d8-1b92063b24e1",
+      "projectId": "TEST_PROJECT_ID_2",
+      "tag": "TAG_B",
+    },
+  ],
+]
+`;
