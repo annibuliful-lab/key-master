@@ -4,15 +4,14 @@ export async function createUserActivity() {
   const createUserActivity = await mongoClient.userActivity.create({
     data: {
       projectId: 'TEST_PROJECT_ID',
-      serviceName: 'TEST_SERVICE_NAME',
-      parentPkId: 'MOCK_PARENT_ID',
+      serviceName: 'KeyManagement',
+      parentPkId: 'KEY_MANAGEMENT_A_ID',
       type: 'CREATE',
       userId: 'TEST_USER_ID',
       data: {
-        fullname: 'TEST_NAME',
-        id: 'TEST_ID',
+        name: 'TEST_KEY_A',
       },
-      description: 'TEST_DESCRIPTION',
+      description: 'Create Key name',
     },
   });
 
