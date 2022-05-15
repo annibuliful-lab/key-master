@@ -4,31 +4,33 @@ import { executeRemoteSchema } from '@key-master/graphql';
 
 const { stitchingDirectivesTransformer } = stitchingDirectives();
 
+const host = process.env.SERVICE_URI;
+
 export const makeGatewaySchema = async () => {
   const userSchema = await executeRemoteSchema({
-    host: 'localhost',
+    host,
     port: 3000,
     supportWs: true,
   });
 
   const authSchema = await executeRemoteSchema({
-    host: 'localhost',
+    host,
     port: 3001,
     supportWs: true,
   });
 
   const projectSchema = await executeRemoteSchema({
-    host: 'localhost',
+    host,
     port: 3002,
   });
 
   const keyManagementSchema = await executeRemoteSchema({
-    host: 'localhost',
+    host,
     port: 3003,
   });
 
   const userActivitySchema = await executeRemoteSchema({
-    host: 'localhost',
+    host,
     port: 3004,
     supportWs: true,
   });
