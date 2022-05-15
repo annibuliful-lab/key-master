@@ -24,6 +24,7 @@ export const typeDefs = gql`
     id: ID!
     userId: ID!
     serviceName: ServiceName!
+    parentPkId: ID!
     projectId: ID
     description: String
     data: JSON

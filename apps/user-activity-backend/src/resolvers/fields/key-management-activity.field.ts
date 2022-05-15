@@ -9,6 +9,7 @@ export const resolvers: Resolvers<IGraphqlContext> = {
         'KeyManagement',
         filter
       );
+
       return historyLogs.map((history) => ({
         ...history,
         serviceName: history.serviceName as ServiceName,

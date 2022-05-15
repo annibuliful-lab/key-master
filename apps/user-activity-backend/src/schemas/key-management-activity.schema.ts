@@ -8,7 +8,7 @@ export const typeDefs = gql`
 
   type KeyManagement @key(selectionSet: "{ id }") {
     id: ID!
-    historyLogs(filter: KeyManagementHistoryLogFilterInput!): [UserActivity]
+    historyLogs(filter: KeyManagementHistoryLogFilterInput): [UserActivity]
   }
 
   type Query {
