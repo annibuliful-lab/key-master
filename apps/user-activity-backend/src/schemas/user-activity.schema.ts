@@ -26,6 +26,7 @@ export const typeDefs = gql`
     take: Int
     userId: String
     projectId: String
+    parentPkId: String
     serviceName: String
     type: [UserActivityType!]
   }
