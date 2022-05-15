@@ -5,6 +5,7 @@ export async function createUserActivity() {
     data: {
       projectId: 'TEST_PROJECT_ID',
       serviceName: 'TEST_SERVICE_NAME',
+      parentPkId: 'MOCK_PARENT_ID',
       type: 'CREATE',
       userId: 'TEST_USER_ID',
       data: {

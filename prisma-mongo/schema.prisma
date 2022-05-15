@@ -46,6 +46,7 @@ enum UserActivityType {
 
 model UserActivity {
     id          String           @id @default(auto()) @map("_id") @db.ObjectId
+    parentPkId  String // primary key of each service key eg. key management id, user id, organization id etc.
     userId      String
     serviceName String
     projectId   String?
