@@ -1,8 +1,13 @@
-import { Resolvers } from '../../codegen-generated';
+import { Resolvers, ServiceName } from '../../codegen-generated';
 import { IGraphqlContext } from '../../context';
 
 export const mutations: Resolvers<IGraphqlContext>['Mutation'] = {
-  createUserActivity: (_parent, { input }, ctx) => {
-    return ctx.userActivity.create(input);
+  createUserActivity: async (_parent, { input }, ctx) => {
+    const created = await ctx.userActivity.create(input);
+
+    return {
+      ...created,
+      serviceName: created.serviceName as ServiceName,
+    };
   },
 };
