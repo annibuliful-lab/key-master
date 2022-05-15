@@ -56,7 +56,12 @@ export const adminOwnerClient = projectOwnerGraphqlClient({
   projectId: 'TEST_PROJECT_ID',
   userId: 'TEST_USER_A_ID',
   options: {
-    'x-user-permissions': 'PERMISSION_WRITE,PERMISSION_READ',
+    'x-user-permissions': [
+      'PERMISSION_WRITE',
+      'PERMISSION_READ',
+      'USER_ACTIVITY_WRITE',
+      'KEY_MANAGEMENT_WRITE',
+    ].join(','),
   },
 });
 
