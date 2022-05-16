@@ -4,6 +4,7 @@ export const typeDefs = gql`
   type User {
     id: ID!
     fullname: String!
+    avatar: String
   }
 
   type Authentication @key(selectionSet: "{ id }") {
@@ -21,6 +22,11 @@ export const typeDefs = gql`
   }
 
   type OrganizationUser @key(selectionSet: "{ userId }") {
+    userId: ID!
+    user: User
+  }
+
+  type UserActivity @key(selectionSet: "{ userId }") {
     userId: ID!
     user: User
   }
@@ -51,6 +57,9 @@ export const typeDefs = gql`
     _organizationUserProfile(
       keys: [OrganizationUserKey!]!
     ): [OrganizationUser!]! @merge(keyArg: "keys")
+
+    _userProfileActivity(ids: [ID!]!): [UserActivity!]!
+      @merge(keyField: "userId")
   }
 
   type Mutation {

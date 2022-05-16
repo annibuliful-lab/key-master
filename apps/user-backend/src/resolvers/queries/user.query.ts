@@ -1,3 +1,4 @@
+import { mapDataWithIdsByCustomFieldId } from '@key-master/graphql';
 import { ForbiddenError } from 'apollo-server-core';
 import { keyBy } from 'lodash';
 import { Resolvers } from '../../codegen-generated';
@@ -42,6 +43,19 @@ export const query: Resolvers<IGraphqlContext>['Query'] = {
   },
   _organizationUserProfile: async (_parent, { keys }, ctx) => {
     const ids = keys.map((key) => key.userId);
+    const users = await ctx.user.findByIds(ids);
+
+    const groupedUsers = keyBy(users, (user) => user.id);
+
+    return ids.map((id) => {
+      const user = groupedUsers[id];
+      return {
+        userId: id,
+        user,
+      };
+    });
+  },
+  _userProfileActivity: async (_parent, { ids }, ctx) => {
     const users = await ctx.user.findByIds(ids);
 
     const groupedUsers = keyBy(users, (user) => user.id);
