@@ -66,12 +66,18 @@ describe('Key Management', () => {
             serviceName: true,
             data: true,
             userId: true,
+            user: {
+              fullname: true,
+              id: true,
+            },
           },
         });
 
       const history = createdKey.historyLogs[0];
 
       expect(createdKey.historyLogs.length).toBeGreaterThanOrEqual(1);
+      expect(history.user.id).toEqual('TEST_USER_A_ID');
+      expect(history.user.fullname).toEqual('testUserAName');
       expect(history.data).toEqual(
         expect.objectContaining({
           name: created.name,
