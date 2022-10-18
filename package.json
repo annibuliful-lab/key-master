@@ -111,7 +111,7 @@
     "concurrently": "7.1.0",
     "core-js": "3.6.5",
     "dataloader": "^2.1.0",
-    "dotenv": "16.0.0",
+    "dotenv": "16.0.3",
     "eslint-plugin-unused-imports": "2.0.0",
     "fast-glob": "3.2.11",
     "fastify": "3.28.0",
