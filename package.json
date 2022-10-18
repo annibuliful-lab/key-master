@@ -101,7 +101,7 @@
     "@graphql-tools/utils": "8.6.9",
     "@graphql-tools/wrap": "8.4.16",
     "@prisma/client": "3.14",
-    "@types/jsonwebtoken": "8.5.8",
+    "@types/jsonwebtoken": "8.5.9",
     "@types/lodash": "4.14.182",
     "@types/wait-on": "5.3.1",
     "apollo-server-core": "3.7.0",
