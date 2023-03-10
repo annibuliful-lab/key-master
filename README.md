@@ -1,6 +1,6 @@
 # Key-master
 
-Funny Project for experimenting Graphql and schema stiching with DataLoader
+Funny Project for experimenting Graphql and schema stiching with DataLoader with key encrytion management
 
 ## How to run
 
